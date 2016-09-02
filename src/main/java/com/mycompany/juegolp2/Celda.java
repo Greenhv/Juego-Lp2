@@ -22,10 +22,10 @@ public class Celda implements Drawable
         this.contenido = ContenidoCeldas.PARED.asChar();
     }
 
-    public Celda(TipoCelda tipo)
+    public Celda(TipoCelda tipo, ContenidoCeldas contenido)
     {
         this.tipo = tipo;
-        this.contenido = ContenidoCeldas.PARED.asChar();
+        this.contenido = contenido.asChar();
     }
     
     public void setTipo(TipoCelda tipo)

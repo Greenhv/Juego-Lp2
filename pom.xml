@@ -13,4 +13,7 @@
     <build>
         <defaultGoal>install</defaultGoal>
     </build>
+    <dependencies>
+
+    </dependencies>
 </project>

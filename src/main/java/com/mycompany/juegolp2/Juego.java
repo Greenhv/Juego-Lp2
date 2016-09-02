@@ -5,6 +5,8 @@
  */
 package com.mycompany.juegolp2;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author pmvb
@@ -13,9 +15,12 @@ public class Juego {
     
     private Avatar jugador;
     private GestorLaberinto gestorLaberinto;
+    private ArrayList<Laberinto> mapa;
     
     public Juego()
     {
+        this.gestorLaberinto = new GestorLaberinto();
+        this.mapa = new ArrayList<>();
     }
 
     // Introducción al juego
@@ -24,7 +29,7 @@ public class Juego {
         System.out.println("JUEGO");
     }
 
-    // Inicia datos del jugador y lo necesario para jugar
+    // Configura lo necesario para jugar
     public void init()
     {
         this.createMap();
@@ -38,6 +43,7 @@ public class Juego {
         this.jugador.getPosition().print();
         this.jugador.move(Direction.DOWN);
         this.jugador.getPosition().print();
+        this.mapa.get(0).draw();
     }
 
     public Result result()
@@ -52,9 +58,10 @@ public class Juego {
 
     private void createMap()
     {
-        int M = (int) ((Math.random()*100) % 31 + 20);
-        int N = (int) ((Math.random()*100) % 31 + 20);
-        this.gestorLaberinto.Crear(M, N);
+        int M = (int) ((Math.random()*100) % 11 + 20);
+        int N = (int) ((Math.random()*100) % 11 + 20);
+        System.out.println(Integer.toString(M) + " - " + Integer.toString(N));
+        this.mapa.add(this.gestorLaberinto.Crear(M, N));
     }
 
     public enum Result

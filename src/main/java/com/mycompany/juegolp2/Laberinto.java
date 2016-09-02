@@ -1,5 +1,7 @@
 package com.mycompany.juegolp2;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.StringStack;
+
 import java.util.*;
 
 /**
@@ -45,13 +47,17 @@ public class Laberinto implements Drawable
     
     public void draw()
     {
-
-        for (int x = 0; x < this.getWidth(); ++x) {
-            for (int y = 0; y < this.getHeight(); ++y) {
+        String topBorder = " " + new String(new char[this.getWidth()]).replace("\0", " _  ");
+        for (int y = 0; y < this.getHeight(); ++y) {
+            System.out.println(topBorder + "\n");
+            for (int x = 0; x < this.getWidth(); ++x) {
+                System.out.print("| ");
                 laberinto.get(x).get(y).draw();
+                System.out.print(' ');
             }
-            System.out.println();
+            System.out.println('|');
         }
+        System.out.println(topBorder);
     }
 
     public int getWidth() {

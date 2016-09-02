@@ -5,18 +5,7 @@
  */
 package com.mycompany.juegolp2;
 
-enum TipoCelda
-{
-    ADENTRO,
-    ANTERIOR,
-    SIGUIENTE,
-    PARED
-};
-
-enum ContenidoCelda
-{
-    
-}
+;
 
 /**
  *
@@ -26,11 +15,17 @@ public class Celda implements Drawable
 {
     private TipoCelda tipo;
     private char contenido;
-    
+
+    public Celda()
+    {
+        this.tipo = TipoCelda.AFUERA;
+        this.contenido = ContenidoCeldas.PARED.asChar();
+    }
+
     public Celda(TipoCelda tipo)
     {
         this.tipo = tipo;
-        this.contenido = ' ';
+        this.contenido = ContenidoCeldas.PARED.asChar();
     }
     
     public void setTipo(TipoCelda tipo)
@@ -43,7 +38,7 @@ public class Celda implements Drawable
         return this.tipo;
     }
     
-    public void ocupar(char contenido)
+    public void setContenido(char contenido)
     {
         this.contenido = contenido;
     }
@@ -53,13 +48,17 @@ public class Celda implements Drawable
         return this.contenido;
     }
     
-    public void visitar()
-    {
-        
-    }
-    
     public void draw()
     {
         System.out.print(this.contenido);
+    }
+
+    public enum TipoCelda
+    {
+        ADENTRO,
+        ANTERIOR,
+        SIGUIENTE,
+        PARED,
+        AFUERA
     }
 }

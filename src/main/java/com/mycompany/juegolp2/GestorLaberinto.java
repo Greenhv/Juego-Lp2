@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany.juegolp2;
 
 import java.util.*;
@@ -23,7 +18,19 @@ public class GestorLaberinto
     public Laberinto Crear(int M, int N)
     {
         Laberinto lab = new Laberinto(2*M+1, 2*N+1);
-        //this.laberintos.add(lab);
+        configLaberinto(lab);
         return lab;
+    }
+
+    public void configLaberinto(Laberinto lab)
+    {
+        for (int i = 1; i < lab.getWidth(); i += 2) {
+            for (int j = 1; j < lab.getHeight(); j += 2) {
+                lab.get(i, j).setTipo(Celda.TipoCelda.AFUERA);
+            }
+        }
+        Deque<Position> visited = new ArrayDeque<>();
+
+
     }
 }

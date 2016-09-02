@@ -5,13 +5,6 @@
  */
 package com.mycompany.juegolp2;
 
-enum GameResult
-{
-    QUIT,
-    LOSE,
-    WIN
-}
-
 /**
  *
  * @author pmvb
@@ -19,42 +12,55 @@ enum GameResult
 public class Juego {
     
     private Avatar jugador;
-    private GestorLaberinto mapa;
+    private GestorLaberinto gestorLaberinto;
     
-    private Juego()
+    public Juego()
     {
     }
-    
-    public static Juego getInstance()
-    {
-        return JuegoHolder.INSTANCE;
-    }
-    
-    private static class JuegoHolder {
 
-        private static final Juego INSTANCE = new Juego();
+    // Introducción al juego
+    public void intro()
+    {
+        System.out.println("JUEGO");
     }
-    
+
     // Inicia datos del jugador y lo necesario para jugar
     public void init()
     {
-        // Obten datos y Crea jugador
+        this.createMap();
+        // Obten datos y crea jugador
         this.createPlayer();
         //
     }
-    
+
     public void play()
     {
-        
+        this.jugador.getPosition().print();
+        this.jugador.move(Direction.DOWN);
+        this.jugador.getPosition().print();
     }
-    
-    public GameResult result()
-    {   
-        return GameResult.WIN;
+
+    public Result result()
+    {
+        return Result.WIN;
     }
     
     private void createPlayer()
     {
         this.jugador = new Avatar("Nombre");
+    }
+
+    private void createMap()
+    {
+        int M = (int) ((Math.random()*100) % 31 + 20);
+        int N = (int) ((Math.random()*100) % 31 + 20);
+        this.gestorLaberinto.Crear(M, N);
+    }
+
+    public enum Result
+    {
+        QUIT,
+        LOSE,
+        WIN
     }
 }

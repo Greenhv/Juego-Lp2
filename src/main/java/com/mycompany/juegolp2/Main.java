@@ -15,18 +15,21 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Juego.getInstance().init();
+        Juego juego = new Juego();
+        juego.intro();
+        juego.init();
         
         while (true) {
-            Juego.getInstance().play();
-            
-            GameResult res = Juego.getInstance().result();
-            if (res == GameResult.QUIT) {
+            juego.play();
+
+            Juego.Result res = juego.result();
+            if (res == Juego.Result.QUIT) {
                 System.out.println("Has decidido terminar el juego");
-            } else if (res == GameResult.WIN) {
+                break;
+            } else if (res == Juego.Result.WIN) {
                 System.out.println("Has ganado !");
                 break;
-            } else if (res == GameResult.LOSE) {
+            } else if (res == Juego.Result.LOSE) {
                 System.out.println("Has perdido :(");
                 break;
             }

@@ -1,15 +1,12 @@
 package com.mycompany.juegolp2;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.StringStack;
-
 import java.util.*;
-import org.w3c.dom.ranges.RangeException;
 
 /**
  *
  * @author pmvb
  */
-public class Laberinto implements Drawable
+public class Laberinto
 {
     /*
      * Ancho de un laberinto
@@ -247,6 +244,4 @@ public class Laberinto implements Drawable
         this.siguiente = sig;
         this.get(sig).setContenido(ContenidoCeldas.SIGUIENTE.asChar());
     }
-    
-    
 }

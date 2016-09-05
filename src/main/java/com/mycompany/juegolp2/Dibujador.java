@@ -9,13 +9,10 @@ package com.mycompany.juegolp2;
  *
  * @author pmvb
  */
-public class Enemigo extends Entidad
+public class Dibujador
 {
-    private int nivel_enemigo;
-    
-    public Enemigo(String nombre)
+    public static void dibujarLaberinto(Laberinto lab)
     {
-        super(nombre);
-        nivel_enemigo = 1;
+        lab.draw();
     }
 }

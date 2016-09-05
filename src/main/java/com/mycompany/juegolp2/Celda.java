@@ -11,7 +11,7 @@ package com.mycompany.juegolp2;
  *
  * @author pmvb
  */
-public class Celda implements Drawable
+public class Celda
 {
     private int fila;
     private int columna;

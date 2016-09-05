@@ -4,33 +4,37 @@ package com.mycompany.juegolp2;
  *
  * @author pmvb
  */
-public class Avatar
+public class Avatar extends Entidad
 {
-    private String nombre;
     private int nivel;
-    private int maxHP;
-    private int hp;
     private Arma arma;
     private Armadura armadura;
     private Saco saco;
-    private Position position;
 
     public Avatar(String nombre)
     {
-        this.nombre = nombre;
+        super(nombre);
         this.nivel = 1;
-        this.position = new Position(0, 0);
+        this.saco = new Saco();
     }
-
-    public void move(Direction dir)
+    
+    public Avatar(String nombre, Position pos)
     {
-        this.getPosition().move(dir);
+        super(nombre, pos);
+        this.nivel = 1;
+        this.saco = new Saco();
     }
-
-    public Position getPosition()
+    
+    public void pickupItem(Artefacto item)
     {
-        return this.position;
+        this.saco.addItem(item);
     }
-
+    
+    public void useItem(int index)
+    {
+        Artefacto item = this.saco.getItem(index);
+        this.saco.removeItem(index);
+        // Qué hacer
+    }
 }
 

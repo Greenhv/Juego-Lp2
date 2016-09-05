@@ -20,7 +20,7 @@ public class Avatar
 
     public void move(Direction dir)
     {
-        dir.move(this.getPosition());
+        this.getPosition().move(dir);
     }
 
     public Position getPosition()

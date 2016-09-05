@@ -51,7 +51,8 @@ public class Laberinto implements Drawable
     }
     
     /* Generador de Camino para el Laberinto */
-        private void inicializar_laberinto(){
+    private void inicializar_laberinto()
+    {
         boolean fila_flag = true;
         boolean columna_flag = false;
         for (int i = 0; i < alto; i++){
@@ -70,7 +71,8 @@ public class Laberinto implements Drawable
         }
     }
     
-    private void generar_ruta(){
+    private void generar_ruta()
+    {
         Stack cells_stack = new Stack();
         Celda starting_cell = laberinto[1][1]; //just a test starting point
         starting_cell.mark_as_inside();

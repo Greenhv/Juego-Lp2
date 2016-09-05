@@ -58,8 +58,9 @@ public class Juego {
 
     private void createMap()
     {
-        int M = (int) ((Math.random()*100) % 11 + 20);
-        int N = (int) ((Math.random()*100) % 11 + 20);
+        // M y N  entre 20 y 30
+        int M = (int) ((Math.random()*10) + 20);
+        int N = (int) ((Math.random()*10) + 20);
         System.out.println(Integer.toString(M) + " - " + Integer.toString(N));
         this.mapa.add(this.gestorLaberinto.Crear(M, N));
     }

@@ -9,7 +9,7 @@ public enum Direction
         @Override
         public void move(Position pos)
         {
-            pos.setY(pos.getY() + 1);
+            pos.setY(pos.getY() - 1);
         }
     },
     RIGHT {
@@ -22,7 +22,7 @@ public enum Direction
     DOWN {
         @Override
         public void move(Position pos) {
-            pos.setY(pos.getY() - 1);
+            pos.setY(pos.getY() + 1);
         }
     },
     LEFT {

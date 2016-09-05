@@ -13,12 +13,22 @@ package com.mycompany.juegolp2;
  */
 public class Celda implements Drawable
 {
+    private int fila;
+    private int columna;
     private TipoCelda tipo;
     private char contenido;
 
     public Celda()
     {
-        this.tipo = TipoCelda.AFUERA;
+        this.tipo = TipoCelda.PARED;
+        this.contenido = ContenidoCeldas.PARED.asChar();
+    }
+    
+    public Celda(int fila, int columna)
+    {
+        this.fila = fila;
+        this.columna = columna;
+        this.tipo = TipoCelda.PARED;
         this.contenido = ContenidoCeldas.PARED.asChar();
     }
 
@@ -53,12 +63,54 @@ public class Celda implements Drawable
         System.out.print(this.contenido);
     }
 
+    /**
+     * @return the fila
+     */
+    public int getFila() {
+        return fila;
+    }
+
+    /**
+     * @param fila the fila to set
+     */
+    public void setFila(int fila) {
+        this.fila = fila;
+    }
+
+    /**
+     * @return the columna
+     */
+    public int getColumna() {
+        return columna;
+    }
+
+    /**
+     * @param columna the columna to set
+     */
+    public void setColumna(int columna) {
+        this.columna = columna;
+    }
+    
+    public void mark_as_inside(){
+        this.setTipo(TipoCelda.ADENTRO);
+        this.setContenido(ContenidoCeldas.LIBRE.asChar());
+    }
+    
+    public void mark_as_outside(){
+        this.setTipo(TipoCelda.AFUERA);
+    }
+    
+    public boolean is_free(int height, int width){
+        return this.getTipo()== TipoCelda.AFUERA;
+    }
+    
     public enum TipoCelda
     {
+        PARED,
         ADENTRO,
+        AFUERA,
         ANTERIOR,
         SIGUIENTE,
-        PARED,
-        AFUERA
+        
     }
 }

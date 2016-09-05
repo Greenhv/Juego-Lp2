@@ -40,7 +40,6 @@ public class Juego {
 
     public void play()
     {
-        this.jugador.getPosition().print();
         this.jugador.move(Direction.DOWN);
         this.jugador.getPosition().print();
         this.mapa.get(0).draw();
@@ -54,6 +53,7 @@ public class Juego {
     private void createPlayer()
     {
         this.jugador = new Avatar("Nombre");
+        //this.jugador.setPosition();
     }
 
     private void createMap()

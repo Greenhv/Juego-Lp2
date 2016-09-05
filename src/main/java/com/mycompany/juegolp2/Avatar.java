@@ -8,6 +8,10 @@ public class Avatar
 {
     private String nombre;
     private int nivel;
+    private int maxHP;
+    private int hp;
+    private Arma arma;
+    private Armadura armadura;
     private Saco saco;
     private Position position;
 

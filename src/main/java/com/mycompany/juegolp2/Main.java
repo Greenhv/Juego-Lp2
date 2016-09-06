@@ -15,28 +15,22 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Juego juego = new Juego();
+        Juego juego = Juego.getInstance();
         juego.intro();
         juego.init();
         
-        OUTER:
-        while (true) {
-            Juego.Result res = juego.play();
-            if (res != null) {
-                switch (res) {
-                    case QUIT:
-                        System.out.println("Has decidido terminar el juego");
-                        break OUTER;
-                    case WIN:
-                        System.out.println("Has ganado !");
-                        break OUTER;
-                    case LOSE:
-                        System.out.println("Has perdido :(");
-                        break OUTER;
-                    default:
-                        break;
-                }
-            }
+        Juego.Result res = juego.play();
+        switch (res) {
+            case QUIT:
+                System.out.print("Has decidido terminar el juego. ");
+                System.out.println("Gracias por jugar.");
+                break;
+            case WIN:
+                System.out.println("Has ganado !");
+                break;
+            case LOSE:
+                System.out.println("Has perdido :(");
+                break;
         }
     }
 }

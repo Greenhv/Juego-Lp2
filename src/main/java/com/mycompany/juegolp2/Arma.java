@@ -23,7 +23,17 @@ public class Arma extends Artefacto
     }
 
     @Override
-    public Artefacto.Tipo getType() {
+    public Artefacto.Tipo type()
+    {
         return Artefacto.Tipo.ARMA;
+    }
+    
+    @Override
+    public String toString()
+    {
+        String str = "Arma: \n";
+        str += "Ataque mínimo: " + Integer.toString(dmg_min) + "\n";
+        str += "Ataque máximo: " + Integer.toString(dmg_max) + "\n";
+        return str;
     }
 }

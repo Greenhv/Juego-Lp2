@@ -10,7 +10,7 @@ public abstract class Artefacto
 
     }
 
-    public abstract Artefacto.Tipo getType();
+    public abstract Artefacto.Tipo type();
 
     public enum Tipo
     {
@@ -18,4 +18,6 @@ public abstract class Artefacto
         POCION,
         ARMA
     }
+    
+    public abstract String toString();
 }

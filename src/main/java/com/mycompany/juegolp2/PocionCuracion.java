@@ -18,7 +18,16 @@ public class PocionCuracion extends Artefacto
     }
 
     @Override
-    public Artefacto.Tipo getType() {
+    public Artefacto.Tipo type()
+    {
         return Artefacto.Tipo.POCION;
+    }
+    
+    @Override
+    public String toString()
+    {
+        String str = "Poción de Curación: \n";
+        str += "Recupera: " + Integer.toString(puntos_vida) + "HP\n";
+        return str;
     }
 }

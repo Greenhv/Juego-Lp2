@@ -27,14 +27,33 @@ public class Avatar extends Entidad
     
     public void pickupItem(Artefacto item)
     {
-        this.saco.addItem(item);
+        if (item.type() == Artefacto.Tipo.ARMA)
+            this.arma = (Arma) item;
+        else if (item.type() == Artefacto.Tipo.ARMADURA)
+            this.armadura = (Armadura) item;
+        else
+            this.saco.addItem(item);
     }
     
-    public void useItem(int index)
+    @Override
+    public int getNivel()
     {
-        Artefacto item = this.saco.getItem(index);
-        this.saco.removeItem(index);
-        // Qué hacer
+        return this.nivel;
+    }
+    
+    public Arma getArma()
+    {
+        return this.arma;
+    }
+    
+    public Armadura getArmadura()
+    {
+        return this.armadura;
+    }
+    
+    public Saco getSaco()
+    {
+        return this.saco;
     }
 }
 

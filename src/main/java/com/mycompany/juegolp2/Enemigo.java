@@ -18,4 +18,10 @@ public class Enemigo extends Entidad
         super(nombre);
         nivel_enemigo = 1;
     }
+    
+    @Override
+    public int getNivel()
+    {
+        return this.nivel_enemigo;
+    }
 }

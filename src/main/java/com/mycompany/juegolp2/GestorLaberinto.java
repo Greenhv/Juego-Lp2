@@ -15,7 +15,7 @@ public class GestorLaberinto
         this.laberintos = new ArrayList<Laberinto>();
     }
     
-    public Laberinto laberintoPosicionN(int n)
+    public Laberinto get(int n)
     {
         return this.laberintos.get(n);
     }
@@ -37,6 +37,8 @@ public class GestorLaberinto
         }
     }
     /**
+     * TODO: Agregar Artefactos y Enemigos
+     * 
      * Agrega lo necesario para completar el laberinto (celdas anterior, siguiente,
      * artefactos y enemigos).
      * Crea lista de celdas libres y luego elige donde poner lo necesario
@@ -78,4 +80,8 @@ public class GestorLaberinto
         laberinto.get(jugador.getPosition()).setContenido(ContenidoCeldas.JUGADOR.asChar());
     }
     
+    public int size()
+    {
+        return laberintos.size();
+    }
 }

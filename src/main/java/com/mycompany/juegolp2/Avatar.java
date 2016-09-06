@@ -10,19 +10,16 @@ public class Avatar extends Entidad
     private Arma arma;
     private Armadura armadura;
     private Saco saco;
-
-    public Avatar(String nombre)
-    {
-        super(nombre);
-        this.nivel = 1;
-        this.saco = new Saco();
-    }
+    private Direction facingDir;
     
     public Avatar(String nombre, Position pos)
     {
         super(nombre, pos);
         this.nivel = 1;
         this.saco = new Saco();
+        this.facingDir = Direction.LEFT;
+        setMaxHP(nivel*10);
+        super.initHP();
     }
     
     public void pickupItem(Artefacto item)
@@ -54,6 +51,30 @@ public class Avatar extends Entidad
     public Saco getSaco()
     {
         return this.saco;
+    }
+    
+    public Direction getFacingDir()
+    {
+        return this.facingDir;
+    }
+    
+    public void setFacingDir(Direction dir)
+    {
+        this.facingDir = dir;
+    }
+    
+    @Override
+    public String toString()
+    {
+        String str = "Nombre: " + getNombre() + " - HP: " + getCurrentHP() + "/" + getMaxHP() + "\n";
+        str += "Mirando hacia: " + Direction.direcciones.get(facingDir) + "\n";
+        str += "Nivel: " + getNivel() + "\n";
+        str += "Arma: " + ((getArma() == null) ? "Ninguna" : getArma().toString()) + "\n";
+        str += "Armadura: " + ((getArmadura() == null) ? "Ninguna" : getArmadura().toString()) + "\n";
+        str += "Saco: \n";
+        str += ((getSaco().empty()) ? "Vacío" : getSaco().toString());
+        
+        return str;
     }
 }
 

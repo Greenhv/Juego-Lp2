@@ -42,6 +42,11 @@ public abstract class Entidad
         this.position = pos;
     }
     
+    protected void initHP()
+    {
+        this.currHP = maxHP;
+    }
+    
     public int getCurrentHP()
     {
         return this.currHP;
@@ -55,7 +60,7 @@ public abstract class Entidad
             this.currHP -= dmg;
     }
     
-    private void setMaxHP(int max)
+    protected void setMaxHP(int max)
     {
         if (max <= 0)
             throw new IllegalArgumentException(

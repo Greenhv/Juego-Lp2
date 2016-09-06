@@ -1,5 +1,7 @@
 package com.mycompany.juegolp2;
 
+import java.util.*;
+
 /**
  * Created by pmvb on 01/09/16.
  */
@@ -17,5 +19,15 @@ public enum Direction
             }
         }
         return false;
+    }
+    
+    public static final Map<Direction, String> direcciones;
+    static
+    {
+        direcciones = new HashMap<>();
+        direcciones.put(UP, "Arriba");
+        direcciones.put(RIGHT, "Derecha");
+        direcciones.put(DOWN, "Abajo");
+        direcciones.put(LEFT, "Izquierda");
     }
 }

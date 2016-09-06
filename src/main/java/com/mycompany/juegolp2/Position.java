@@ -13,6 +13,12 @@ public class Position
         this.setY(y);
     }
 
+    public Position(Position pos)
+    {
+        this.setX(pos.getX());
+        this.setY(pos.getY());
+    }
+            
     public void print()
     {
         System.out.println(this.toString());
@@ -50,21 +56,27 @@ public class Position
         this.Y = y;
     }
     
-    public void move(Direction dir)
+    public Position move(Direction dir)
     {
         switch (dir) {
             case UP:
-                this.setY(this.getY() - 1);
-                break;
-            case RIGHT:
-                this.setX(this.getX() + 1);
-                break;
-            case DOWN:
-                this.setY(this.getY() + 1);
-                break;
-            case LEFT:
                 this.setX(this.getX() - 1);
                 break;
+            case RIGHT:
+                this.setY(this.getY() + 1);
+                break;
+            case DOWN:
+                this.setX(this.getX() + 1);
+                break;
+            case LEFT:
+                this.setY(this.getY() - 1);
+                break;
         }
+        return this.copy();
+    }
+    
+    public Position copy()
+    {
+        return new Position(getX(), getY());
     }
 }

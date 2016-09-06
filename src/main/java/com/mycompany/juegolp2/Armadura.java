@@ -19,7 +19,16 @@ public class Armadura extends Artefacto
     }
 
     @Override
-    public Artefacto.Tipo getType() {
+    public Artefacto.Tipo type()
+    {
         return Artefacto.Tipo.ARMADURA;
+    }
+    
+    @Override
+    public String toString()
+    {
+        String str = "Armadura: \n";
+        str += "Defensa: " + Integer.toString(defensa) + "\n";
+        return str;
     }
 }

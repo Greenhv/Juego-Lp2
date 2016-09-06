@@ -15,25 +15,22 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Juego juego = new Juego();
+        Juego juego = Juego.getInstance();
         juego.intro();
         juego.init();
         
-        while (true) {
-            juego.play();
-
-            Juego.Result res = juego.result();
-            if (res == Juego.Result.QUIT) {
-                System.out.println("Has decidido terminar el juego");
+        Juego.Result res = juego.play();
+        switch (res) {
+            case QUIT:
+                System.out.print("Has decidido terminar el juego. ");
+                System.out.println("Gracias por jugar.");
                 break;
-            } else if (res == Juego.Result.WIN) {
+            case WIN:
                 System.out.println("Has ganado !");
                 break;
-            } else if (res == Juego.Result.LOSE) {
+            case LOSE:
                 System.out.println("Has perdido :(");
                 break;
-            }
         }
     }
-    
 }

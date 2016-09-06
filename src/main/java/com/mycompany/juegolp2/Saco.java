@@ -34,4 +34,18 @@ public class Saco
     {
         this.saco.remove(index);
     }
+    
+    public int size()
+    {
+        return this.saco.size();
+    }
+    
+    public String toString()
+    {
+        String str = "";
+        for (int i = 0; i < saco.size(); ++i)
+            str += saco.get(i);
+        str += "\n";
+        return str;
+    }
 }

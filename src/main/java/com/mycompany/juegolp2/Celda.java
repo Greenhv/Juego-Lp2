@@ -52,6 +52,11 @@ public class Celda
     {
         this.contenido = contenido;
     }
+
+    public void setContenido(ContenidoCeldas contenido)
+    {
+        this.contenido = contenido.asChar();
+    }
     
     public char getContenido()
     {
@@ -106,6 +111,11 @@ public class Celda
     public boolean isFree()
     {
         return this.getTipo() == TipoCelda.AFUERA;
+    }
+    
+    public boolean esPared()
+    {
+        return this.getTipo() == TipoCelda.PARED;
     }
     
     public enum TipoCelda

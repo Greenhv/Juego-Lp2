@@ -25,7 +25,6 @@ public abstract class Entidad
     {
         this.nombre = nombre;
         this.setPosition(pos);
-        this.setPosition(new Position(1, 1));
     }
     
     public void move(Direction dir)
@@ -69,4 +68,16 @@ public abstract class Entidad
     {
         return this.maxHP;
     }
+    
+    public String getNombre()
+    {
+        return this.nombre;
+    }
+    
+    public void setNombre(String nombre)
+    {
+        this.nombre = nombre;
+    }
+    
+    public abstract int getNivel();
 }

@@ -194,7 +194,7 @@ public class Laberinto
         int x = pos.getX();
         int y = pos.getY();
         // Por como se manejan los arreglos, 'x' corresponde al alto y 'y' al ancho
-        if (x < 0 || y < 0 || x >= getAlto() || y >= getAncho())
+        if (!this.inBounds(x, y))
             throw new IndexOutOfBoundsException(
                 "Coordenadas fuera de rango en Laberinto.get(Position)"
                 + "pos: " + pos.toString());
@@ -204,7 +204,7 @@ public class Laberinto
     public Celda get(int x, int y)
     {
         // Por como se manejan los arreglos, 'x' corresponde al alto y 'y' al ancho
-        if (x < 0 || y < 0 || x >= getAlto() || y >= getAncho())
+        if (!this.inBounds(x, y))
             throw new IndexOutOfBoundsException(
                 "Coordenadas fuera de rango en Laberinto.get(int, int): "
                 + "x: " + Integer.toString(x) + ", y: " + Integer.toString(y));
@@ -243,5 +243,43 @@ public class Laberinto
     {
         this.siguiente = sig;
         this.get(sig).setContenido(ContenidoCeldas.SIGUIENTE.asChar());
+    }
+    
+    public void actualizarJugador(int X, int Y)
+    {
+        this.get(X, Y).setContenido(ContenidoCeldas.JUGADOR);
+    }
+    
+    public boolean inBounds(int x, int y)
+    {
+        return !(x < 0 || y < 0 || x >= getAlto() || y >= getAncho());
+    }
+    
+    public boolean inBounds(Position pos)
+    {
+        int x = pos.getX();
+        int y = pos.getY();
+        return !(x < 0 || y < 0 || x >= getAlto() || y >= getAncho());
+    }
+    
+    public boolean validPlayerPosition(int x, int y)
+    {
+        if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1)
+            return false;
+        if (this.get(x, y).getTipo() == Celda.TipoCelda.PARED)
+            return false;
+        return true;
+    }
+    
+    public boolean validPlayerPosition(Position pos)
+    {
+        int x = pos.getX();
+        int y = pos.getY();
+        
+        if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1)
+            return false;
+        if (this.get(x, y).getTipo() == Celda.TipoCelda.PARED)
+            return false;
+        return true;
     }
 }

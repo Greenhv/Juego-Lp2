@@ -244,4 +244,9 @@ public class Laberinto
         this.siguiente = sig;
         this.get(sig).setContenido(ContenidoCeldas.SIGUIENTE.asChar());
     }
+    
+    public void actualizarJugador(int X, int Y)
+    {
+        laberinto[X][Y].setContenido(ContenidoCeldas.JUGADOR);
+    }
 }

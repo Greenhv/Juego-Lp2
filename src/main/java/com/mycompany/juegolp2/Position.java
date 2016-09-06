@@ -53,16 +53,16 @@ public class Position
     public void move(Direction dir)
     {
         switch (dir) {
-            case UP:
+            case U:
                 this.setY(this.getY() - 1);
                 break;
-            case RIGHT:
+            case R:
                 this.setX(this.getX() + 1);
                 break;
-            case DOWN:
+            case D:
                 this.setY(this.getY() + 1);
                 break;
-            case LEFT:
+            case L:
                 this.setX(this.getX() - 1);
                 break;
         }

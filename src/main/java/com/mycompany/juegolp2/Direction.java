@@ -5,8 +5,8 @@ package com.mycompany.juegolp2;
  */
 public enum Direction
 {
-    UP,
-    RIGHT,
-    DOWN,
-    LEFT,
+    U, //UP
+    R, //RIGHT
+    D, //DOWN
+    L, // LEFT
 }

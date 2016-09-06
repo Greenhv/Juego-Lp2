@@ -19,21 +19,24 @@ public class Main {
         juego.intro();
         juego.init();
         
+        OUTER:
         while (true) {
-            juego.play();
-
-            Juego.Result res = juego.result();
-            if (res == Juego.Result.QUIT) {
-                System.out.println("Has decidido terminar el juego");
-                break;
-            } else if (res == Juego.Result.WIN) {
-                System.out.println("Has ganado !");
-                break;
-            } else if (res == Juego.Result.LOSE) {
-                System.out.println("Has perdido :(");
-                break;
+            Juego.Result res = juego.play();
+            if (res != null) {
+                switch (res) {
+                    case QUIT:
+                        System.out.println("Has decidido terminar el juego");
+                        break OUTER;
+                    case WIN:
+                        System.out.println("Has ganado !");
+                        break OUTER;
+                    case LOSE:
+                        System.out.println("Has perdido :(");
+                        break OUTER;
+                    default:
+                        break;
+                }
             }
         }
     }
-    
 }

@@ -15,6 +15,11 @@ public class GestorLaberinto
         this.laberintos = new ArrayList<Laberinto>();
     }
     
+    public Laberinto laberintoPosicionN(int n)
+    {
+        return this.laberintos.get(n);
+    }
+    
     public Laberinto Crear(int M, int N)
     {
         Laberinto lab = new Laberinto(2*M+1, 2*N+1);
@@ -22,6 +27,15 @@ public class GestorLaberinto
         return lab;
     }
     
+    public void crearLaberintos(int numLaberintos)
+    {
+        for (int i = 0; i < numLaberintos; ++i) {
+            // M y N  entre 20 y 30
+            int M = (int) ((Math.random()*11) + 20);
+            int N = (int) ((Math.random()*11) + 20);
+            this.laberintos.add(this.Crear(M, N));
+        }
+    }
     /**
      * Agrega lo necesario para completar el laberinto (celdas anterior, siguiente,
      * artefactos y enemigos).
@@ -57,4 +71,11 @@ public class GestorLaberinto
         
         // Agrega enemigos
     }
+    
+    public void agregaPlayer(Avatar jugador)
+    {
+        Laberinto laberinto = this.laberintos.get(0);
+        laberinto.get(jugador.getPosition()).setContenido(ContenidoCeldas.JUGADOR.asChar());
+    }
+    
 }

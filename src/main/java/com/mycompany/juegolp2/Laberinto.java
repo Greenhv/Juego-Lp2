@@ -266,7 +266,6 @@ public class Laberinto
     {
         if (x < 1 || y < 1 || x >= getAlto()-2 || y >= getAncho()-2)
             return false;
-        System.out.println(this.get(x, y).getTipo());
         if (this.get(x, y).getTipo() == Celda.TipoCelda.PARED)
             return false;
         return true;

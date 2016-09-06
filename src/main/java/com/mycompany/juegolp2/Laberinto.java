@@ -266,9 +266,9 @@ public class Laberinto
     {
         if (x < 1 || y < 1 || x >= getAlto()-2 || y >= getAncho()-2)
             return false;
-        if (this.get(x, y).getTipo() == Celda.TipoCelda.PARED)
-            return false;
-        return true;
+        
+        return (this.get(x, y).getTipo() != Celda.TipoCelda.PARED && 
+                this.get(x, y).getTipo() != Celda.TipoCelda.AFUERA);
     }
     
     public boolean validPlayerPosition(Position pos)

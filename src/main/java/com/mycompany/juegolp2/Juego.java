@@ -168,8 +168,10 @@ public class Juego {
         Scanner scan = new Scanner(System.in);
         System.out.print("Ingrese su nombre: ");
         String nombre = scan.nextLine();
-        this.jugador = new Avatar(nombre, this.gestorLaberinto.get(this.currentLabIndex).getAnterior());
-        System.out.println(this.gestorLaberinto.get(currentLabIndex).getAnterior());
+        Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
+        Position avatarPos = new Position(currentLab.getAnterior());
+        this.jugador = new Avatar(nombre, avatarPos);
+        System.out.println(currentLab.getAnterior());
         System.out.println(this.jugador.getPosition());
         this.gestorLaberinto.agregaPlayer(jugador);
     }
@@ -194,7 +196,7 @@ public class Juego {
         if (playerPos.equals(laberintoActual.getAnterior())) {
             // Si está sobre la celda ANTERIOR antes de moverse, lo pinta de nuevo
             currCell.setContenido(ContenidoCeldas.ANTERIOR.asChar());
-        } else if (playerPos.equals(laberintoActual.getAnterior())) {
+        } else if (playerPos.equals(laberintoActual.getSiguiente())) {
             // Si está sobre la celda SIGUIENTE antes de moverse, lo pinta de nuevo
             currCell.setContenido(ContenidoCeldas.SIGUIENTE.asChar());
         } else {

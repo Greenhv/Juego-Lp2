@@ -45,7 +45,7 @@ public class Dibujador
             }
             System.out.println();
         }
-        System.out.print("\n\n\n");
+//        System.out.print("\n\n\n");
     }
     
     public void dibujarInfoJugador(Avatar jugador)

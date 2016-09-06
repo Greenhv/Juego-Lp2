@@ -1,5 +1,7 @@
 package com.mycompany.juegolp2;
 
+import java.util.HashMap;
+
 public class Position
 {
     private int X;
@@ -46,5 +48,23 @@ public class Position
     public void setY(int y)
     {
         this.Y = y;
+    }
+    
+    public void move(Direction dir)
+    {
+        switch (dir) {
+            case UP:
+                this.setY(this.getY() - 1);
+                break;
+            case RIGHT:
+                this.setX(this.getX() + 1);
+                break;
+            case DOWN:
+                this.setY(this.getY() + 1);
+                break;
+            case LEFT:
+                this.setX(this.getX() - 1);
+                break;
+        }
     }
 }

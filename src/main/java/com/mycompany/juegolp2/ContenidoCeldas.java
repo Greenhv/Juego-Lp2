@@ -11,7 +11,8 @@ public enum ContenidoCeldas
     ARTEFACTO('A'),
     ENEMIGO('E'),
     SIGUIENTE('+'),
-    ANTERIOR('-');
+    ANTERIOR('-'),
+    JUGADOR('*');
 
     public char asChar()
     {

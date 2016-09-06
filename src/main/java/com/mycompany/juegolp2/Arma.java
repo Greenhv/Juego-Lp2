@@ -19,7 +19,7 @@ public class Arma extends Artefacto
 
     public int damage()
     {
-        return (int) (Math.random() * (dmg_max-dmg_min) + dmg_min);
+        return (int) (Math.random() * (dmg_max-dmg_min+1) + dmg_min);
     }
 
     @Override

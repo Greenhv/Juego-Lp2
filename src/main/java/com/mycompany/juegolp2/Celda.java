@@ -11,7 +11,7 @@ package com.mycompany.juegolp2;
  *
  * @author pmvb
  */
-public class Celda implements Drawable
+public class Celda
 {
     private int fila;
     private int columna;
@@ -87,21 +87,25 @@ public class Celda implements Drawable
     /**
      * @param columna the columna to set
      */
-    public void setColumna(int columna) {
+    public void setColumna(int columna)
+    {
         this.columna = columna;
     }
     
-    public void mark_as_inside(){
+    public void markAsInside()
+    {
         this.setTipo(TipoCelda.ADENTRO);
         this.setContenido(ContenidoCeldas.LIBRE.asChar());
     }
     
-    public void mark_as_outside(){
+    public void markAsOutside()
+    {
         this.setTipo(TipoCelda.AFUERA);
     }
     
-    public boolean is_free(int height, int width){
-        return this.getTipo()== TipoCelda.AFUERA;
+    public boolean isFree()
+    {
+        return this.getTipo() == TipoCelda.AFUERA;
     }
     
     public enum TipoCelda

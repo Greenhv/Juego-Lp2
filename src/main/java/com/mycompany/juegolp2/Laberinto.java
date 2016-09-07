@@ -227,7 +227,7 @@ public class Laberinto
      */
     public Position getAnterior() 
     {
-        return anterior;
+        return anterior.copy();
     }
 
     /**
@@ -244,7 +244,7 @@ public class Laberinto
      */
     public Position getSiguiente() 
     {
-        return siguiente;
+        return siguiente.copy();
     }
 
     /**

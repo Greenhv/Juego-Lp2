@@ -10,6 +10,11 @@ public class GestorLaberinto
 {
     List<Laberinto> laberintos;
     
+    private final static Arma[] armas = {new Arma(5,10), new Arma(15,25)};
+    private final static Armadura[] armaduras = {new Armadura(5), new Armadura(20)};
+    private final static PocionCuracion[] posciones = {new PocionCuracion(5),new PocionCuracion(10)};
+    
+    
     public GestorLaberinto()
     {
         this.laberintos = new ArrayList<Laberinto>();
@@ -70,8 +75,8 @@ public class GestorLaberinto
         libres.remove(index);
         
         // Agrega artefactos
-//        index = (int) (Math.random()*100) % (libres.size()/2);
-//        
+        index = (int) (Math.random()*100) % (libres.size()/2);
+        
 //        // Agrega enemigos
 //        int numEnem = (int)(libres.size()*1.5/10);
 //        for(int i = 0; i < numEnem; i++){

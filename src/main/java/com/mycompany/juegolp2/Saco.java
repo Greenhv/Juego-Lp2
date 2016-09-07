@@ -40,11 +40,16 @@ public class Saco
         return this.saco.size();
     }
     
+    public boolean empty()
+    {
+        return this.size() == 0;
+    }
+    
     public String toString()
     {
         String str = "";
         for (int i = 0; i < saco.size(); ++i)
-            str += saco.get(i);
+            str += Integer.toString(i) + ". " + saco.get(i);
         str += "\n";
         return str;
     }

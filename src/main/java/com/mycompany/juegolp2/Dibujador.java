@@ -33,7 +33,7 @@ public class Dibujador
         System.out.println(jugador);
         int X = jugador.getX();
         int Y = jugador.getY();
-        laberinto.actualizarJugador(X,Y);
+        laberinto.actualizarJugador(X, Y);
         int xIni = (X - this.altoVisible) < 0 ? 0 : (X - this.altoVisible);
         int xFin = (X + this.altoVisible) >= laberinto.getAlto() ? (laberinto.getAlto()-1) : (X + this.altoVisible);
         int yIni = (Y - this.anchoVisible) < 0 ? 0 : (Y - this.anchoVisible);
@@ -45,19 +45,12 @@ public class Dibujador
             }
             System.out.println();
         }
-        System.out.print("\n\n\n");
+//        System.out.print("\n\n\n");
     }
     
     public void dibujarInfoJugador(Avatar jugador)
     {
-        System.out.println("Jugador: " + jugador.getNombre());
-        System.out.println("Nivel: " + jugador.getNivel());
-        String arma = (jugador.getArma() != null) ? jugador.getArma().toString() : "Ninguna";
-        System.out.println("Arma: " + arma);
-        String armadura = (jugador.getArmadura() != null) ? jugador.getArmadura().toString() : "Ninguna";
-        System.out.println("Armadura: " + armadura);
-        System.out.println("Saco: ");
-        System.out.println(jugador.getSaco());
+        System.out.println(jugador);
     }
     
     public void showError(String err)

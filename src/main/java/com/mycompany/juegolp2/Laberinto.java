@@ -264,22 +264,17 @@ public class Laberinto
     
     public boolean validPlayerPosition(int x, int y)
     {
-        if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1)
+        if (x < 1 || y < 1 || x >= getAlto()-2 || y >= getAncho()-2)
             return false;
-        if (this.get(x, y).getTipo() == Celda.TipoCelda.PARED)
-            return false;
-        return true;
+        
+        return (this.get(x, y).getTipo() != Celda.TipoCelda.PARED && 
+                this.get(x, y).getTipo() != Celda.TipoCelda.AFUERA);
     }
     
     public boolean validPlayerPosition(Position pos)
     {
         int x = pos.getX();
         int y = pos.getY();
-        
-        if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1)
-            return false;
-        if (this.get(x, y).getTipo() == Celda.TipoCelda.PARED)
-            return false;
-        return true;
+        return validPlayerPosition(x, y);
     }
 }

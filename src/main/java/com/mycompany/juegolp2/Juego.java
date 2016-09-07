@@ -17,6 +17,7 @@ public class Juego {
     private static final String[] availableCommands = {
         "help",
         "interactuar",
+        "mirar",
         "mover",
         "salir"
     };
@@ -77,7 +78,10 @@ public class Juego {
                         // Interactua con el artefacto mas cercano
                         break;
                     case "mover":
-                        this.moverAvatar(cmd[1].toUpperCase(), laberintoActual);
+                        this.moverAvatar(cmd[1], laberintoActual);
+                        break;
+                    case "mirar":
+                        this.playerFaceDirection(cmd[1]);
                         break;
                     case "salir":
                         return Result.QUIT;
@@ -96,12 +100,15 @@ public class Juego {
         // Si no ha ingresado ningun comando
         if (cmd.length <= 0)
             return false;
+        // Limpia la entrada
+        cmd[0] = cmd[0].toLowerCase();
         // Si el comando no está disponible
         if (!Arrays.asList(availableCommands).contains(cmd[0].toLowerCase()))
             return false;
         // Si trata de moverse, pero la direccion no es valida
-        if (cmd[0].toLowerCase().equals("mover")) {
-            if (!Direction.contains(cmd[1].toUpperCase()))
+        if (cmd[0].equals("mover") || cmd[0].equals("mirar")) {
+            cmd[1] = cmd[1].toUpperCase();
+            if (!Direction.contains(cmd[1]))
                 return false;
         }
         return true;
@@ -117,16 +124,21 @@ public class Juego {
         /**
          * Mover
          */
-        System.out.println("mover <dir>:\tPermite mover al jugador en la direccion dir");
+        System.out.println("mover <dir>:\t\tMueve al jugador en la direccion dir");
         System.out.println("\t\tDonde dir puede ser:");
         System.out.println("\t\t'UP': arriba");
         System.out.println("\t\t'DOWN': abajo");
         System.out.println("\t\t'RIGHT': derecha");
         System.out.println("\t\t'LEFT': izquierda");
         /**
+         * Mirar
+         */
+        System.out.println("mirar <dir>:\t\tMira en la direccion dir");
+        System.out.println("\t\tDonde dir puede tener los mismos valores que al mover el jugador");
+        /**
          * Interactuar
          */
-        System.out.println("interactuar:\t\t");
+        System.out.println("interactuar:\t\tInteractua con un artefacto en la casilla adyacente en la direccion que estás mirando");
         /**
          * Salir
          */
@@ -156,8 +168,10 @@ public class Juego {
         Scanner scan = new Scanner(System.in);
         System.out.print("Ingrese su nombre: ");
         String nombre = scan.nextLine();
-        this.jugador = new Avatar(nombre, this.gestorLaberinto.get(this.currentLabIndex).getAnterior());
-        System.out.println(this.gestorLaberinto.get(currentLabIndex).getAnterior());
+        Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
+        Position avatarPos = new Position(currentLab.getAnterior());
+        this.jugador = new Avatar(nombre, avatarPos);
+        System.out.println(currentLab.getAnterior());
         System.out.println(this.jugador.getPosition());
         this.gestorLaberinto.agregaPlayer(jugador);
     }
@@ -182,13 +196,19 @@ public class Juego {
         if (playerPos.equals(laberintoActual.getAnterior())) {
             // Si está sobre la celda ANTERIOR antes de moverse, lo pinta de nuevo
             currCell.setContenido(ContenidoCeldas.ANTERIOR.asChar());
-        } else if (playerPos.equals(laberintoActual.getAnterior())) {
+        } else if (playerPos.equals(laberintoActual.getSiguiente())) {
             // Si está sobre la celda SIGUIENTE antes de moverse, lo pinta de nuevo
             currCell.setContenido(ContenidoCeldas.SIGUIENTE.asChar());
         } else {
             currCell.setContenido(ContenidoCeldas.LIBRE.asChar());
         }
         this.jugador.move(dir);
+    }
+    
+    private void playerFaceDirection(String mov)
+    {
+        Direction dir = Direction.valueOf(mov);
+        this.jugador.setFacingDir(dir);
     }
     
     private void pause()

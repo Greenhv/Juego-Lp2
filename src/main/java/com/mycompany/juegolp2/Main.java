@@ -16,9 +16,8 @@ public class Main {
      */
     public static void main(String[] args) {
         Juego juego = Juego.getInstance();
-        juego.intro();
         juego.init();
-        
+        juego.intro();
         Juego.Result res = juego.play();
         switch (res) {
             case QUIT:

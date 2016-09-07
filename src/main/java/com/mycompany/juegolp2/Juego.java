@@ -44,8 +44,27 @@ public class Juego {
     public void intro()
     {
         System.out.println("JUEGO");
+        this.historia();
     }
-
+      
+    private void historia(){
+        String nJugador = this.jugador.getNombre();        
+        System.out.println("A través del tiempo y el espacio se abren puertas.");
+        System.out.println("Mundo paralelos se crean todos los días con acciones pequeñas.");
+        System.out.println("Hay mundos maravillosos con historias y leyendas nunca antes contadas");
+        System.out.println("Sin embargo...");
+        System.out.println("No todos los mundos son amigables.");
+        System.out.print("Un día normal de su vida, ");
+        System.out.print(nJugador);
+        System.out.println(" es transportado hacia el fantástico mundo de Aether.");
+        System.out.println("Aether está dominado por el demonio Azazel");
+        System.out.println("Azazel planea unir los mundos y convertirse en el amo supremo");
+        System.out.print(nJugador);
+        System.out.println(" lo detendrá, no porque lo desee, sino porque es el único que puede hacerlo.");
+        System.out.printf("Avanza, %s\n",nJugador);
+        this.pause();
+    }
+    
     // Configura lo necesario para jugar
     public void init()
     {

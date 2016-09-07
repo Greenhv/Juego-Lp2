@@ -70,8 +70,15 @@ public class GestorLaberinto
         libres.remove(index);
         
         // Agrega artefactos
-        
-        // Agrega enemigos
+//        index = (int) (Math.random()*100) % (libres.size()/2);
+//        
+//        // Agrega enemigos
+//        int numEnem = (int)(libres.size()*1.5/10);
+//        for(int i = 0; i < numEnem; i++){
+//            index = (int) (Math.random()*libres.size());
+//            lab.addEnemigo(libres.get(index));
+//            libres.remove(index);
+//        }
     }
     
     public void agregaPlayer(Avatar jugador)

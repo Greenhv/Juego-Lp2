@@ -79,6 +79,24 @@ public class Juego {
                         break;
                     case "mover":
                         this.moverAvatar(cmd[1], laberintoActual);
+                        if(laberintoActual.getSiguiente() == this.jugador.getPosition()){
+                            this.currentLabIndex++;
+                            if(this.currentLabIndex == this.gestorLaberinto.size())
+                                return Result.WIN;
+                            else {
+                                laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
+                                Position avatarPos = new Position(laberintoActual.getAnterior());
+                                this.jugador.setPosition(avatarPos);   
+                            }
+                        }
+                        else if(laberintoActual.getAnterior() == this.jugador.getPosition()){
+                            if(this.currentLabIndex > 1){
+                                this.currentLabIndex--;
+                                laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
+                                Position avatarPos = new Position(laberintoActual.getSiguiente());
+                                this.jugador.setPosition(avatarPos);
+                            }
+                        }
                         break;
                     case "mirar":
                         this.playerFaceDirection(cmd[1]);

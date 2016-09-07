@@ -125,6 +125,8 @@ public class Juego {
             return false;
         // Si trata de moverse, pero la direccion no es valida
         if (cmd[0].equals("mover") || cmd[0].equals("mirar")) {
+            if (cmd.length < 2)
+                return false;
             cmd[1] = cmd[1].toUpperCase();
             if (!Direction.contains(cmd[1]))
                 return false;

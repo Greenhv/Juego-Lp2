@@ -13,10 +13,10 @@ public class Enemigo extends Entidad
 {
     private int nivel_enemigo;
     
-    public Enemigo(String nombre)
+    public Enemigo(Position pos)
     {
-        super(nombre);
-        nivel_enemigo = 1;
+        super(pos);
+        nivel_enemigo = 1;        
     }
     
     @Override

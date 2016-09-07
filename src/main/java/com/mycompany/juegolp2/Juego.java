@@ -76,9 +76,25 @@ public class Juego {
                         break;
                     case "interactuar":
                         // Interactua con el artefacto mas cercano
+                        
                         break;
                     case "mover":
                         this.moverAvatar(cmd[1], laberintoActual);
+                        if(this.jugador.getPosition().equals(laberintoActual.getSiguiente())){
+                            if(++this.currentLabIndex == this.gestorLaberinto.size()) {
+                                return Result.WIN;
+                            } else {
+                                laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
+                                this.jugador.setPosition(laberintoActual.getAnterior());
+                            }
+                        }
+                        else if(this.jugador.getPosition().equals(laberintoActual.getAnterior())){
+                            if(this.currentLabIndex >= 1){
+                                this.currentLabIndex--;
+                                laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
+                                this.jugador.setPosition(laberintoActual.getSiguiente());
+                            }
+                        }
                         break;
                     case "mirar":
                         this.playerFaceDirection(cmd[1]);
@@ -107,6 +123,8 @@ public class Juego {
             return false;
         // Si trata de moverse, pero la direccion no es valida
         if (cmd[0].equals("mover") || cmd[0].equals("mirar")) {
+            if (cmd.length < 2)
+                return false;
             cmd[1] = cmd[1].toUpperCase();
             if (!Direction.contains(cmd[1]))
                 return false;

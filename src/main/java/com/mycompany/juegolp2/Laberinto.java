@@ -44,11 +44,22 @@ public class Laberinto
      * 
      */
     private Position siguiente;
+    /**
+     * Enemigos agregados al laberinto
+     * 
+     */
+    private ArrayList<Enemigo> enemigos;
+    /**
+     * Artefactos que se pueden agregar al laberinto
+     */
+    private ArrayList<Artefacto> artefactos;
     
     public Laberinto(int ancho, int alto)
     {
         this.setAncho(ancho);
         this.setAlto(alto);
+        this.enemigos = new ArrayList<Enemigo>();
+        this.artefactos = new ArrayList<Artefacto>();
         laberinto = new Celda[alto][ancho];
         for (int i = 0; i < alto; i++){
           for (int j = 0; j < ancho; j++){
@@ -216,7 +227,7 @@ public class Laberinto
      */
     public Position getAnterior() 
     {
-        return anterior;
+        return anterior.copy();
     }
 
     /**
@@ -233,7 +244,7 @@ public class Laberinto
      */
     public Position getSiguiente() 
     {
-        return siguiente;
+        return siguiente.copy();
     }
 
     /**
@@ -267,8 +278,10 @@ public class Laberinto
         if (x < 1 || y < 1 || x >= getAlto()-2 || y >= getAncho()-2)
             return false;
         
-        return (this.get(x, y).getTipo() != Celda.TipoCelda.PARED && 
-                this.get(x, y).getTipo() != Celda.TipoCelda.AFUERA);
+        return (this.get(x, y).getContenido() == ContenidoCeldas.LIBRE.asChar() ||
+                this.get(x, y).getContenido() == ContenidoCeldas.ANTERIOR.asChar() ||
+                this.get(x, y).getContenido() == ContenidoCeldas.SIGUIENTE.asChar());
+                //this.get(x, y).getContenido() == ContenidoCeldas.ENEMIGO.asChar() Para que pueda pasar encima de el
     }
     
     public boolean validPlayerPosition(Position pos)
@@ -276,5 +289,12 @@ public class Laberinto
         int x = pos.getX();
         int y = pos.getY();
         return validPlayerPosition(x, y);
+    }
+    
+    public void addEnemigo(Position pos)
+    {   
+        Enemigo enemigo = new Enemigo(pos);
+        this.enemigos.add(enemigo);
+        this.laberinto[pos.getX()][pos.getY()].setContenido(ContenidoCeldas.ENEMIGO);
     }
 }

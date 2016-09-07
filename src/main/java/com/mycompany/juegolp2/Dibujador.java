@@ -55,6 +55,6 @@ public class Dibujador
     
     public void showError(String err)
     {
-        System.err.println(err);
+        System.out.println(err);
     }
 }

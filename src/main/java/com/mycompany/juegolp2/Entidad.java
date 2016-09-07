@@ -15,21 +15,32 @@ public abstract class Entidad
     private int maxHP;
     private int currHP;
     private Position position;
+    private Direction facingDir;
+    
+    public Entidad(Position pos)
+    {
+        this.setPosition(pos);
+        this.nombre = "Enemigo";
+        this.facingDir = Direction.LEFT;
+    }
     
     public Entidad(String nombre)
     {
         this.nombre = nombre;
+        this.facingDir = Direction.LEFT;
     }
     
     public Entidad(String nombre, Position pos)
     {
         this.nombre = nombre;
         this.setPosition(pos);
+        this.facingDir = Direction.LEFT;
     }
     
     public void move(Direction dir)
     {
         this.getPosition().move(dir);
+        this.setFacingDir(dir);
     }
 
     public Position getPosition()
@@ -82,6 +93,16 @@ public abstract class Entidad
     public void setNombre(String nombre)
     {
         this.nombre = nombre;
+    }
+    
+    public Direction getFacingDir()
+    {
+        return this.facingDir;
+    }
+    
+    public void setFacingDir(Direction dir)
+    {
+        this.facingDir = dir;
     }
     
     public abstract int getNivel();

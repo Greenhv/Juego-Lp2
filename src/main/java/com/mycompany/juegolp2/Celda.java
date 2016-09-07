@@ -17,6 +17,8 @@ public class Celda
     private int columna;
     private TipoCelda tipo;
     private char contenido;
+    private Enemigo enemigo;
+    private Artefacto artefacto;
 
     public Celda()
     {
@@ -116,6 +118,44 @@ public class Celda
     public boolean esPared()
     {
         return this.getTipo() == TipoCelda.PARED;
+    }
+    
+    public Enemigo getEnemigo()
+    {
+        return this.enemigo;
+    }
+    
+    public void setEnemigo(Enemigo ene)
+    {
+        if (this.getContenido() == ContenidoCeldas.ENEMIGO.asChar())
+            this.enemigo = ene;
+    }
+    
+    public void removeEnemigo()
+    {
+        if (this.getContenido() == ContenidoCeldas.ENEMIGO.asChar()) {
+            this.enemigo = null;
+            this.setContenido(ContenidoCeldas.LIBRE.asChar());
+        }
+    }
+    
+    public Artefacto getArtefacto()
+    {
+        return this.artefacto;
+    }
+    
+    public void setArtefacto(Artefacto art)
+    {
+        if (this.getContenido() == ContenidoCeldas.ARTEFACTO.asChar())
+            this.artefacto = art;
+    }
+    
+    public void removeArtefacto()
+    {
+        if (this.getContenido() == ContenidoCeldas.ARTEFACTO.asChar()) {
+            this.artefacto = null;
+            this.setContenido(ContenidoCeldas.LIBRE.asChar());
+        }
     }
     
     public enum TipoCelda

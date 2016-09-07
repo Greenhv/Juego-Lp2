@@ -44,21 +44,17 @@ public class Laberinto
      * 
      */
     private Position siguiente;
-    /**
-     * Enemigos agregados al laberinto
-     * 
-     */
-    private ArrayList<Enemigo> enemigos;
+    
     /**
      * Artefactos que se pueden agregar al laberinto
      */
     private ArrayList<Artefacto> artefactos;
     
-    public Laberinto(int ancho, int alto)
+    public Laberinto(int ancho, int alto, double pct_enemigo)
     {
+        this.setPctEnemigo(pct_enemigo);
         this.setAncho(ancho);
         this.setAlto(alto);
-        this.enemigos = new ArrayList<Enemigo>();
         this.artefactos = new ArrayList<Artefacto>();
         laberinto = new Celda[alto][ancho];
         for (int i = 0; i < alto; i++){
@@ -68,7 +64,6 @@ public class Laberinto
         }
         this.init();
         generar_ruta();
-
     }
     
     /* Generador de Camino para el Laberinto */
@@ -294,7 +289,20 @@ public class Laberinto
     public void addEnemigo(Position pos)
     {   
         Enemigo enemigo = new Enemigo(pos);
-        this.enemigos.add(enemigo);
-        this.laberinto[pos.getX()][pos.getY()].setContenido(ContenidoCeldas.ENEMIGO);
+        this.get(pos).setContenido(ContenidoCeldas.ENEMIGO);
+        this.get(pos).setEnemigo(enemigo);
+    }
+    
+    public double getPctEnemigo()
+    {
+        return this.pct_enemigo;
+    }
+    
+    private void setPctEnemigo(double pct)
+    {
+        if (pct < 0 || pct > 1)
+            throw new IllegalArgumentException(
+                "La probabilidad de aparicion de enemigos debe estar entre 0 y 1 (inclusivo)");
+        this.pct_enemigo = pct;
     }
 }

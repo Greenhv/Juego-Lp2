@@ -27,7 +27,9 @@ public class GestorLaberinto
     
     public Laberinto Crear(int M, int N)
     {
-        Laberinto lab = new Laberinto(2*M+1, 2*N+1);
+        // pct_enemigo: Minimo 10% - Maximo 30%
+        double pct = ((Math.random() * 100) % 21 + 10) / 100;
+        Laberinto lab = new Laberinto(2*M+1, 2*N+1, pct);
         configLaberinto(lab);
         return lab;
     }
@@ -75,15 +77,14 @@ public class GestorLaberinto
         libres.remove(index);
         
         // Agrega artefactos
-        index = (int) (Math.random()*100) % (libres.size()/2);
-        
-//        // Agrega enemigos
-//        int numEnem = (int)(libres.size()*1.5/10);
-//        for(int i = 0; i < numEnem; i++){
-//            index = (int) (Math.random()*libres.size());
-//            lab.addEnemigo(libres.get(index));
-//            libres.remove(index);
-//        }
+//        index = (int) (Math.random()*100) % (libres.size()/2);
+//        
+        // Agrega enemigos
+        for (int i = 0; i < libres.size(); ++i) {
+            if (Math.random() <= lab.getPctEnemigo()) {
+                lab.addEnemigo(libres.get(i));
+            }
+        }
     }
     
     public void agregaPlayer(Avatar jugador)

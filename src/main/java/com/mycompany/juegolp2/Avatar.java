@@ -9,11 +9,13 @@ public class Avatar extends Entidad
     private int nivel;
     private Arma arma;
     private Armadura armadura;
+    private Saco saco;
     
     public Avatar(String nombre, Position pos)
     {
         super(nombre, pos);
         this.nivel = 1;
+        this.saco = new Saco();
         setMaxHP(nivel*10);
         super.initHP();
     }
@@ -44,6 +46,11 @@ public class Avatar extends Entidad
         return this.armadura;
     }
        
+    public Saco getSaco()
+    {
+        return this.saco;
+    }
+    
     @Override
     public String toString()
     {

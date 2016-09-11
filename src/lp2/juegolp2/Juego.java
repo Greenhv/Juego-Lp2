@@ -88,11 +88,11 @@ public class Juego {
                         this.showHelp();
                         break;
                     case "interactuar":
-                        // Interactua con el artefacto mas cercano
-                        
+                        this.interactuarMundo(laberintoActual);                        
                         break;
                     case "mover":
                         this.moverAvatar(cmd[1], laberintoActual);
+//                        this.moverEnemigos(laberintoActual);
                         if(this.jugador.getPosition().equals(laberintoActual.getSiguiente())){
                             if(++this.currentLabIndex == this.gestorLaberinto.size()) {
                                 return Result.WIN;
@@ -205,7 +205,9 @@ public class Juego {
         String nombre = scan.nextLine();
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
+        Arma armaInicial = new Arma(1, 5);
         this.jugador = new Avatar(nombre, avatarPos);
+        this.jugador.setArma(armaInicial);
         this.gestorLaberinto.agregaPlayer(jugador);
     }
 
@@ -236,6 +238,65 @@ public class Juego {
             currCell.setContenido(Celda.Contenido.LIBRE.asChar());
         }
         this.jugador.move(dir);
+    }
+    
+    private void moverEnemigos(Laberinto laberintoActual){
+        int rand = (int)(Math.random()*4);
+        Direction directions[] = Direction.values();
+        Direction dir = directions[rand];
+        for(int i = 1; i<laberintoActual.getAlto()-1;i++)
+            for(int j = 1; j<laberintoActual.getAncho(); j++){
+                if(laberintoActual.get(i,j).getEnemigo() != null){
+                    if(laberintoActual.validPlayerPosition(laberintoActual.get(i,j).getEnemigo().getPosition().copy().move(dir))){
+                        Enemigo enemigo = laberintoActual.get(i,j).getEnemigo();
+                        // Saco el enemigo de la posicion anterior
+                        laberintoActual.get(i,j).setEnemigo(null);
+                        laberintoActual.get(i,j).setContenido(Celda.Contenido.LIBRE);
+                        enemigo.move(dir);
+                        // Agrego al enemigo a la nueva posicion
+                        laberintoActual.get(enemigo.getPosition()).setEnemigo(enemigo);
+                        laberintoActual.get(enemigo.getPosition()).setContenido(Celda.Contenido.ENEMIGO);
+                    }
+                }
+            }
+    }
+    
+    private void interactuar(Laberinto laberintoActual, Position pos){
+        if(laberintoActual.get(pos).getContenido() != Celda.Contenido.PARED.asChar()){
+            System.out.println("Entra a la condicion");
+            Artefacto artefacto = laberintoActual.get(pos).getArtefacto();
+            Enemigo enemigo = laberintoActual.get(pos).getEnemigo();
+            if(artefacto != null){
+                this.jugador.pickupItem(artefacto);
+                laberintoActual.get(pos).setContenido(Celda.Contenido.LIBRE);
+                laberintoActual.get(pos).setArtefacto(null);
+            }
+            else if(enemigo != null){
+                int damage = this.jugador.getArma().damage();
+                enemigo.damage(damage);
+                System.out.println("El enemigo recibio " + damage + "de danho");
+                System.out.println("Vida actual del enemigo: " + enemigo.getCurrentHP());
+                if(enemigo.getCurrentHP() == 0) {
+                    laberintoActual.get(pos).setContenido(Celda.Contenido.LIBRE);
+                    laberintoActual.get(pos).setEnemigo(null);
+                }
+                this.pauseScreen();
+            }
+        }        
+    }
+    
+    private void interactuarMundo(Laberinto laberintoActual){
+        Position posicionActual = this.jugador.getPosition();
+//        Direction dir =this.jugador.getFacingDir(); // Este parametro dira exactamente con que se quiere interactuar 
+        // Por el momento interactua con las 4 direcciones
+        Position topPos = this.jugador.getPosition().copy().move(Direction.UP);
+        Position rightPos = this.jugador.getPosition().copy().move(Direction.RIGHT);
+        Position downPos = this.jugador.getPosition().copy().move(Direction.DOWN);
+        Position leftPos = this.jugador.getPosition().copy().move(Direction.LEFT);
+        this.interactuar(laberintoActual, topPos);
+        this.interactuar(laberintoActual, rightPos);
+        this.interactuar(laberintoActual, downPos);
+        this.interactuar(laberintoActual, leftPos);
     }
     
     private void playerFaceDirection(String mov)

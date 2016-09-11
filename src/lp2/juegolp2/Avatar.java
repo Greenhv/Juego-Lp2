@@ -23,7 +23,7 @@ public class Avatar extends Entidad
     public void pickupItem(Artefacto item)
     {
         if (item.type() == Artefacto.Tipo.ARMA)
-            this.arma = (Arma) item;
+            this.setArma((Arma) item);
         else if (item.type() == Artefacto.Tipo.ARMADURA)
             this.armadura = (Armadura) item;
         else
@@ -63,6 +63,13 @@ public class Avatar extends Entidad
         str += ((getSaco().empty()) ? "Vacío" : getSaco().toString());
         
         return str;
+    }
+
+    /**
+     * @param arma the arma to set
+     */
+    public void setArma(Arma arma) {
+        this.arma = arma;
     }
 }
 

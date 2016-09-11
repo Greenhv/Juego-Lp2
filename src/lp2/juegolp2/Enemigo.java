@@ -7,8 +7,8 @@ package lp2.juegolp2;
 public class Enemigo extends Entidad
 {
     private int nivel_enemigo;
-    
     public Enemigo(Position pos)
+    // El enemigo tambien deberia hacer danho. Armas ? Danho Fisico ? Otro tipo de danho ?
     {
         super(pos);
         nivel_enemigo = 1;        

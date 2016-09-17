@@ -1,7 +1,15 @@
-package lp2.juegolp2;
+package lp2.Juego;
 
+import lp2.Mundo.Enemigo;
+import lp2.Mundo.Position;
+import lp2.Mundo.Avatar;
+import lp2.Mundo.Direction;
+import lp2.Mundo.Laberinto;
+import lp2.Mundo.Celda;
+import lp2.Mundo.GestorLaberinto;
 import java.util.*;
-
+import lp2.Artefactos.*;
+import lp2.Interfaz.*;
 /**
  * Singleton, no debería haber más de una instancia de Juego
  * 

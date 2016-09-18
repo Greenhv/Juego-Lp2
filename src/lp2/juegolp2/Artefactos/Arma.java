@@ -33,8 +33,7 @@ public class Arma extends Artefacto
     public String toString()
     {
         // Se imprime el daño promedio
-        String str = "Arma: \n";
-        str += "Ataque: " + Integer.toString((dmg_min+dmg_max)/2) + "\n";
+        String str = "Ataque: " + Integer.toString((dmg_min+dmg_max)/2) + "\n";
         return str;
     }
 }

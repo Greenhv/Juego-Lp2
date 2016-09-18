@@ -1,10 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package lp2.juegolp2;
+package lp2.juegolp2.Interfaz;
 
+import lp2.juegolp2.Mundo.Avatar;
+import lp2.juegolp2.Mundo.Position;
+import lp2.juegolp2.Mundo.Laberinto;
 /**
  *
  * @author pmvb

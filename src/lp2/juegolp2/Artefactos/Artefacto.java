@@ -1,4 +1,4 @@
-package lp2.juegolp2;
+package lp2.juegolp2.Artefactos;
 
 /**
  * Created by pmvb on 01/09/16.

@@ -1,7 +1,9 @@
-package lp2.juegolp2;
+package lp2.juegolp2.Juego;
 
 import java.util.*;
-
+import lp2.juegolp2.Mundo.*;
+import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Interfaz.*;
 /**
  * Singleton, no debería haber más de una instancia de Juego
  * 

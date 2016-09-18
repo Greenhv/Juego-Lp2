@@ -1,4 +1,4 @@
-package lp2.juegolp2;
+package lp2.juegolp2.Mundo;
 
 import java.util.*;
 

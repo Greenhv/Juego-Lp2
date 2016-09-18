@@ -1,5 +1,6 @@
-package lp2.juegolp2;
+package lp2.juegolp2.Mundo;
 
+import lp2.juegolp2.Artefactos.*;
 /**
  *
  * @author pmvb

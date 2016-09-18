@@ -20,10 +20,9 @@ public class Celda
     
     public Celda(int fila, int columna)
     {
+        this();
         this.fila = fila;
         this.columna = columna;
-        this.tipo = Tipo.PARED;
-        this.contenido = Contenido.PARED.asChar();
     }
 
     public Celda(Tipo tipo, Contenido contenido)
@@ -40,11 +39,6 @@ public class Celda
     public Tipo getTipo()
     {
         return this.tipo;
-    }
-    
-    public void setContenido(char contenido)
-    {
-        this.contenido = contenido;
     }
 
     public void setContenido(Contenido contenido)
@@ -94,7 +88,7 @@ public class Celda
     public void markAsInside()
     {
         this.setTipo(Tipo.ADENTRO);
-        this.setContenido(Contenido.LIBRE.asChar());
+        this.setContenido(Contenido.LIBRE);
     }
     
     public void markAsOutside()

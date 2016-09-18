@@ -240,7 +240,7 @@ public class Laberinto
     public void setAnterior(Position anterior) 
     {
         this.anterior = anterior;
-        this.get(anterior).setContenido(Celda.Contenido.ANTERIOR.asChar());
+        this.get(anterior).setContenido(Celda.Contenido.ANTERIOR);
     }
 
     /**
@@ -257,7 +257,7 @@ public class Laberinto
     public void setSiguiente(Position sig)
     {
         this.siguiente = sig;
-        this.get(sig).setContenido(Celda.Contenido.SIGUIENTE.asChar());
+        this.get(sig).setContenido(Celda.Contenido.SIGUIENTE);
     }
     
     public void actualizarJugador(int X, int Y)
@@ -326,9 +326,9 @@ public class Laberinto
             // Si es una posición válida, mueve el enemigo y termina
             if (validPlayerPosition(enemigos.get(i).getPosition().copy().move(dir))) {
                 Enemigo enemy = this.enemigos.get(i);
-                this.get(enemy.getPosition()).setContenido(Celda.Contenido.LIBRE.asChar());
+                this.get(enemy.getPosition()).setContenido(Celda.Contenido.LIBRE);
                 enemy.move(dir);
-                this.get(enemy.getPosition()).setContenido(Celda.Contenido.ENEMIGO.asChar());
+                this.get(enemy.getPosition()).setContenido(Celda.Contenido.ENEMIGO);
             }
         }
     }

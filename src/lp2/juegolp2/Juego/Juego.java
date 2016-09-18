@@ -240,12 +240,12 @@ public class Juego {
         Celda currCell = laberintoActual.get(playerPos);
         if (playerPos.equals(laberintoActual.getAnterior())) {
             // Si está sobre la celda ANTERIOR antes de moverse, lo pinta de nuevo
-            currCell.setContenido(Celda.Contenido.ANTERIOR.asChar());
+            currCell.setContenido(Celda.Contenido.ANTERIOR);
         } else if (playerPos.equals(laberintoActual.getSiguiente())) {
             // Si está sobre la celda SIGUIENTE antes de moverse, lo pinta de nuevo
-            currCell.setContenido(Celda.Contenido.SIGUIENTE.asChar());
+            currCell.setContenido(Celda.Contenido.SIGUIENTE);
         } else {
-            currCell.setContenido(Celda.Contenido.LIBRE.asChar());
+            currCell.setContenido(Celda.Contenido.LIBRE);
         }
         this.jugador.move(dir);
     }

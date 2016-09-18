@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         Juego juego = Juego.getInstance();
         juego.init();
-        juego.intro();
+        juego.historia();
         Juego.Result res = juego.play();
         switch (res) {
             case QUIT:

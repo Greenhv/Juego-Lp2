@@ -18,6 +18,8 @@ public class Juego {
         "mover",
         "salir"
     };
+    // Rango de niveles de enemigos de un laberinto
+    private static final int enemyLevelRange = 5;
     
     private Avatar jugador;
     private GestorLaberinto gestorLaberinto;
@@ -37,14 +39,8 @@ public class Juego {
         return Juego.INSTANCE;
     }
     
-    // Introducción al juego
-    public void intro()
-    {
-        System.out.println("JUEGO");
-        this.historia();
-    }
-      
-    private void historia(){
+    // Introducción al juego      
+    public void historia(){
         String nJugador = this.jugador.getNombre();        
         System.out.println("A través del tiempo y el espacio se abren puertas.");
         System.out.println("Mundo paralelos se crean todos los días con acciones pequeñas.");
@@ -82,7 +78,7 @@ public class Juego {
             
             String[] cmd = this.getCommandFromString(scan.nextLine());
             if (!this.verifyCommand(cmd)) {
-                System.err.println("No se ha ingresado un comando válido");
+                this.dibujador.showError("No se ha ingresado un comando válido");
                 this.showHelp();
             } else {
                 switch (cmd[0]) {
@@ -90,26 +86,13 @@ public class Juego {
                         this.showHelp();
                         break;
                     case "interactuar":
-                        this.interactuarMundo(laberintoActual);                        
+                        this.interactuar(cmd[1], laberintoActual);                        
                         break;
                     case "mover":
-                        this.moverAvatar(cmd[1], laberintoActual);
-//                        this.moverEnemigos(laberintoActual);
-                        if(this.jugador.getPosition().equals(laberintoActual.getSiguiente())){
-                            if(++this.currentLabIndex == this.gestorLaberinto.size()) {
-                                return Result.WIN;
-                            } else {
-                                laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
-                                this.jugador.setPosition(laberintoActual.getAnterior());
-                            }
-                        }
-                        else if(this.jugador.getPosition().equals(laberintoActual.getAnterior())){
-                            if(this.currentLabIndex >= 1){
-                                this.currentLabIndex--;
-                                laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
-                                this.jugador.setPosition(laberintoActual.getSiguiente());
-                            }
-                        }
+                        Result res = this.move(cmd[1], laberintoActual);
+                        // Si el juego termina
+                        if (res != null)
+                            return res;
                         break;
                     case "mirar":
                         this.playerFaceDirection(cmd[1]);
@@ -137,7 +120,9 @@ public class Juego {
         if (!Arrays.asList(availableCommands).contains(cmd[0].toLowerCase()))
             return false;
         // Si trata de moverse, pero la direccion no es valida
-        if (cmd[0].equals("mover") || cmd[0].equals("mirar")) {
+        if (cmd[0].equals("mover")
+            || cmd[0].equals("mirar")
+            || cmd[0].equals("interactuar")) {
             if (cmd.length < 2)
                 return false;
             cmd[1] = cmd[1].toUpperCase();
@@ -157,25 +142,26 @@ public class Juego {
         /**
          * Mover
          */
-        System.out.println("mover <dir>:\tMueve al jugador en la direccion dir");
-        System.out.println("\t\tDonde dir puede ser:");
-        System.out.println("\t\t'UP': arriba");
-        System.out.println("\t\t'DOWN': abajo");
-        System.out.println("\t\t'RIGHT': derecha");
-        System.out.println("\t\t'LEFT': izquierda");
+        System.out.println("mover <dir>:\t\tMueve al jugador en la direccion dir");
+        System.out.println("\t\t\tDonde dir puede ser:");
+        System.out.println("\t\t\t'UP': arriba");
+        System.out.println("\t\t\t'DOWN': abajo");
+        System.out.println("\t\t\t'RIGHT': derecha");
+        System.out.println("\t\t\t'LEFT': izquierda");
         /**
          * Mirar
          */
-        System.out.println("mirar <dir>:\tMira en la direccion dir");
-        System.out.println("\t\tDonde dir puede tener los mismos valores que al mover el jugador");
+        System.out.println("mirar <dir>:\t\tMira en la direccion dir");
+        System.out.println("\t\t\tDonde dir puede tener los mismos valores que al mover el jugador");
         /**
          * Interactuar
          */
-        System.out.println("interactuar:\tInteractua con un artefacto en la casilla adyacente en la direccion que estás mirando");
+        System.out.println("interactuar <dir>:\tInteractua con la celda adyacente en la direccion dir");
+        System.out.println("\t\t\tDonde dir puede tener los mismos valores que al mover el jugador");
         /**
          * Salir
          */
-        System.out.println("salir:\t\tTermina el juego inmediatamente.");
+        System.out.println("salir:\t\t\tTermina el juego inmediatamente.");
         /**
          * Pause the screen
          */
@@ -216,7 +202,29 @@ public class Juego {
     private void initMap()
     {
         this.numLaberintos = (int) (Math.random() * 6) + 5;
-        this.gestorLaberinto.crearLaberintos(numLaberintos);
+        this.gestorLaberinto.crearLaberintos(numLaberintos, enemyLevelRange);
+    }
+    
+    private Result move(String mov, Laberinto laberintoActual)
+    {
+        Result res = null;
+        this.moverAvatar(mov, laberintoActual);
+        if(this.jugador.getPosition().equals(laberintoActual.getSiguiente())){
+            if(++this.currentLabIndex == this.gestorLaberinto.size()) {
+                res = Result.WIN;
+            } else {
+                laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
+                this.jugador.setPosition(laberintoActual.getAnterior());
+            }
+        } else if(this.jugador.getPosition().equals(laberintoActual.getAnterior())){
+            if(this.currentLabIndex >= 1){
+                this.currentLabIndex--;
+                laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
+                this.jugador.setPosition(laberintoActual.getSiguiente());
+            }
+        }
+        this.moverEnemigos(laberintoActual);
+        return res;
     }
     
     private void moverAvatar(String mov, Laberinto laberintoActual) 
@@ -242,63 +250,47 @@ public class Juego {
         this.jugador.move(dir);
     }
     
-    private void moverEnemigos(Laberinto laberintoActual){
-        int rand = (int)(Math.random()*4);
-        Direction directions[] = Direction.values();
-        Direction dir = directions[rand];
-        for(int i = 1; i<laberintoActual.getAlto()-1;i++)
-            for(int j = 1; j<laberintoActual.getAncho(); j++){
-                if(laberintoActual.get(i,j).getEnemigo() != null){
-                    if(laberintoActual.validPlayerPosition(laberintoActual.get(i,j).getEnemigo().getPosition().copy().move(dir))){
-                        Enemigo enemigo = laberintoActual.get(i,j).getEnemigo();
-                        // Saco el enemigo de la posicion anterior
-                        laberintoActual.get(i,j).setEnemigo(null);
-                        laberintoActual.get(i,j).setContenido(Celda.Contenido.LIBRE);
-                        enemigo.move(dir);
-                        // Agrego al enemigo a la nueva posicion
-                        laberintoActual.get(enemigo.getPosition()).setEnemigo(enemigo);
-                        laberintoActual.get(enemigo.getPosition()).setContenido(Celda.Contenido.ENEMIGO);
-                    }
-                }
-            }
+    private void moverEnemigos(Laberinto lab)
+    {
+        lab.moverEnemigos();
     }
     
-    private void interactuar(Laberinto laberintoActual, Position pos){
-        if(laberintoActual.get(pos).getContenido() != Celda.Contenido.PARED.asChar()){
-            System.out.println("Entra a la condicion");
-            Artefacto artefacto = laberintoActual.get(pos).getArtefacto();
-            Enemigo enemigo = laberintoActual.get(pos).getEnemigo();
-            if(artefacto != null){
-                this.jugador.pickupItem(artefacto);
-                laberintoActual.get(pos).setContenido(Celda.Contenido.LIBRE);
-                laberintoActual.get(pos).setArtefacto(null);
-            }
-            else if(enemigo != null){
-                int damage = this.jugador.getArma().damage();
-                enemigo.damage(damage);
-                System.out.println("El enemigo recibio " + damage + "de danho");
-                System.out.println("Vida actual del enemigo: " + enemigo.getCurrentHP());
-                if(enemigo.getCurrentHP() == 0) {
-                    laberintoActual.get(pos).setContenido(Celda.Contenido.LIBRE);
-                    laberintoActual.get(pos).setEnemigo(null);
-                }
-                this.pauseScreen();
-            }
-        }        
+    private void interactuar(String mov, Laberinto laberintoActual)
+    {
+        Direction dir = Direction.valueOf(mov);
+        Position pos = this.jugador.getPosition().copy().move(dir);
+        // Si no se puede mover a la posición seleccionada, se envía un mensaje
+        if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED.asChar()) {
+            this.dibujador.showError("No se puede interactuar con esa celda");
+            this.pauseScreen();
+            return;
+        }
+        this.interactuar(laberintoActual, pos);
+        this.pauseScreen();
     }
     
-    private void interactuarMundo(Laberinto laberintoActual){
-        Position posicionActual = this.jugador.getPosition();
-//        Direction dir =this.jugador.getFacingDir(); // Este parametro dira exactamente con que se quiere interactuar 
-        // Por el momento interactua con las 4 direcciones
-        Position topPos = this.jugador.getPosition().copy().move(Direction.UP);
-        Position rightPos = this.jugador.getPosition().copy().move(Direction.RIGHT);
-        Position downPos = this.jugador.getPosition().copy().move(Direction.DOWN);
-        Position leftPos = this.jugador.getPosition().copy().move(Direction.LEFT);
-        this.interactuar(laberintoActual, topPos);
-        this.interactuar(laberintoActual, rightPos);
-        this.interactuar(laberintoActual, downPos);
-        this.interactuar(laberintoActual, leftPos);
+    private void interactuar(Laberinto laberintoActual, Position pos)
+    {
+        System.out.println("Entra a la condicion");
+        // Verifico si hay un artefacto
+        Artefacto artefacto = laberintoActual.getArtefacto(pos);
+        if (artefacto != null) {
+            this.jugador.pickupItem(artefacto);
+            laberintoActual.removeArtefacto(pos);
+            return;
+        }
+        // Verifico si hay un enemigo en esa posicion
+        Enemigo enemigo = laberintoActual.getEnemigo(pos);
+        if (enemigo != null) {
+            this.battle(this.jugador, enemigo);
+            return;
+        }
+    }
+    
+    private void battle(Avatar jugador, Entidad enemigo)
+    {
+        System.out.println("Batalla");
+        this.pauseScreen();
     }
     
     private void playerFaceDirection(String mov)

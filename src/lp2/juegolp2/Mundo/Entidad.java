@@ -12,13 +12,6 @@ public abstract class Entidad
     private Position position;
     private Direction facingDir;
     
-    public Entidad(Position pos)
-    {
-        this.setPosition(pos);
-        this.nombre = "Enemigo";
-        this.facingDir = Direction.LEFT;
-    }
-    
     public Entidad(String nombre)
     {
         this.nombre = nombre;
@@ -27,7 +20,7 @@ public abstract class Entidad
     
     public Entidad(String nombre, Position pos)
     {
-        this.nombre = nombre;
+        this(nombre);
         this.setPosition(pos);
         this.facingDir = Direction.LEFT;
     }

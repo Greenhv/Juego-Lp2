@@ -47,17 +47,25 @@ public class Laberinto
     private Position siguiente;
     
     /**
-     * Artefactos que se pueden agregar al laberinto
+     * Artefactos en el laberinto
      */
-    private ArrayList<Artefacto> artefactos;
+    private HashMap<Position, Artefacto> artefactos;
     
-    public Laberinto(int ancho, int alto, double pct_enemigo)
+    /**
+     * Enemigos en el laberinto
+     */
+    private ArrayList<Enemigo> enemigos;
+    
+    public Laberinto(int ancho, int alto, double pct_enemigo, int[] niveles)
     {
         this.setPctEnemigo(pct_enemigo);
         this.setAncho(ancho);
         this.setAlto(alto);
-        this.artefactos = new ArrayList<Artefacto>();
+        this.artefactos = new HashMap<>();
+        this.enemigos = new ArrayList<>();
         laberinto = new Celda[alto][ancho];
+        this.niveles = Arrays.copyOfRange(niveles, 0, niveles.length);
+        
         for (int i = 0; i < alto; i++){
           for (int j = 0; j < ancho; j++){
                 laberinto[i][j] = new Celda(i,j);
@@ -289,9 +297,11 @@ public class Laberinto
     
     public void addEnemigo(Position pos)
     {   
-        Enemigo enemigo = new Enemigo(pos);
+        int nivel = this.niveles[(int) (Math.random() % niveles.length)];
+        Enemigo enemigo = Enemigo.random(nivel);
+        enemigo.setPosition(pos);
+        this.enemigos.add(enemigo);
         this.get(pos).setContenido(Celda.Contenido.ENEMIGO);
-        this.get(pos).setEnemigo(enemigo);
     }
     
     public double getPctEnemigo()
@@ -305,5 +315,46 @@ public class Laberinto
             throw new IllegalArgumentException(
                 "La probabilidad de aparicion de enemigos debe estar entre 0 y 1 (inclusivo)");
         this.pct_enemigo = pct;
+    }
+    
+    public void moverEnemigos()
+    {
+        Direction[] dirs = Direction.values();
+        for (int i = 0; i < this.enemigos.size(); ++i) {
+            int index = (int) (Math.random() * 4);
+            Direction dir = dirs[index];
+            // Si es una posición válida, mueve el enemigo y termina
+            if (validPlayerPosition(enemigos.get(i).getPosition().copy().move(dir))) {
+                Enemigo enemy = this.enemigos.get(i);
+                this.get(enemy.getPosition()).setContenido(Celda.Contenido.LIBRE.asChar());
+                enemy.move(dir);
+                this.get(enemy.getPosition()).setContenido(Celda.Contenido.ENEMIGO.asChar());
+            }
+        }
+    }
+    
+    public Artefacto getArtefacto(Position pos)
+    {
+        return this.artefactos.get(pos);
+    }
+    
+    public void removeArtefacto(Position pos)
+    {
+        this.artefactos.remove(pos);
+    }
+    
+    public Enemigo getEnemigo(Position pos)
+    {
+        for (int i = 0; i < enemigos.size(); ++i)
+            if (enemigos.get(i).getPosition().equals(pos))
+                return enemigos.get(i);
+        return null;
+    }
+    
+    public void removeEnemigo(Position pos)
+    {
+        for (int i = 0; i < enemigos.size(); ++i)
+            if (enemigos.get(i).getPosition().equals(pos))
+                enemigos.remove(i);
     }
 }

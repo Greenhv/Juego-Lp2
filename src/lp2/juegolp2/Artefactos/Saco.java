@@ -44,7 +44,7 @@ public class Saco
     {
         String str = "";
         for (int i = 0; i < saco.size(); ++i)
-            str += Integer.toString(i) + ". " + saco.get(i);
+            str += Integer.toString(i+1) + ". " + saco.get(i);
         str += "\n";
         return str;
     }

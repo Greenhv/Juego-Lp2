@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+Class-Path: lp2.juegolp2.Artefactos.jar lp2.juegolp2.Mundo.jar

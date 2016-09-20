@@ -86,7 +86,9 @@ public class Juego {
                         this.showHelp();
                         break;
                     case "interactuar":
-                        this.interactuar(cmd[1], laberintoActual);                        
+                        Result resultado = this.interactuar(cmd[1], laberintoActual);
+                        if (resultado != null)
+                            return resultado;
                         break;
                     case "mover":
                         Result res = this.move(cmd[1], laberintoActual);
@@ -255,7 +257,7 @@ public class Juego {
         lab.moverEnemigos();
     }
     
-    private void interactuar(String mov, Laberinto laberintoActual)
+    private Result interactuar(String mov, Laberinto laberintoActual)
     {
         Direction dir = Direction.valueOf(mov);
         Position pos = this.jugador.getPosition().copy().move(dir);
@@ -263,13 +265,14 @@ public class Juego {
         if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED.asChar()) {
             this.dibujador.showError("No se puede interactuar con esa celda");
             this.pauseScreen();
-            return;
+            return null;
         }
-        this.interactuar(laberintoActual, pos);
+        Result res = this.interactuar(laberintoActual, pos);
         this.pauseScreen();
+        return res;
     }
     
-    private void interactuar(Laberinto laberintoActual, Position pos)
+    private Result interactuar(Laberinto laberintoActual, Position pos)
     {
         System.out.println("Entra a la condicion");
         // Verifico si hay un artefacto
@@ -277,20 +280,56 @@ public class Juego {
         if (artefacto != null) {
             this.jugador.pickupItem(artefacto);
             laberintoActual.removeArtefacto(pos);
-            return;
+            return null;
         }
         // Verifico si hay un enemigo en esa posicion
         Enemigo enemigo = laberintoActual.getEnemigo(pos);
         if (enemigo != null) {
-            this.battle(this.jugador, enemigo);
-            return;
+            Result res = this.battle(this.jugador, enemigo);
+            if (res == null) {
+                laberintoActual.removeEnemigo(enemigo.getPosition());
+                laberintoActual.get(enemigo.getPosition()).setContenido(Celda.Contenido.LIBRE);
+            }
+            return res;
         }
+        return null;
     }
     
-    private void battle(Avatar jugador, Entidad enemigo)
-    {
-        System.out.println("Batalla");
-        this.pauseScreen();
+    private Result battle(Avatar jugador, Entidad enemigo)
+    {   
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Secuencia de Batalla iniciada.");
+        while(true) {
+            System.out.print("Heroe: " + jugador.getNombre());
+            System.out.print(" - Vida Actual: " + jugador.getCurrentHP());
+            System.out.print(" \t\t vs \t\tEnemigo: " + enemigo.getNombre());
+            System.out.println(" - Vida Actual: " + enemigo.getCurrentHP());
+            System.out.println("Acciones disponibles: 1) atacar 2) huir 3) usar");
+            System.out.print("Accion a tomar: ");
+            String cmd = scan.nextLine();
+            // Accion del Avatar
+            switch(cmd) {
+                case "atacar":
+                    enemigo.damage(jugador.getArma().damage());
+                    break;
+                case "huir":
+                    return null;
+                case "usar":
+                    // Mostrar el inventario, luego pedir indice.
+                    break;
+            }
+            // El enemigo murio luego de la accion del jugador ?
+            if(enemigo.getCurrentHP() == 0) {
+                System.out.println("El " + enemigo.getNombre() + " a sido derrotado!");
+                return null;
+            }
+            
+            // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
+            jugador.damage(1/*enemigo.getArma().damage()*/);
+            
+            // El jugadopr murio luego de la accion del Enemigo ?
+            if(jugador.getCurrentHP() == 0) return Result.LOSE;
+        }
     }
     
     private void playerFaceDirection(String mov)

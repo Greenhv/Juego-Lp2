@@ -18,6 +18,12 @@ public class Juego {
         "mover",
         "salir"
     };
+    private static final String[] battleCommands = {
+        "help",
+        "atacar",
+        "huir",
+        "usar"
+    };
     // Rango de niveles de enemigos de un laberinto
     private static final int enemyLevelRange = 5;
     
@@ -304,18 +310,27 @@ public class Juego {
             System.out.print(" - Vida Actual: " + jugador.getCurrentHP());
             System.out.print(" \t\t vs \t\tEnemigo: " + enemigo.getNombre());
             System.out.println(" - Vida Actual: " + enemigo.getCurrentHP());
-            System.out.println("Acciones disponibles: 1) atacar 2) huir 3) usar");
+            System.out.println("Acciones disponibles: *atacar *huir *usar");
             System.out.print("Accion a tomar: ");
-            String cmd = scan.nextLine();
+            String[] cmd = getCommandFromString(scan.nextLine());
+            if (!this.verifyBattleCommand(cmd)) {
+                this.dibujador.showError("No se ha ingresado un comando válido");
+                this.showBattleHelp();
+            }
+            boolean attacked = false;
             // Accion del Avatar
-            switch(cmd) {
+            switch(cmd[0]) {
+                case "help":
+                    this.showBattleHelp();
                 case "atacar":
                     enemigo.damage(jugador.getArma().damage());
+                    attacked = true;
                     break;
                 case "huir":
                     return null;
                 case "usar":
                     // Mostrar el inventario, luego pedir indice.
+                    this.useItem();
                     break;
             }
             // El enemigo murio luego de la accion del jugador ?
@@ -325,10 +340,99 @@ public class Juego {
             }
             
             // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
-            jugador.damage(1/*enemigo.getArma().damage()*/);
+            if (attacked)
+                jugador.damage(1/*enemigo.getArma().damage()*/);
             
             // El jugadopr murio luego de la accion del Enemigo ?
-            if(jugador.getCurrentHP() == 0) return Result.LOSE;
+            if(jugador.getCurrentHP() == 0)
+                return Result.LOSE;
+        }
+    }
+    
+    public void showBattleHelp()
+    {
+        System.out.println("Comandos de batalla disponibles: ");
+        /**
+         * Ayuda
+         */
+        System.out.println("help:\t\tMuestra este mensaje de ayuda");
+        /**
+         * Atacar
+         */
+        System.out.println("atacar:\t\tAtacar al enemigo con tu arma equipada");
+        /**
+         * Usar
+         */
+        System.out.println("usar:\t\tUsar un artefacto de tu inventorio");
+        /**
+         * Huir
+         */
+        System.out.println("huir:\t\tTermina la batalla inmediatamente");
+        this.pauseScreen();
+    }
+    
+    public boolean verifyBattleCommand(String[] cmd)
+    {
+        // Si no ha ingresado ningun comando
+        if (cmd.length <= 0)
+            return false;
+        // Limpia la entrada
+        cmd[0] = cmd[0].toLowerCase();
+        // Si el comando no está disponible
+        if (!Arrays.asList(battleCommands).contains(cmd[0].toLowerCase()))
+            return false;
+        return true;
+    }
+    
+    public void useItem()
+    {
+        System.out.println("Saco:");
+        System.out.println(this.jugador.getSaco());
+        boolean validChoice;
+        int choice;
+        int numItems = this.jugador.getNumItems();
+        Scanner scan = new Scanner(System.in);
+        do {
+            validChoice = true;
+            System.out.print("Ingrese el artefacto a utilizar ('q' para salir): ");
+            try {
+                choice = scan.nextInt();
+                if (choice < 0 || choice >= numItems)
+                    validChoice = false;
+            } catch (InputMismatchException ex) {
+                choice = scan.next().charAt(0);
+                if (choice != 'q')
+                    validChoice = false;
+            }
+        } while (!validChoice);
+        
+        if (choice == 'q')
+            return;
+        Artefacto artefacto = this.jugador.getArtefacto(choice);
+        /**
+         * Usa artefacto
+         * 
+         * Si es un arma o armadura, lo cambia por los que tiene actualmente
+         * Si es una pocion, la utiliza
+         */
+        switch (artefacto.type()) {
+            case ARMA:
+                Arma arma = (Arma) artefacto;
+                //
+                this.jugador.pickupItem(this.jugador.getArma());
+                this.jugador.setArma(arma);
+                this.jugador.dropItem(choice);
+                break;
+            case ARMADURA:
+                Armadura armadura = (Armadura) artefacto;
+                this.jugador.pickupItem(this.jugador.getArmadura());
+                this.jugador.setArmadura(armadura);
+                this.jugador.dropItem(choice);
+                break;
+            case POCION:
+                PocionCuracion pocion = (PocionCuracion) artefacto;
+                this.jugador.heal(pocion);
+                break;
         }
     }
     

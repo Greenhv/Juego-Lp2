@@ -304,6 +304,26 @@ public class Laberinto
         this.get(pos).setContenido(Celda.Contenido.ENEMIGO);
     }
     
+    public void addArtefacto(/*Position pos*/){
+        Artefacto artefacto;
+        int index = (int) (Math.random() * 3);
+        switch(index){
+            case 1:
+                artefacto = new Armadura(10);
+                break;
+            case 2:
+                artefacto = new PocionCuracion(10);
+                break;
+            case 3:
+                artefacto = new Arma(5, 15);
+                break;
+        }
+        //this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
+        System.out.print(index);
+        //System.out.print(artefacto);
+        //Artefacto artefacto = tipo_artefacto[index];
+    }
+    
     public double getPctEnemigo()
     {
         return this.pct_enemigo;
@@ -319,12 +339,19 @@ public class Laberinto
     
     public void moverEnemigos()
     {
+        int k = 0, kk = 0;
         Direction[] dirs = Direction.values();
         for (int i = 0; i < this.enemigos.size(); ++i) {
             int index = (int) (Math.random() * 4);
             Direction dir = dirs[index];
+            k++;
+            System.out.println("Enemigos evaluados:");
+            System.out.println(k);
             // Si es una posición válida, mueve el enemigo y termina
             if (validPlayerPosition(enemigos.get(i).getPosition().copy().move(dir))) {
+                kk++;
+                System.out.println("Enemigos movidos:");
+                System.out.println(kk);
                 Enemigo enemy = this.enemigos.get(i);
                 this.get(enemy.getPosition()).setContenido(Celda.Contenido.LIBRE);
                 enemy.move(dir);

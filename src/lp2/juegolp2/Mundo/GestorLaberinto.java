@@ -31,7 +31,8 @@ public class GestorLaberinto
     {
         // pct_enemigo: Minimo 10% - Maximo 20%
         double pct = ((Math.random() * 100) % 11 + 10) / 100;
-        Laberinto lab = new Laberinto(2*M+1, 2*N+1, pct, niveles);
+        //Laberinto lab = new Laberinto(2*M+1, 2*N+1, pct, niveles);
+        Laberinto lab = new Laberinto(7, 7, pct, niveles);
         configLaberinto(lab);
         return lab;
     }
@@ -80,7 +81,7 @@ public class GestorLaberinto
         libres.remove(index);
         
         // Agrega artefactos
-//        index = (int) (Math.random()*100) % (libres.size()/2);
+        index = (int) (Math.random()*100) % (libres.size()/2);
 //        
         // Agrega enemigos
         for (int i = 0; i < libres.size(); ++i) {

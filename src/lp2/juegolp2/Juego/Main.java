@@ -1,5 +1,9 @@
 package lp2.juegolp2.Juego;
 
+import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Mundo.*;
+import java.util.*;
+import java.util.stream.IntStream;
 /**
  *
  * @author pmvb
@@ -10,7 +14,10 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Juego juego = Juego.getInstance();
+        int[] niveles ={0};
+        Laberinto l = new Laberinto(10,10,0.5,niveles);
+        l.addArtefacto();
+        /*Juego juego = Juego.getInstance();
         juego.init();
         juego.historia();
         Juego.Result res = juego.play();
@@ -25,6 +32,6 @@ public class Main {
             case LOSE:
                 System.out.println("Has perdido :(");
                 break;
-        }
+        }*/
     }
 }

@@ -83,6 +83,7 @@ public class Juego {
             System.out.print("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles) : ");
             
             String[] cmd = this.getCommandFromString(scan.nextLine());
+            Result result = Result.PLAYING;
             if (!this.verifyCommand(cmd)) {
                 this.dibujador.showError("No se ha ingresado un comando válido");
                 this.showHelp();
@@ -92,29 +93,27 @@ public class Juego {
                         this.showHelp();
                         break;
                     case "interactuar":
-                        Result resultado = this.interactuar(cmd[1], laberintoActual);
-                        if (resultado != null)
-                            return resultado;
+                        result = this.interactuar(cmd[1], laberintoActual);
                         break;
                     case "mover":
-                        Result res = this.move(cmd[1], laberintoActual);
-                        // Si el juego termina
-                        if (res != null)
-                            return res;
+                        result = this.move(cmd[1], laberintoActual);
                         break;
                     case "mirar":
                         this.playerFaceDirection(cmd[1]);
                         break;
                     case "salir":
-                        return Result.QUIT;
+                        result = Result.QUIT;
+                        break;
                 }
             }
+            if (result != Result.PLAYING)
+                return result;
         }
     }
     
     private String[] getCommandFromString(String line)
     {
-        return line.split(" ");
+        return line.trim().split(" ");
     }
     
     private boolean verifyCommand(String[] cmd)
@@ -215,7 +214,7 @@ public class Juego {
     
     private Result move(String mov, Laberinto laberintoActual)
     {
-        Result res = null;
+        Result res = Result.PLAYING;
         this.moverAvatar(mov, laberintoActual);
         if(this.jugador.getPosition().equals(laberintoActual.getSiguiente())){
             if(++this.currentLabIndex == this.gestorLaberinto.size()) {
@@ -271,7 +270,7 @@ public class Juego {
         if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED.asChar()) {
             this.dibujador.showError("No se puede interactuar con esa celda");
             this.pauseScreen();
-            return null;
+            return Result.PLAYING;
         }
         Result res = this.interactuar(laberintoActual, pos);
         this.pauseScreen();
@@ -286,7 +285,7 @@ public class Juego {
         if (artefacto != null) {
             this.jugador.pickupItem(artefacto);
             laberintoActual.removeArtefacto(pos);
-            return null;
+            return Result.PLAYING;
         }
         // Verifico si hay un enemigo en esa posicion
         Enemigo enemigo = laberintoActual.getEnemigo(pos);
@@ -298,7 +297,7 @@ public class Juego {
             }
             return res;
         }
-        return null;
+        return Result.PLAYING;
     }
     
     private Result battle(Avatar jugador, Entidad enemigo)
@@ -328,7 +327,7 @@ public class Juego {
                     attacked = true;
                     break;
                 case "huir":
-                    return null;
+                    return Result.PLAYING;
                 case "usar":
                     // Mostrar el inventario, luego pedir indice.
                     this.useItem();
@@ -337,14 +336,14 @@ public class Juego {
             // El enemigo murio luego de la accion del jugador ?
             if(enemigo.getCurrentHP() == 0) {
                 System.out.println("El " + enemigo.getNombre() + " a sido derrotado!");
-                return null;
+                return Result.PLAYING;
             }
             
             // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
             if (attacked)
                 jugador.damage(1/*enemigo.getArma().damage()*/);
             
-            // El jugadopr murio luego de la accion del Enemigo ?
+            // El jugador murio luego de la accion del Enemigo ?
             if(jugador.getCurrentHP() == 0)
                 return Result.LOSE;
         }

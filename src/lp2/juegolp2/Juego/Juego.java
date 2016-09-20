@@ -16,6 +16,7 @@ public class Juego {
         "interactuar",
         "mirar",
         "mover",
+        "usar",
         "salir"
     };
     private static final String[] battleCommands = {
@@ -101,6 +102,9 @@ public class Juego {
                     case "mirar":
                         this.playerFaceDirection(cmd[1]);
                         break;
+                    case "usar":
+                        this.useItem();
+                        break;
                     case "salir":
                         result = Result.QUIT;
                         break;
@@ -165,6 +169,10 @@ public class Juego {
          */
         System.out.println("interactuar <dir>:\tInteractua con la celda adyacente en la direccion dir");
         System.out.println("\t\t\tDonde dir puede tener los mismos valores que al mover el jugador");
+        /**
+         * Usar
+         */
+        System.out.println("usar:\t\t\tUsa un artefacto de tu saco");
         /**
          * Salir
          */
@@ -386,11 +394,16 @@ public class Juego {
     
     public void useItem()
     {
+        int numItems = this.jugador.getNumItems();
+        if (numItems == 0) {
+            this.dibujador.showError("No tiene artefactos en su saco.");
+            pauseScreen();
+            return;
+        }
         System.out.println("Saco:");
         System.out.println(this.jugador.getSaco());
         boolean validChoice;
         int choice;
-        int numItems = this.jugador.getNumItems();
         Scanner scan = new Scanner(System.in);
         do {
             validChoice = true;
@@ -405,9 +418,10 @@ public class Juego {
                     validChoice = false;
             }
         } while (!validChoice);
-        
+
         if (choice == 'q')
             return;
+        
         Artefacto artefacto = this.jugador.getArtefacto(choice);
         /**
          * Usa artefacto

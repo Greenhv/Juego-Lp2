@@ -310,7 +310,7 @@ public class Juego {
             System.out.print(" - Vida Actual: " + jugador.getCurrentHP());
             System.out.print(" \t\t vs \t\tEnemigo: " + enemigo.getNombre());
             System.out.println(" - Vida Actual: " + enemigo.getCurrentHP());
-            System.out.println("Acciones disponibles: *atacar *huir *usar");
+            System.out.println("Acciones disponibles: *help *atacar *huir *usar");
             System.out.print("Accion a tomar: ");
             String[] cmd = getCommandFromString(scan.nextLine());
             if (!this.verifyBattleCommand(cmd)) {

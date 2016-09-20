@@ -322,6 +322,7 @@ public class Juego {
             switch(cmd[0]) {
                 case "help":
                     this.showBattleHelp();
+                    break;
                 case "atacar":
                     enemigo.damage(jugador.getArma().damage());
                     attacked = true;

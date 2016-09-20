@@ -20,7 +20,6 @@ public class Dibujador
     
     public void flush()
     {
-        //System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         System.out.print(new String(new char[30]).replace('\0', '\n'));
     }
     
@@ -54,5 +53,10 @@ public class Dibujador
     public void showError(String err)
     {
         System.out.println(err);
+    }
+    
+    public void showMessage(String msg)
+    {
+        System.out.println(msg);
     }
 }

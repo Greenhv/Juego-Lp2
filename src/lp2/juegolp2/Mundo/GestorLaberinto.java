@@ -2,6 +2,7 @@ package lp2.juegolp2.Mundo;
 
 import lp2.juegolp2.Artefactos.*;
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -26,22 +27,23 @@ public class GestorLaberinto
         return this.laberintos.get(n);
     }
     
-    public Laberinto Crear(int M, int N)
+    public Laberinto Crear(int M, int N, int[] niveles)
     {
-        // pct_enemigo: Minimo 10% - Maximo 30%
-        double pct = ((Math.random() * 100) % 21 + 10) / 100;
-        Laberinto lab = new Laberinto(2*M+1, 2*N+1, pct);
+        // pct_enemigo: Minimo 10% - Maximo 20%
+        double pct = ((Math.random() * 100) % 11 + 10) / 100;
+        Laberinto lab = new Laberinto(2*M+1, 2*N+1, pct, niveles);
         configLaberinto(lab);
         return lab;
     }
     
-    public void crearLaberintos(int numLaberintos)
+    public void crearLaberintos(int numLaberintos, int enemy_range)
     {
         for (int i = 0; i < numLaberintos; ++i) {
             // M y N  entre 20 y 30
             int M = (int) ((Math.random()*11) + 20);
             int N = (int) ((Math.random()*11) + 20);
-            this.laberintos.add(this.Crear(M, N));
+            int[] niveles = IntStream.rangeClosed(i+1, (i+1)*enemy_range).toArray();
+            this.laberintos.add(this.Crear(M, N, niveles));
         }
     }
     /**
@@ -91,7 +93,7 @@ public class GestorLaberinto
     public void agregaPlayer(Avatar jugador)
     {
         Laberinto laberinto = this.laberintos.get(0);
-        laberinto.get(jugador.getPosition()).setContenido(Celda.Contenido.JUGADOR.asChar());
+        laberinto.get(jugador.getPosition()).setContenido(Celda.Contenido.JUGADOR);
     }
     
     public int size()

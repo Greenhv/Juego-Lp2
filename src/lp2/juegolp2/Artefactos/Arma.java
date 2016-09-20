@@ -12,7 +12,8 @@ public class Arma extends Artefacto
     {
         super();
         if (dmg_min > dmg_max)
-            throw new ArithmeticException("Minimum weapon damage can't be lower than maximum damage");
+            throw new ArithmeticException(
+                "El daño máximo de un arma no puede ser menor que el mínimo");
         this.dmg_min = dmg_min;
         this.dmg_max = dmg_max;
     }
@@ -31,9 +32,8 @@ public class Arma extends Artefacto
     @Override
     public String toString()
     {
-        String str = "Arma: \n";
-        str += "Ataque mínimo: " + Integer.toString(dmg_min) + "\n";
-        str += "Ataque máximo: " + Integer.toString(dmg_max) + "\n";
+        // Se imprime el daño promedio
+        String str = "Ataque: " + Integer.toString((dmg_min+dmg_max)/2) + "\n";
         return str;
     }
 }

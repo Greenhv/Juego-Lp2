@@ -11,8 +11,6 @@ public class Celda
     private int columna;
     private Tipo tipo;
     private char contenido;
-    private Enemigo enemigo;
-    private Artefacto artefacto;
 
     public Celda()
     {
@@ -22,10 +20,9 @@ public class Celda
     
     public Celda(int fila, int columna)
     {
+        this();
         this.fila = fila;
         this.columna = columna;
-        this.tipo = Tipo.PARED;
-        this.contenido = Contenido.PARED.asChar();
     }
 
     public Celda(Tipo tipo, Contenido contenido)
@@ -42,11 +39,6 @@ public class Celda
     public Tipo getTipo()
     {
         return this.tipo;
-    }
-    
-    public void setContenido(char contenido)
-    {
-        this.contenido = contenido;
     }
 
     public void setContenido(Contenido contenido)
@@ -96,7 +88,7 @@ public class Celda
     public void markAsInside()
     {
         this.setTipo(Tipo.ADENTRO);
-        this.setContenido(Contenido.LIBRE.asChar());
+        this.setContenido(Contenido.LIBRE);
     }
     
     public void markAsOutside()
@@ -112,44 +104,6 @@ public class Celda
     public boolean esPared()
     {
         return this.getTipo() == Tipo.PARED;
-    }
-    
-    public Enemigo getEnemigo()
-    {
-        return this.enemigo;
-    }
-    
-    public void setEnemigo(Enemigo ene)
-    {
-        if (this.getContenido() == Contenido.ENEMIGO.asChar())
-            this.enemigo = ene;
-    }
-    
-    public void removeEnemigo()
-    {
-        if (this.getContenido() == Contenido.ENEMIGO.asChar()) {
-            this.enemigo = null;
-            this.setContenido(Contenido.LIBRE.asChar());
-        }
-    }
-    
-    public Artefacto getArtefacto()
-    {
-        return this.artefacto;
-    }
-    
-    public void setArtefacto(Artefacto art)
-    {
-        if (this.getContenido() == Contenido.ARTEFACTO.asChar())
-            this.artefacto = art;
-    }
-    
-    public void removeArtefacto()
-    {
-        if (this.getContenido() == Contenido.ARTEFACTO.asChar()) {
-            this.artefacto = null;
-            this.setContenido(Contenido.LIBRE.asChar());
-        }
     }
 
     /**

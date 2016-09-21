@@ -208,9 +208,11 @@ public class Juego {
         String nombre = scan.nextLine();
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
-        Arma armaInicial = new Arma(1, 5);
+        Arma armaIni = Arma.armasDisp[0];
+        Armadura armaduraIni = Armadura.armadurasDisp[0];
         this.jugador = new Avatar(nombre, avatarPos);
-        this.jugador.setArma(armaInicial);
+        this.jugador.setArma(armaIni);
+        this.jugador.setArmadura(armaduraIni);
         this.gestorLaberinto.agregaPlayer(jugador);
     }
 
@@ -275,7 +277,7 @@ public class Juego {
         Direction dir = Direction.valueOf(mov);
         Position pos = this.jugador.getPosition().copy().move(dir);
         // Si no se puede mover a la posición seleccionada, se envía un mensaje
-        if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED.asChar()) {
+        if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED) {
             this.dibujador.showError("No se puede interactuar con esa celda");
             this.pauseScreen();
             return Result.PLAYING;
@@ -287,7 +289,6 @@ public class Juego {
     
     private Result interactuar(Laberinto laberintoActual, Position pos)
     {
-        System.out.println("Entra a la condicion");
         // Verifico si hay un artefacto
         Artefacto artefacto = laberintoActual.getArtefacto(pos);
         if (artefacto != null) {
@@ -299,7 +300,7 @@ public class Juego {
         Enemigo enemigo = laberintoActual.getEnemigo(pos);
         if (enemigo != null) {
             Result res = this.battle(this.jugador, enemigo);
-            if (res == null) {
+            if (res == Result.PLAYING) {
                 laberintoActual.removeEnemigo(enemigo.getPosition());
                 laberintoActual.get(enemigo.getPosition()).setContenido(Celda.Contenido.LIBRE);
             }
@@ -349,7 +350,7 @@ public class Juego {
             
             // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
             if (attacked)
-                jugador.damage(1/*enemigo.getArma().damage()*/);
+                jugador.damage(enemigo.getArma().damage());
             
             // El jugador murio luego de la accion del Enemigo ?
             if(jugador.getCurrentHP() == 0)

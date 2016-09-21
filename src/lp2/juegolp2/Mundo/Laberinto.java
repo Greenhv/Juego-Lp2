@@ -282,10 +282,9 @@ public class Laberinto
         if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1){
             return false;
         }
-        return (this.get(x, y).getContenido() == Celda.Contenido.LIBRE.asChar() ||
-                this.get(x, y).getContenido() == Celda.Contenido.ANTERIOR.asChar() ||
-                this.get(x, y).getContenido() == Celda.Contenido.SIGUIENTE.asChar());
-                //this.get(x, y).getContenido() == Contenido.ENEMIGO.asChar() Para que pueda pasar encima de el
+        return (this.get(x, y).getContenido() == Celda.Contenido.LIBRE ||
+                this.get(x, y).getContenido() == Celda.Contenido.ANTERIOR ||
+                this.get(x, y).getContenido() == Celda.Contenido.SIGUIENTE);
     }
     
     public boolean validPlayerPosition(Position pos)
@@ -299,7 +298,17 @@ public class Laberinto
     {   
         int nivel = this.niveles[(int) (Math.random() % niveles.length)];
         Enemigo enemigo = Enemigo.random(nivel);
+        this.addEnemigo(pos, enemigo);
+    }
+    
+    public void addEnemigo(Position pos, Enemigo enemigo)
+    {
         enemigo.setPosition(pos);
+        // Si ya hay un enemigo en esa posición, termina
+        for (int i = 0; i < enemigos.size(); ++i) {
+            if (enemigos.get(i).getPosition().equals(pos))
+                return;
+        }
         this.enemigos.add(enemigo);
         this.get(pos).setContenido(Celda.Contenido.ENEMIGO);
     }
@@ -341,6 +350,13 @@ public class Laberinto
     public void removeArtefacto(Position pos)
     {
         this.artefactos.remove(pos);
+        this.get(pos).setContenido(Celda.Contenido.LIBRE);
+    }
+    
+    public void addArtefacto(Position pos, Artefacto art)
+    {
+        this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
+        this.artefactos.put(pos, art);
     }
     
     public Enemigo getEnemigo(Position pos)

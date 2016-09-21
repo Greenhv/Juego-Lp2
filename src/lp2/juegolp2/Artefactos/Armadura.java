@@ -5,6 +5,12 @@ package lp2.juegolp2.Artefactos;
  */
 public class Armadura extends Artefacto
 {
+    public static Armadura[] armadurasDisp;
+    static {
+        armadurasDisp = new Armadura[2];
+        armadurasDisp[0] = new Armadura(4, "Armadura de Cuero");
+        armadurasDisp[1] = new Armadura(8, "Armadura de Metal");
+    }
     private int defensa;
 
     public Armadura(int def)
@@ -12,7 +18,13 @@ public class Armadura extends Artefacto
         super();
         this.defensa = def;
     }
-
+    
+    public Armadura(int def, String nombre)
+    {
+        this(def);
+        setNombre(nombre);
+    }
+    
     public int getDefensa()
     {
         return defensa;
@@ -27,8 +39,7 @@ public class Armadura extends Artefacto
     @Override
     public String toString()
     {
-        String str = "Armadura: \n";
-        str += "Defensa: " + Integer.toString(defensa) + "\n";
+        String str = getNombre() + " - " + Integer.toString(defensa);
         return str;
     }
 }

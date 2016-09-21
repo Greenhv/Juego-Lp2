@@ -5,11 +5,28 @@ package lp2.juegolp2.Artefactos;
  */
 public abstract class Artefacto
 {
+    String nombre;
+    
     public Artefacto()
     {
-
+        
     }
-
+    
+    public Artefacto(String nombre)
+    {
+        this.nombre = nombre;
+    }
+    
+    public String getNombre()
+    {
+        return this.nombre;
+    }
+    
+    public void setNombre(String nombre)
+    {
+        this.nombre = nombre;
+    }
+    
     public abstract Artefacto.Tipo type();
 
     public enum Tipo

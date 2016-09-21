@@ -1,5 +1,7 @@
 package lp2.juegolp2.Mundo;
 
+import lp2.juegolp2.Artefactos.*;
+
 /**
  *
  * @author pmvb
@@ -11,6 +13,8 @@ public abstract class Entidad
     private int currHP;
     private Position position;
     private Direction facingDir;
+    private Arma arma;
+    private Armadura armadura;
     
     public Entidad(String nombre)
     {
@@ -94,4 +98,44 @@ public abstract class Entidad
     }
     
     public abstract int getNivel();
+    
+    public void heal(int hp)
+    {
+        currHP += hp;
+        if (currHP > maxHP)
+            currHP = maxHP;
+    }
+    
+    public void heal(PocionCuracion pocion)
+    {
+        this.heal(pocion.getHP());
+    }
+    
+    /**
+     * @return the arma
+     */
+    public Arma getArma() {
+        return arma;
+    }
+
+    /**
+     * @param arma the arma to set
+     */
+    public void setArma(Arma arma) {
+        this.arma = arma;
+    }
+
+    /**
+     * @return the armadura
+     */
+    public Armadura getArmadura() {
+        return armadura;
+    }
+
+    /**
+     * @param armadura the armadura to set
+     */
+    public void setArmadura(Armadura armadura) {
+        this.armadura = armadura;
+    }
 }

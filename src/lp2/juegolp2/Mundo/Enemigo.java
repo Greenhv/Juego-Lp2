@@ -1,5 +1,6 @@
 package lp2.juegolp2.Mundo;
 
+import lp2.juegolp2.Artefactos.*;
 /**
  *
  * @author pmvb
@@ -13,6 +14,7 @@ public class Enemigo extends Entidad
     };
     
     private int nivel_enemigo;
+    
     public Enemigo(String nombre)
     // El enemigo tambien deberia hacer danho. Armas ? Danho Fisico ? Otro tipo de danho ?
     {
@@ -24,6 +26,12 @@ public class Enemigo extends Entidad
     {
         this(nombre);
         this.nivel_enemigo = nivel;
+        super.setMaxHP(nivel*10);
+        super.initHP();
+        Arma armaBasica = new Arma(nivel,nivel*2);
+        Armadura armaduraBasica = new Armadura(nivel*2);
+        this.setArma(armaBasica);
+        this.setArmadura(armaduraBasica);
     }
     
     @Override

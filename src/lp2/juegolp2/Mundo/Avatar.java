@@ -8,8 +8,6 @@ import lp2.juegolp2.Artefactos.*;
 public class Avatar extends Entidad
 {
     private int nivel;
-    private Arma arma;
-    private Armadura armadura;
     private Saco saco;
     
     public Avatar(String nombre, Position pos)
@@ -26,7 +24,7 @@ public class Avatar extends Entidad
         if (item.type() == Artefacto.Tipo.ARMA)
             this.setArma((Arma) item);
         else if (item.type() == Artefacto.Tipo.ARMADURA)
-            this.armadura = (Armadura) item;
+            this.setArmadura((Armadura) item);
         else
             this.getSaco().addItem(item);
     }
@@ -35,16 +33,6 @@ public class Avatar extends Entidad
     public int getNivel()
     {
         return this.nivel;
-    }
-    
-    public Arma getArma()
-    {
-        return this.arma;
-    }
-    
-    public Armadura getArmadura()
-    {
-        return this.armadura;
     }
        
     public Saco getSaco()
@@ -65,12 +53,20 @@ public class Avatar extends Entidad
         
         return str;
     }
-
-    /**
-     * @param arma the arma to set
-     */
-    public void setArma(Arma arma) {
-        this.arma = arma;
+    
+    public int getNumItems()
+    {
+        return this.getSaco().size();
+    }
+    
+    public Artefacto getArtefacto(int index)
+    {
+        return this.getSaco().getItem(index);
+    }
+    
+    public void dropItem(int index)
+    {
+        this.getSaco().removeItem(index);
     }
 }
 

@@ -43,6 +43,9 @@ public class Enemigo extends Entidad
     public static Enemigo random(int nivel)
     {
         String nombre = enemy_names[(int) (Math.random()) % enemy_names.length];
-        return new Enemigo(nombre, nivel);
+        Enemigo enemigo = new Enemigo(nombre, nivel);
+        enemigo.setArma(Arma.armasDisp[nivel%2]);
+        enemigo.setArmadura(Armadura.armadurasDisp[nivel%2]);
+        return enemigo;
     }
 }

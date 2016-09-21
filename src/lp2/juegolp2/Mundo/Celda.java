@@ -1,6 +1,5 @@
 package lp2.juegolp2.Mundo;
 
-import lp2.juegolp2.Artefactos.*;
 /**
  *
  * @author pmvb
@@ -10,12 +9,12 @@ public class Celda
     private int fila;
     private int columna;
     private Tipo tipo;
-    private char contenido;
+    private Contenido contenido;
 
     public Celda()
     {
         this.tipo = Tipo.PARED;
-        this.contenido = Contenido.PARED.asChar();
+        this.contenido = Contenido.PARED;
     }
     
     public Celda(int fila, int columna)
@@ -28,7 +27,7 @@ public class Celda
     public Celda(Tipo tipo, Contenido contenido)
     {
         this.tipo = tipo;
-        this.contenido = contenido.asChar();
+        this.contenido = contenido;
     }
     
     public void setTipo(Tipo tipo)
@@ -43,17 +42,17 @@ public class Celda
 
     public void setContenido(Contenido contenido)
     {
-        this.contenido = contenido.asChar();
+        this.contenido = contenido;
     }
     
-    public char getContenido()
+    public Contenido getContenido()
     {
         return this.contenido;
     }
     
     public void draw()
     {
-        System.out.print(this.contenido);
+        System.out.print(this.contenido.asChar());
     }
 
     /**
@@ -136,6 +135,5 @@ public class Celda
         AFUERA,
         ANTERIOR,
         SIGUIENTE,
-        
     }
 }

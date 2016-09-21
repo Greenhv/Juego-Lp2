@@ -63,7 +63,7 @@ public class GestorLaberinto
         for (int i = 1; i < lab.getAlto()-1; ++i) {
             for (int j = 1; j < lab.getAncho()-1; ++j) {
                 // Si está libre, la añado a la lista
-                if (lab.get(i, j).getContenido() == Celda.Contenido.LIBRE.asChar()) {
+                if (lab.get(i, j).getContenido() == Celda.Contenido.LIBRE) {
                     libres.add(new Position(i, j));
                 }
             }
@@ -79,14 +79,37 @@ public class GestorLaberinto
         lab.setSiguiente(libres.get(index));
         libres.remove(index);
         
-        // Agrega artefactos
-//        index = (int) (Math.random()*100) % (libres.size()/2);
-//        
+        ArrayList<Position> usadas = new ArrayList<>();
         // Agrega enemigos
         for (int i = 0; i < libres.size(); ++i) {
             if (Math.random() <= lab.getPctEnemigo()) {
                 lab.addEnemigo(libres.get(i));
+                usadas.add(libres.get(i));
             }
+        }
+        // Elimino las posiciones donde ya puse un enemigo
+        for (int i = 0; i < usadas.size(); ++i) {
+            libres.remove(usadas.get(i));
+        }
+        //usadas.clear();
+        
+        /**
+         * Por ahora lo haremos así, luego se arregla
+         */
+        // Crea lista de artefactos a agregar
+        //int numArt = ((int) (Math.random() * 6)) + 6;
+        Artefacto[] artefactos = new Artefacto[6];
+        artefactos[0] = PocionCuracion.pocionesDisp[0];
+        artefactos[1] = PocionCuracion.pocionesDisp[1];
+        artefactos[2] = Arma.armasDisp[0];
+        artefactos[3] = Arma.armasDisp[1];
+        artefactos[4] = Armadura.armadurasDisp[0];
+        artefactos[5] = Armadura.armadurasDisp[1];
+        
+        for (int i = 0; i < artefactos.length; ++i) {
+            index = (int) (Math.random() * libres.size());
+            lab.addArtefacto(libres.get(index), artefactos[i]);
+            libres.remove(index);
         }
     }
     

@@ -38,7 +38,7 @@ public class Dibujador
         
         for(int i = xIni; i <= xFin; i++){
             for(int j = yIni; j <= yFin;j++){
-                laberinto.get(i, j).draw();
+                System.out.print(laberinto.get(i, j).getContenido().asChar());
             }
             System.out.println();
         }

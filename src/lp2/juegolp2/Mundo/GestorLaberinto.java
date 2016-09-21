@@ -109,7 +109,6 @@ public class GestorLaberinto
         for (int i = 0; i < artefactos.length; ++i) {
             index = (int) (Math.random() * libres.size());
             lab.addArtefacto(libres.get(index), artefactos[i]);
-            System.out.println("Artefacto en posicion: " + libres.get(index));
             libres.remove(index);
         }
     }

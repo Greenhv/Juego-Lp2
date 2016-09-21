@@ -14,10 +14,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int[] niveles ={0};
-        Laberinto l = new Laberinto(10,10,0.5,niveles);
-        l.addArtefacto();
-        /*Juego juego = Juego.getInstance();
+        Juego juego = Juego.getInstance();
         juego.init();
         juego.historia();
         Juego.Result res = juego.play();
@@ -32,6 +29,6 @@ public class Main {
             case LOSE:
                 System.out.println("Has perdido :(");
                 break;
-        }*/
+        }
     }
 }

@@ -304,24 +304,24 @@ public class Laberinto
         this.get(pos).setContenido(Celda.Contenido.ENEMIGO);
     }
     
-    public void addArtefacto(/*Position pos*/){
+    public void addArtefacto(Position pos){
         Artefacto artefacto;
         int index = (int) (Math.random() * 3);
         switch(index){
             case 1:
                 artefacto = new Armadura(10);
+                this.artefactos.put(pos,artefacto);
                 break;
             case 2:
                 artefacto = new PocionCuracion(10);
+                this.artefactos.put(pos,artefacto);
                 break;
             case 3:
                 artefacto = new Arma(5, 15);
+                this.artefactos.put(pos,artefacto);
                 break;
         }
-        //this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
-        System.out.print(index);
-        //System.out.print(artefacto);
-        //Artefacto artefacto = tipo_artefacto[index];
+        this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
     }
     
     public double getPctEnemigo()
@@ -362,6 +362,11 @@ public class Laberinto
     
     public Artefacto getArtefacto(Position pos)
     {
+        //System.out.println(this.artefactos.values());
+        //System.out.println(this.artefactos.size());
+        //System.out.println(pos);
+        //this.artefactos.forEach((k,v)-> System.out.println(k+", "+v));
+        //System.out.println(this.artefactos.get(pos));
         return this.artefactos.get(pos);
     }
     

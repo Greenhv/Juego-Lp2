@@ -1,0 +1,3 @@
+jar cvf dist/lp2.juegolp2.Artefactos.jar build/classes/lp2/juegolp2/Artefactos/*.class
+jar cvf -cp dist/lp2.juegolp2.Artefactos.jar dist/lp2.juegolp2.Mundo.jar build/classes/lp2/juegolp2/Mundo/*.class build/classes/lp2/juegolp2/Artefactos/*.class
+jar cvf -cp dist/lp2.juegolp2.Mundo.jar dist/lp2.juegolp2.Interfaz.jar build/classes/lp2/juegolp2/Interfaz/*.class build/classes/lp2/juegolp2/Mundo/*.class

@@ -16,6 +16,7 @@ public class Juego {
         "interactuar",
         "mirar",
         "mover",
+        "usar",
         "salir"
     };
     private static final String[] battleCommands = {
@@ -101,6 +102,9 @@ public class Juego {
                     case "mirar":
                         this.playerFaceDirection(cmd[1]);
                         break;
+                    case "usar":
+                        this.useItem();
+                        break;
                     case "salir":
                         result = Result.QUIT;
                         break;
@@ -166,6 +170,10 @@ public class Juego {
         System.out.println("interactuar <dir>:\tInteractua con la celda adyacente en la direccion dir");
         System.out.println("\t\t\tDonde dir puede tener los mismos valores que al mover el jugador");
         /**
+         * Usar
+         */
+        System.out.println("usar:\t\t\tUsa un artefacto de tu saco");
+        /**
          * Salir
          */
         System.out.println("salir:\t\t\tTermina el juego inmediatamente.");
@@ -200,9 +208,11 @@ public class Juego {
         String nombre = scan.nextLine();
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
-        Arma armaInicial = new Arma(1, 5);
+        Arma armaIni = Arma.armasDisp[0];
+        Armadura armaduraIni = Armadura.armadurasDisp[0];
         this.jugador = new Avatar(nombre, avatarPos);
-        this.jugador.setArma(armaInicial);
+        this.jugador.setArma(armaIni);
+        this.jugador.setArmadura(armaduraIni);
         this.gestorLaberinto.agregaPlayer(jugador);
     }
 
@@ -267,7 +277,7 @@ public class Juego {
         Direction dir = Direction.valueOf(mov);
         Position pos = this.jugador.getPosition().copy().move(dir);
         // Si no se puede mover a la posición seleccionada, se envía un mensaje
-        if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED.asChar()) {
+        if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED) {
             this.dibujador.showError("No se puede interactuar con esa celda");
             this.pauseScreen();
             return Result.PLAYING;
@@ -279,7 +289,6 @@ public class Juego {
     
     private Result interactuar(Laberinto laberintoActual, Position pos)
     {
-        System.out.println("Entra a la condicion");
         // Verifico si hay un artefacto
         Artefacto artefacto = laberintoActual.getArtefacto(pos);
         //System.out.println(laberintoActual.get(pos).getContenido());
@@ -293,7 +302,7 @@ public class Juego {
         Enemigo enemigo = laberintoActual.getEnemigo(pos);
         if (enemigo != null) {
             Result res = this.battle(this.jugador, enemigo);
-            if (res == null) {
+            if (res == Result.PLAYING) {
                 laberintoActual.removeEnemigo(enemigo.getPosition());
                 laberintoActual.get(enemigo.getPosition()).setContenido(Celda.Contenido.LIBRE);
             }
@@ -343,7 +352,7 @@ public class Juego {
             
             // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
             if (attacked)
-                jugador.damage(1/*enemigo.getArma().damage()*/);
+                jugador.damage(enemigo.getArma().damage());
             
             // El jugador murio luego de la accion del Enemigo ?
             if(jugador.getCurrentHP() == 0)
@@ -388,11 +397,16 @@ public class Juego {
     
     public void useItem()
     {
+        int numItems = this.jugador.getNumItems();
+        if (numItems == 0) {
+            this.dibujador.showError("No tiene artefactos en su saco.");
+            pauseScreen();
+            return;
+        }
         System.out.println("Saco:");
         System.out.println(this.jugador.getSaco());
         boolean validChoice;
         int choice;
-        int numItems = this.jugador.getNumItems();
         Scanner scan = new Scanner(System.in);
         do {
             validChoice = true;
@@ -407,9 +421,10 @@ public class Juego {
                     validChoice = false;
             }
         } while (!validChoice);
-        
+
         if (choice == 'q')
             return;
+        
         Artefacto artefacto = this.jugador.getArtefacto(choice);
         /**
          * Usa artefacto

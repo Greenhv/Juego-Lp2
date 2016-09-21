@@ -291,7 +291,9 @@ public class Juego {
     {
         // Verifico si hay un artefacto
         Artefacto artefacto = laberintoActual.getArtefacto(pos);
+        //System.out.println(laberintoActual.get(pos).getContenido());
         if (artefacto != null) {
+            //System.out.println("Coge el artefacto");
             this.jugador.pickupItem(artefacto);
             laberintoActual.removeArtefacto(pos);
             return Result.PLAYING;

@@ -79,6 +79,20 @@ public class GestorLaberinto
         lab.setSiguiente(libres.get(index));
         libres.remove(index);
         
+        // Agrega artefactos
+        //index = (int) (Math.random()*100) % (libres.size()/2);
+        int numero_artefactos = 15; //variable temporal que indica el numero de artefactos por laberinto
+        int artefactos_colocados = 0;
+        int index_artefacto;
+        
+        while(artefactos_colocados < numero_artefactos){
+            index_artefacto = (int) (Math.random() * 100);
+            if(index_artefacto < libres.size()){
+                lab.addArtefacto(libres.get(index_artefacto));
+                artefactos_colocados++;
+            }
+        }
+        
         ArrayList<Position> usadas = new ArrayList<>();
         // Agrega enemigos
         for (int i = 0; i < libres.size(); ++i) {

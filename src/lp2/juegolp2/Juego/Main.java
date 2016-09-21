@@ -1,5 +1,9 @@
 package lp2.juegolp2.Juego;
 
+import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Mundo.*;
+import java.util.*;
+import java.util.stream.IntStream;
 /**
  *
  * @author pmvb

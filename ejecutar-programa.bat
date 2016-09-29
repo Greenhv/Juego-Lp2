@@ -1,2 +1,9 @@
-call compilar-fuentes.bat
-cd build/classes && java lp2.juegolp2.Juego.Main && cd ../../
+#!/bin/sh
+
+#Windows
+#call crear-jars.bat
+
+#Linux
+source ./crear-jars.bat
+
+cd dist && java -jar lp2.juegolp2.Juego.jar; cd ../

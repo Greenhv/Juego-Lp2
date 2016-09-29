@@ -29,8 +29,8 @@ public class GestorLaberinto
     
     public Laberinto Crear(int M, int N, int[] niveles)
     {
-        // pct_enemigo: Minimo 10% - Maximo 20%
-        double pct = ((Math.random() * 100) % 11 + 10) / 100;
+        // pct_enemigo: Minimo 5% - Maximo 20%
+        double pct = ((Math.random() * 100) % 11 + 5) / 100;
         Laberinto lab = new Laberinto(2*M+1, 2*N+1, pct, niveles);
         configLaberinto(lab);
         return lab;
@@ -47,7 +47,6 @@ public class GestorLaberinto
         }
     }
     /**
-     * TODO: Agregar Artefactos y Enemigos
      * 
      * Agrega lo necesario para completar el laberinto (celdas anterior, siguiente,
      * artefactos y enemigos).

@@ -1,6 +1,8 @@
 package lp2.juegolp2.Mundo;
 
 import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Facilidades.*;
+
 import java.util.*;
 
 /**
@@ -296,7 +298,7 @@ public class Laberinto
     
     public void addEnemigo(Position pos)
     {   
-        int nivel = this.niveles[(int) (Math.random() % niveles.length)];
+        int nivel = this.niveles[(int) (Math.random() * niveles.length)];
         Enemigo enemigo = Enemigo.random(nivel);
         this.addEnemigo(pos, enemigo);
     }
@@ -346,36 +348,47 @@ public class Laberinto
         this.pct_enemigo = pct;
     }
     
+    /**
+     * Modificación Lab2: El método moverEnemigos se ha generalizado en un
+     * método moverEntidad, ejecutado por cada enemigo en el laberinto
+     */
     public void moverEnemigos()
     {
-        int k = 0, kk = 0;
-        Direction[] dirs = Direction.values();
         for (int i = 0; i < this.enemigos.size(); ++i) {
-            int index = (int) (Math.random() * 4);
-            Direction dir = dirs[index];
-            k++;
-            System.out.println("Enemigos evaluados:");
-            System.out.println(k);
-            // Si es una posición válida, mueve el enemigo y termina
-            if (validPlayerPosition(enemigos.get(i).getPosition().copy().move(dir))) {
-                kk++;
-                System.out.println("Enemigos movidos:");
-                System.out.println(kk);
-                Enemigo enemy = this.enemigos.get(i);
-                this.get(enemy.getPosition()).setContenido(Celda.Contenido.LIBRE);
-                enemy.move(dir);
-                this.get(enemy.getPosition()).setContenido(Celda.Contenido.ENEMIGO);
-            }
+            moverEntidad(this.enemigos.get(i));
+        }
+    }
+    /**
+     * Mueve una entidad en una dirección aleatoria, haciendo uso de la sobrecarga
+     * del método: moverEntidad(Entidad, Direction)
+     * 
+     * @param ent 
+     */
+    public void moverEntidad(Entidad ent)
+    {
+        Direction[] dirs = Direction.values();
+        int index = (int) (Math.random() * 4);
+        Direction dir = dirs[index];
+        this.moverEntidad(ent, dir);
+    }
+    
+    public void moverEntidad(Entidad ent, Direction dir)
+    {
+        // Si es una posición válida, mueve la entidad y termina
+        if (validPlayerPosition(ent.getPosition().copy().move(dir))) {
+            this.get(ent.getPosition()).setContenido(Celda.Contenido.LIBRE);
+            ent.move(dir);
+            Celda.Contenido cont = Celda.Contenido.ALIADO;
+            if (ent instanceof Aliado)
+                cont = Celda.Contenido.ALIADO;
+            else if (ent instanceof Enemigo)
+                cont = Celda.Contenido.ENEMIGO;
+            this.get(ent.getPosition()).setContenido(cont);
         }
     }
     
     public Artefacto getArtefacto(Position pos)
     {
-        //System.out.println(this.artefactos.values());
-        //System.out.println(this.artefactos.size());
-        //System.out.println(pos);
-        //this.artefactos.forEach((k,v)-> System.out.println(k+", "+v));
-        //System.out.println(this.artefactos.get(pos));
         return this.artefactos.get(pos);
     }
     
@@ -401,8 +414,11 @@ public class Laberinto
     
     public void removeEnemigo(Position pos)
     {
+        // Remueve el enemigo de la lista
         for (int i = 0; i < enemigos.size(); ++i)
             if (enemigos.get(i).getPosition().equals(pos))
                 enemigos.remove(i);
+        // Y de la celda
+        this.get(pos).setContenido(Celda.Contenido.LIBRE);
     }
 }

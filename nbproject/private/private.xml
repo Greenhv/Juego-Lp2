@@ -2,6 +2,16 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/home/pmvb/Projets/LP2/Lab2/src/lp2/juegolp2/Mundo/Avatar.java</file>
+            <file>file:/home/pmvb/Projets/LP2/Lab2/src/lp2/juegolp2/Mundo/Position.java</file>
+            <file>file:/home/pmvb/Projets/LP2/Lab2/src/lp2/juegolp2/Artefactos/PocionCuracion.java</file>
+            <file>file:/home/pmvb/Projets/LP2/Lab2/src/lp2/juegolp2/Artefactos/Artefacto.java</file>
+            <file>file:/home/pmvb/Projets/LP2/Lab2/src/lp2/juegolp2/Mundo/Celda.java</file>
+            <file>file:/home/pmvb/Projets/LP2/Lab2/src/lp2/juegolp2/Mundo/Laberinto.java</file>
+            <file>file:/home/pmvb/Projets/LP2/Lab2/src/lp2/juegolp2/Facilidades/Aliado.java</file>
+            <file>file:/home/pmvb/Projets/LP2/Lab2/src/lp2/juegolp2/Mundo/Entidad.java</file>
+            <file>file:/home/pmvb/Projets/LP2/Lab2/src/lp2/juegolp2/Juego/Juego.java</file>
+        </group>
     </open-files>
 </project-private>

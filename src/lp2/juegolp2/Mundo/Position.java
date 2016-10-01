@@ -28,12 +28,29 @@ public class Position
     {
         return "(" + getX() + ", " + getY() + ")";
     }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof Position)) {
+            return false;
+        }
+        return this.equals((Position) obj);
+    }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 11 * hash + this.X;
+        hash = 11 * hash + this.Y;
+        return hash;
+    }
+    
     public boolean equals(Position pos)
     {
-        return this.getX() == pos.getX()
+        return (this.getX() == pos.getX())
                &&
-               this.getY() == pos.getY();
+               (this.getY() == pos.getY());
     }
 
     public int getX()

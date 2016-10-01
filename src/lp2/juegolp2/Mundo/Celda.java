@@ -116,7 +116,8 @@ public class Celda
         ENEMIGO('E'), 
         SIGUIENTE('+'),
         ANTERIOR('-'), 
-        JUGADOR('*');
+        JUGADOR('O'),
+        ALIADO('F');
 
         public char asChar() {
             return asChar;

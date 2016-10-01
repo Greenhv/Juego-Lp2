@@ -10,6 +10,15 @@ public class Avatar extends Entidad
     private int nivel;
     private Saco saco;
     
+    public Avatar(String nombre)
+    {
+        super(nombre);
+        this.nivel = 1;
+        this.saco = new Saco();
+        setMaxHP(nivel*10);
+        super.initHP();
+    }
+    
     public Avatar(String nombre, Position pos)
     {
         super(nombre, pos);
@@ -21,12 +30,13 @@ public class Avatar extends Entidad
     
     public void pickupItem(Artefacto item)
     {
-        if (item.type() == Artefacto.Tipo.ARMA)
+        if (item.type() == Artefacto.Tipo.ARMA && this.getArma() == null) {
             this.setArma((Arma) item);
-        else if (item.type() == Artefacto.Tipo.ARMADURA)
+        } else if (item.type() == Artefacto.Tipo.ARMADURA && this.getArmadura() == null) {
             this.setArmadura((Armadura) item);
-        else
+        } else {
             this.getSaco().addItem(item);
+        }
     }
     
     @Override

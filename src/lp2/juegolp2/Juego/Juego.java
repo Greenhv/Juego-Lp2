@@ -4,6 +4,8 @@ import java.util.*;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Interfaz.*;
+import lp2.juegolp2.Facilidades.*;
+
 /**
  * Singleton, no debería haber más de una instancia de Juego
  * 
@@ -14,7 +16,6 @@ public class Juego {
     private static final String[] availableCommands = {
         "help",
         "interactuar",
-        "mirar",
         "mover",
         "usar",
         "salir"
@@ -29,6 +30,7 @@ public class Juego {
     private static final int enemyLevelRange = 5;
     
     private Avatar jugador;
+    private Aliado aliado;
     private GestorLaberinto gestorLaberinto;
     private Dibujador dibujador;
     private int currentLabIndex;
@@ -54,14 +56,12 @@ public class Juego {
         System.out.println("Hay mundos maravillosos con historias y leyendas nunca antes contadas");
         System.out.println("Sin embargo...");
         System.out.println("No todos los mundos son amigables.");
-        System.out.print("Un día normal de su vida, ");
-        System.out.print(nJugador);
+        System.out.print("Un día normal de su vida, " + nJugador);
         System.out.println(" es transportado hacia el fantástico mundo de Aether.");
         System.out.println("Aether está dominado por el demonio Azazel");
         System.out.println("Azazel planea unir los mundos y convertirse en el amo supremo");
-        System.out.print(nJugador);
-        System.out.println(" lo detendrá, no porque lo desee, sino porque es el único que puede hacerlo.");
-        System.out.printf("Avanza, %s\n",nJugador);
+        System.out.println(nJugador + " lo detendrá, no porque lo desee, sino porque es el único que puede hacerlo.");
+        System.out.println("Avanza, " + nJugador);
         this.pauseScreen();
     }
     
@@ -71,7 +71,7 @@ public class Juego {
         this.initMap();
         // Obten datos y crea jugador
         this.initPlayer();
-        
+        this.initAliado();
     }
 
     public Result play()
@@ -81,6 +81,8 @@ public class Juego {
         while(true){
             this.dibujador.dibujarLaberinto(laberintoActual, this.jugador.getPosition());
             this.dibujador.dibujarInfoJugador(this.jugador);
+            System.out.println("ALIADO:");
+            this.dibujador.dibujarInfoJugador(this.aliado);
             System.out.print("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles) : ");
             
             String[] cmd = this.getCommandFromString(scan.nextLine());
@@ -98,9 +100,6 @@ public class Juego {
                         break;
                     case "mover":
                         result = this.move(cmd[1], laberintoActual);
-                        break;
-                    case "mirar":
-                        this.playerFaceDirection(cmd[1]);
                         break;
                     case "usar":
                         this.useItem();
@@ -130,9 +129,8 @@ public class Juego {
         // Si el comando no está disponible
         if (!Arrays.asList(availableCommands).contains(cmd[0].toLowerCase()))
             return false;
-        // Si trata de moverse, pero la direccion no es valida
+        // Comandos que requieren argumento direccion
         if (cmd[0].equals("mover")
-            || cmd[0].equals("mirar")
             || cmd[0].equals("interactuar")) {
             if (cmd.length < 2)
                 return false;
@@ -159,11 +157,6 @@ public class Juego {
         System.out.println("\t\t\t'DOWN': abajo");
         System.out.println("\t\t\t'RIGHT': derecha");
         System.out.println("\t\t\t'LEFT': izquierda");
-        /**
-         * Mirar
-         */
-        System.out.println("mirar <dir>:\t\tMira en la direccion dir");
-        System.out.println("\t\t\tDonde dir puede tener los mismos valores que al mover el jugador");
         /**
          * Interactuar
          */
@@ -215,7 +208,52 @@ public class Juego {
         this.jugador.setArmadura(armaduraIni);
         this.gestorLaberinto.agregaPlayer(jugador);
     }
-
+    
+    /**
+     * Modificación: Función que inicializa el aliado
+     */
+    private void initAliado()
+    {
+        /**
+         * Encuentra una posición inicial para el aliado
+         */
+        Position posAliado = new Position(this.jugador.getPosition());
+        Laberinto labActual = this.gestorLaberinto.get(currentLabIndex);
+        for (Direction dir : Direction.values()) {
+            Position newPos = posAliado.copy().move(dir);
+            if (labActual.validPlayerPosition(newPos)) {
+                posAliado.move(dir);
+                break;
+            }
+        }
+        aliado = new Aliado("ALIADO", posAliado);
+        this.gestorLaberinto.get(currentLabIndex).get(posAliado).setContenido(Celda.Contenido.ALIADO);
+        /**
+         * Llena el saco del aliado
+         */
+        int numArt = (int) (Math.random() * 6) + 5;
+        for (int i = 0; i < numArt; ++i) {
+            // Obtiene el tipo de artefacto que poner
+            int tipo = (int) (Math.random() * 3);
+            Artefacto.Tipo type = Artefacto.Tipo.values()[tipo];
+            int index;
+            switch (type) {
+                case ARMA:
+                    index = (int) (Math.random() * Arma.armasDisp.length);
+                    this.aliado.pickupItem(Arma.armasDisp[index]);
+                    break;
+                case ARMADURA:
+                    index = (int) (Math.random() * Armadura.armadurasDisp.length);
+                    this.aliado.pickupItem(Armadura.armadurasDisp[index]);
+                    break;
+                case POCION:
+                    index = (int) (Math.random() * PocionCuracion.pocionesDisp.length);
+                    this.aliado.pickupItem(PocionCuracion.pocionesDisp[index]);
+                    break;
+            }
+        }
+    }
+    
     private void initMap()
     {
         this.numLaberintos = (int) (Math.random() * 6) + 5;
@@ -241,6 +279,7 @@ public class Juego {
             }
         }
         this.moverEnemigos(laberintoActual);
+        laberintoActual.moverEntidad(aliado);
         return res;
     }
     
@@ -276,7 +315,7 @@ public class Juego {
     {
         Direction dir = Direction.valueOf(mov);
         Position pos = this.jugador.getPosition().copy().move(dir);
-        // Si no se puede mover a la posición seleccionada, se envía un mensaje
+        // Si no se puede interactuar con la posición seleccionada, se envía un mensaje
         if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED) {
             this.dibujador.showError("No se puede interactuar con esa celda");
             this.pauseScreen();
@@ -291,11 +330,11 @@ public class Juego {
     {
         // Verifico si hay un artefacto
         Artefacto artefacto = laberintoActual.getArtefacto(pos);
-        //System.out.println(laberintoActual.get(pos).getContenido());
         if (artefacto != null) {
-            //System.out.println("Coge el artefacto");
             this.jugador.pickupItem(artefacto);
             laberintoActual.removeArtefacto(pos);
+            
+            this.dibujador.showMessage("Has recogido un artefacto.");
             return Result.PLAYING;
         }
         // Verifico si hay un enemigo en esa posicion
@@ -304,9 +343,11 @@ public class Juego {
             Result res = this.battle(this.jugador, enemigo);
             if (res == Result.PLAYING) {
                 laberintoActual.removeEnemigo(enemigo.getPosition());
-                laberintoActual.get(enemigo.getPosition()).setContenido(Celda.Contenido.LIBRE);
             }
             return res;
+        }
+        if (aliado.getPosition().equals(pos)) {
+            this.dibujador.showMessage("Consejo de tu aliado: " + aliado.getConsejo());
         }
         return Result.PLAYING;
     }
@@ -314,7 +355,6 @@ public class Juego {
     private Result battle(Avatar jugador, Entidad enemigo)
     {   
         Scanner scan = new Scanner(System.in);
-        System.out.println("Secuencia de Batalla iniciada.");
         while(true) {
             System.out.print("Heroe: " + jugador.getNombre());
             System.out.print(" - Vida Actual: " + jugador.getCurrentHP());
@@ -451,12 +491,6 @@ public class Juego {
                 this.jugador.heal(pocion);
                 break;
         }
-    }
-    
-    private void playerFaceDirection(String mov)
-    {
-        Direction dir = Direction.valueOf(mov);
-        this.jugador.setFacingDir(dir);
     }
     
     private void pauseScreen()

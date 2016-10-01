@@ -36,5 +36,28 @@ public abstract class Artefacto
         ARMA
     }
     
+    public static Artefacto random()
+    {
+        int tipo = (int) (Math.random() * Artefacto.Tipo.values().length);
+        Artefacto.Tipo type = Artefacto.Tipo.values()[tipo];
+        Artefacto artefacto = null;
+        int index = 0;
+        switch (type) {
+            case POCION:
+                index = (int) (Math.random() * PocionCuracion.pocionesDisp.length);
+                artefacto = PocionCuracion.pocionesDisp[index];
+                break;
+            case ARMA:
+                index = (int) (Math.random() * Arma.armasDisp.length);
+                artefacto = Arma.armasDisp[index];
+                break;
+            case ARMADURA:
+                index = (int) (Math.random() * Armadura.armadurasDisp.length);
+                artefacto = Armadura.armadurasDisp[index];
+                break;
+        }
+        return artefacto;
+    }
+    
     public abstract String toString();
 }

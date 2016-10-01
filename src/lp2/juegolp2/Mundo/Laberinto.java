@@ -267,6 +267,11 @@ public class Laberinto
         this.get(X, Y).setContenido(Celda.Contenido.JUGADOR);
     }
     
+    public void actualizarJugador(Position pos)
+    {
+        this.actualizarJugador(pos.getX(), pos.getY());
+    }
+    
     public boolean inBounds(int x, int y)
     {
         return !(x < 0 || y < 0 || x >= getAlto() || y >= getAncho());
@@ -300,10 +305,10 @@ public class Laberinto
     {   
         int nivel = this.niveles[(int) (Math.random() * niveles.length)];
         Enemigo enemigo = Enemigo.random(nivel);
-        this.addEnemigo(pos, enemigo);
+        this.addEnemigo(enemigo, pos);
     }
     
-    public void addEnemigo(Position pos, Enemigo enemigo)
+    public void addEnemigo(Enemigo enemigo, Position pos)
     {
         enemigo.setPosition(pos);
         // Si ya hay un enemigo en esa posición, termina
@@ -316,23 +321,16 @@ public class Laberinto
     }
     
     public void addArtefacto(Position pos){
-        Artefacto artefacto;
-        int index = (int) (Math.random() * 3);
-        switch(index){
-            case 1:
-                artefacto = new Armadura(10);
-                this.artefactos.put(pos,artefacto);
-                break;
-            case 2:
-                artefacto = new PocionCuracion(10);
-                this.artefactos.put(pos,artefacto);
-                break;
-            case 3:
-                artefacto = new Arma(5, 15);
-                this.artefactos.put(pos,artefacto);
-                break;
+        Artefacto artefacto = Artefacto.random();
+        this.addArtefacto(artefacto, pos);
+    }
+    
+    public void addArtefacto(Artefacto artefacto, Position pos)
+    {
+        if (artefacto != null) {
+            this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
+            this.artefactos.put(pos, artefacto);
         }
-        this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
     }
     
     public double getPctEnemigo()

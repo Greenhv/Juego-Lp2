@@ -27,10 +27,8 @@ public class Dibujador
     {
         this.flush();
         //laberinto.draw(); //Metodo de debug para revisar si el mapa es correctamente Dibujado
-        System.out.println(jugador);
         int X = jugador.getX();
         int Y = jugador.getY();
-        laberinto.actualizarJugador(X, Y);
         int xIni = (X - this.altoVisible) < 0 ? 0 : (X - this.altoVisible);
         int xFin = (X + this.altoVisible) >= laberinto.getAlto() ? (laberinto.getAlto()-1) : (X + this.altoVisible);
         int yIni = (Y - this.anchoVisible) < 0 ? 0 : (Y - this.anchoVisible);

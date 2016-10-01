@@ -233,24 +233,7 @@ public class Juego {
          */
         int numArt = (int) (Math.random() * 6) + 5;
         for (int i = 0; i < numArt; ++i) {
-            // Obtiene el tipo de artefacto que poner
-            int tipo = (int) (Math.random() * 3);
-            Artefacto.Tipo type = Artefacto.Tipo.values()[tipo];
-            int index;
-            switch (type) {
-                case ARMA:
-                    index = (int) (Math.random() * Arma.armasDisp.length);
-                    this.aliado.pickupItem(Arma.armasDisp[index]);
-                    break;
-                case ARMADURA:
-                    index = (int) (Math.random() * Armadura.armadurasDisp.length);
-                    this.aliado.pickupItem(Armadura.armadurasDisp[index]);
-                    break;
-                case POCION:
-                    index = (int) (Math.random() * PocionCuracion.pocionesDisp.length);
-                    this.aliado.pickupItem(PocionCuracion.pocionesDisp[index]);
-                    break;
-            }
+            this.aliado.pickupItem(Artefacto.random());
         }
     }
     
@@ -304,6 +287,7 @@ public class Juego {
             currCell.setContenido(Celda.Contenido.LIBRE);
         }
         this.jugador.move(dir);
+        laberintoActual.actualizarJugador(this.jugador.getPosition());
     }
     
     private void moverEnemigos(Laberinto lab)
@@ -453,7 +437,7 @@ public class Juego {
             System.out.print("Ingrese el artefacto a utilizar ('q' para salir): ");
             try {
                 choice = scan.nextInt();
-                if (choice < 0 || choice >= numItems)
+                if (choice < 1 || choice > numItems)
                     validChoice = false;
             } catch (InputMismatchException ex) {
                 choice = scan.next().charAt(0);
@@ -465,7 +449,7 @@ public class Juego {
         if (choice == 'q')
             return;
         
-        Artefacto artefacto = this.jugador.getArtefacto(choice);
+        Artefacto artefacto = this.jugador.getArtefacto(choice-1);
         /**
          * Usa artefacto
          * 

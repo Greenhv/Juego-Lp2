@@ -14,17 +14,17 @@ public class PocionCuracion extends Artefacto
     }
     private int puntos_vida;
     
-    public PocionCuracion(int puntos_vida)
-    {
-        this.setHP(puntos_vida);
-    }
-    
     public PocionCuracion(int puntos_vida, String nombre)
     {
-        this(puntos_vida);
-        setNombre(nombre);
+        super(nombre);
+        this.setHP(puntos_vida);
     }
 
+    public PocionCuracion(PocionCuracion pocion)
+    {
+        this(pocion.getHP(), pocion.getNombre());
+    }
+    
     public int getHP()
     {
         return this.puntos_vida;
@@ -41,7 +41,12 @@ public class PocionCuracion extends Artefacto
     
     public static PocionCuracion random()
     {
-        return pocionesDisp.get((int) (Math.random() * pocionesDisp.size()));
+        return pocionesDisp.get((int) (Math.random() * pocionesDisp.size())).copy();
+    }
+    
+    public PocionCuracion copy()
+    {
+        return new PocionCuracion(this);
     }
     
     @Override

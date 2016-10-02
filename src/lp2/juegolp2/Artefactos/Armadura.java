@@ -16,26 +16,39 @@ public class Armadura extends Artefacto
     }
     private int defensa;
 
-    public Armadura(int def)
-    {
-        super();
-        this.defensa = def;
-    }
-    
     public Armadura(int def, String nombre)
     {
-        this(def);
-        setNombre(nombre);
+        super(nombre);
+        setDefensa(def);
+    }
+    
+    public Armadura(Armadura armadura)
+    {
+        this(armadura.getDefensa(), armadura.getNombre());
     }
     
     public int getDefensa()
     {
         return defensa;
     }
+    
+    public void setDefensa(int def)
+    {
+        if (def <= 0)
+            throw new IllegalArgumentException(
+                "La defensa de una armadura debe ser mayor que cero"
+            );
+        this.defensa = def;
+    }
 
     public static Armadura random()
     {
-        return armadurasDisp.get((int) (Math.random() * armadurasDisp.size()));
+        return armadurasDisp.get((int) (Math.random() * armadurasDisp.size())).copy();
+    }
+    
+    public Armadura copy()
+    {
+        return new Armadura(this);
     }
     
     @Override

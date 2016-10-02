@@ -32,6 +32,11 @@ public class Arma extends Artefacto
         this(dmg_min, dmg_max);
         this.setNombre(nombre);
     }
+    
+    public Arma(Arma arma)
+    {
+        this(arma.dmg_min, arma.dmg_max, arma.getNombre());
+    }
 
     public int damage()
     {
@@ -40,7 +45,12 @@ public class Arma extends Artefacto
 
     public static Arma random()
     {
-        return armasDisp.get((int) (Math.random() * armasDisp.size()));
+        return armasDisp.get((int) (Math.random() * armasDisp.size())).copy();
+    }
+    
+    public Arma copy()
+    {
+        return new Arma(this);
     }
     
     @Override

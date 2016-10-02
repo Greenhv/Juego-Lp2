@@ -1,7 +1,7 @@
 package lp2.juegolp2.Juego;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.*;
+import com.thoughtworks.xstream.io.xml.*;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FileReader;
@@ -263,8 +263,9 @@ public class Juego {
     private void moverAvatar(String mov, Laberinto laberintoActual) 
     {
         Direction dir = Direction.valueOf(mov);
-        // Si no se puede mover a la posición seleccionada, se envía un mensaje
-        if (!laberintoActual.validPlayerPosition(this.jugador.getPosition().copy().move(dir))) {
+        Position newPos = this.jugador.getPosition().copy().move(dir);
+        // Si no se puede mover a la posición seleccionada, mostramos un mensaje
+        if (!laberintoActual.validPlayerPosition(newPos)) {
             this.dibujador.showError("No se puede mover a esa posición");
             pauseScreen();
             return;
@@ -280,7 +281,10 @@ public class Juego {
         } else {
             currCell.setContenido(Celda.Contenido.LIBRE);
         }
-        this.jugador.move(dir);
+        if (newPos.equals(this.aliado.getPosition())) {
+            laberintoActual.moverEntidad(aliado, dir.opposite());
+        }
+        this.jugador.setPosition(newPos);
         laberintoActual.actualizarJugador(this.jugador.getPosition());
     }
     

@@ -3,18 +3,18 @@
 echo "Compilando Fuentes"
 
 # Compila Artefactos
-javac -sourcepath src -cp "lib/\*" -d build/classes src/lp2/juegolp2/Artefactos/*.java
+javac -sourcepath src -classpath "lib/\*" -d build/classes src/lp2/juegolp2/Artefactos/*.java
 
 # Compila Facilidades
-javac -sourcepath src -d build/classes src/lp2/juegolp2/Facilidades/*.java
+#javac -sourcepath src -d build/classes src/lp2/juegolp2/Facilidades/*.java
 
 # Compila Mundo
-javac -sourcepath src -d build/classes src/lp2/juegolp2/Mundo/*.java
+#javac -sourcepath src -d build/classes src/lp2/juegolp2/Mundo/*.java
 
 # Compila Interfaz
-javac -sourcepath src -d build/classes src/lp2/juegolp2/Interfaz/*.java
+#javac -sourcepath src -d build/classes src/lp2/juegolp2/Interfaz/*.java
 
 # Compila Juego
-javac -sourcepath src -cp "lib/\*" -d build/classes src/lp2/juegolp2/Juego/*.java
+#javac -sourcepath src -classpath "lib/\*" -d build/classes src/lp2/juegolp2/Juego/*.java
 
 echo "Listo!"

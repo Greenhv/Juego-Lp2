@@ -1,6 +1,6 @@
 package lp2.juegolp2.Artefactos;
 
-import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;

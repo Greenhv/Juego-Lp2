@@ -289,9 +289,11 @@ public class Laberinto
         if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1){
             return false;
         }
-        return (this.get(x, y).getContenido() == Celda.Contenido.LIBRE ||
-                this.get(x, y).getContenido() == Celda.Contenido.ANTERIOR ||
-                this.get(x, y).getContenido() == Celda.Contenido.SIGUIENTE);
+        Celda.Contenido cont = this.get(x, y).getContenido();
+        return (cont == Celda.Contenido.LIBRE ||
+                cont == Celda.Contenido.ANTERIOR ||
+                cont == Celda.Contenido.SIGUIENTE ||
+                cont == Celda.Contenido.ALIADO);
     }
     
     public boolean validPlayerPosition(Position pos)
@@ -374,13 +376,15 @@ public class Laberinto
     {
         // Si es una posición válida, mueve la entidad y termina
         if (validPlayerPosition(ent.getPosition().copy().move(dir))) {
-            this.get(ent.getPosition()).setContenido(Celda.Contenido.LIBRE);
+            this.get(ent.getPosition()).setContenido(this.get(ent.getPosition()).getContenidoPrevio());
             ent.move(dir);
             Celda.Contenido cont = Celda.Contenido.ALIADO;
             if (ent instanceof Aliado)
                 cont = Celda.Contenido.ALIADO;
             else if (ent instanceof Enemigo)
                 cont = Celda.Contenido.ENEMIGO;
+            else if (ent instanceof Avatar)
+                cont = Celda.Contenido.JUGADOR;
             this.get(ent.getPosition()).setContenido(cont);
         }
     }

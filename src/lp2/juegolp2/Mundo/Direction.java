@@ -21,13 +21,10 @@ public enum Direction
         return false;
     }
     
-    public static final Map<Direction, String> direcciones;
-    static
+    public Direction opposite()
     {
-        direcciones = new HashMap<>();
-        direcciones.put(UP, "Arriba");
-        direcciones.put(RIGHT, "Derecha");
-        direcciones.put(DOWN, "Abajo");
-        direcciones.put(LEFT, "Izquierda");
+        Direction[] values = Direction.values();
+        int index = (this.ordinal() + values.length/2) % values.length;
+        return values[index];
     }
 }

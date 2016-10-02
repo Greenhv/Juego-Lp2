@@ -12,11 +12,6 @@ public class GestorLaberinto
 {
     List<Laberinto> laberintos;
     
-    private final static Arma[] armas = {new Arma(5,10), new Arma(15,25)};
-    private final static Armadura[] armaduras = {new Armadura(5), new Armadura(20)};
-    private final static PocionCuracion[] posciones = {new PocionCuracion(5),new PocionCuracion(10)};
-    
-    
     public GestorLaberinto()
     {
         this.laberintos = new ArrayList<Laberinto>();

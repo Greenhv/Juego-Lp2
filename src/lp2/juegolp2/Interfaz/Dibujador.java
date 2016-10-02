@@ -45,7 +45,9 @@ public class Dibujador
     
     public void dibujarInfoJugador(Avatar jugador)
     {
+        System.out.println("*********************--------**********************");
         System.out.println(jugador);
+        System.out.println("*********************--------**********************");
     }
     
     public void showError(String err)

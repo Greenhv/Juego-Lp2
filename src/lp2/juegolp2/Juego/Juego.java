@@ -201,8 +201,9 @@ public class Juego {
         String nombre = scan.nextLine();
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
-        Arma armaIni = Arma.armasDisp[0];
-        Armadura armaduraIni = Armadura.armadurasDisp[0];
+        Arma armaIni = Arma.armasDisp.get(0);
+        Armadura armaduraIni = Armadura.armadurasDisp.get(0);
+        
         this.jugador = new Avatar(nombre, avatarPos);
         this.jugador.setArma(armaIni);
         this.jugador.setArmadura(armaduraIni);

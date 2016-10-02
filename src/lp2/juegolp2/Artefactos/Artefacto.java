@@ -41,19 +41,15 @@ public abstract class Artefacto
         int tipo = (int) (Math.random() * Artefacto.Tipo.values().length);
         Artefacto.Tipo type = Artefacto.Tipo.values()[tipo];
         Artefacto artefacto = null;
-        int index = 0;
         switch (type) {
             case POCION:
-                index = (int) (Math.random() * PocionCuracion.pocionesDisp.length);
-                artefacto = PocionCuracion.pocionesDisp[index];
+                artefacto = PocionCuracion.random();
                 break;
             case ARMA:
-                index = (int) (Math.random() * Arma.armasDisp.length);
-                artefacto = Arma.armasDisp[index];
+                artefacto = Arma.random();
                 break;
             case ARMADURA:
-                index = (int) (Math.random() * Armadura.armadurasDisp.length);
-                artefacto = Armadura.armadurasDisp[index];
+                artefacto = Armadura.random();
                 break;
         }
         return artefacto;

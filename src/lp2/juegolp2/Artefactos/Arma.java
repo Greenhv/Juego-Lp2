@@ -1,15 +1,18 @@
 package lp2.juegolp2.Artefactos;
 
+import java.util.*;
+
 /**
  * Created by pmvb on 01/09/16.
  */
 public class Arma extends Artefacto
 {
-    public static Arma[] armasDisp;
+    public static ArrayList<Arma> armasDisp;
     static {
-        armasDisp = new Arma[2];
-        armasDisp[0] = new Arma(1, 5, "Daga");
-        armasDisp[1] = new Arma(4, 8, "Espada");
+        armasDisp = new ArrayList<>();
+        armasDisp.add(new Arma(5, 10, "Daga"));
+        armasDisp.add(new Arma(10, 15, "Espada"));
+        armasDisp.add(new Arma(15, 20, "Hacha"));
     }
     private int dmg_min;
     private int dmg_max;
@@ -35,6 +38,11 @@ public class Arma extends Artefacto
         return (int) (Math.random() * (dmg_max-dmg_min+1) + dmg_min);
     }
 
+    public static Arma random()
+    {
+        return armasDisp.get((int) (Math.random() * armasDisp.size()));
+    }
+    
     @Override
     public Artefacto.Tipo type()
     {

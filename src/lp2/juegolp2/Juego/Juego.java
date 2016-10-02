@@ -1,5 +1,11 @@
 package lp2.juegolp2.Juego;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Artefactos.*;
@@ -35,12 +41,14 @@ public class Juego {
     private Dibujador dibujador;
     private int currentLabIndex;
     private int numLaberintos;
+    private XStream xmlSerializer;
     
     private Juego()
     {
         this.gestorLaberinto = new GestorLaberinto();
         this.dibujador = new Dibujador();
         this.currentLabIndex = 0;
+        xmlSerializer = new XStream(new StaxDriver());
     }
     
     public static Juego getInstance()
@@ -68,6 +76,7 @@ public class Juego {
     // Configura lo necesario para jugar
     public void init()
     {
+        this.initArtefactos();
         this.initMap();
         // Obten datos y crea jugador
         this.initPlayer();
@@ -109,8 +118,10 @@ public class Juego {
                         break;
                 }
             }
-            if (result != Result.PLAYING)
+            if (result != Result.PLAYING) {
+                this.closeGame();
                 return result;
+            }
         }
     }
     
@@ -174,24 +185,6 @@ public class Juego {
          * Pause the screen
          */
         this.pauseScreen();
-    }
-    
-    public Result result()
-    {
-        // Verifica si el jugador ha perdido o gano, o si sigue jugando
-        /**
-         * Si el jugador está en la posición siguiente del último laberinto, 
-         * ha ganado
-         */
-        if (this.currentLabIndex == this.gestorLaberinto.size()-1
-            &&
-            this.jugador.getPosition().equals(this.gestorLaberinto.get(numLaberintos).getSiguiente())) {
-            return Result.WIN; 
-        }
-        if (this.jugador.getCurrentHP() == 0) {
-            return Result.LOSE;
-        }
-        return Result.WIN;
     }
     
     private void initPlayer()
@@ -488,5 +481,60 @@ public class Juego {
         LOSE,
         WIN,
         PLAYING
+    }
+    
+    public void closeGame()
+    {
+        this.serializeArtefactos();
+        this.serializeArmas();
+        this.serializeArmaduras();
+    }
+    
+    public void serializeArmaduras()
+    {
+        try {
+            FileWriter fw = new FileWriter("armaduras.xml");
+            xmlSerializer.toXML(Armadura.armadurasDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    public void serializeArmas()
+    {
+        try {
+            FileWriter fw = new FileWriter("armas.xml");
+            xmlSerializer.toXML(Arma.armasDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    public void serializeArtefactos()
+    {
+        try {
+            FileWriter fw = new FileWriter("pociones.xml");
+            xmlSerializer.toXML(PocionCuracion.pocionesDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    public void initArtefactos()
+    {
+        try {
+            PocionCuracion.loadXML(xmlSerializer);
+            Arma.loadXML(xmlSerializer);
+            Armadura.loadXML(xmlSerializer);
+        } catch (FileNotFoundException e) {
+            this.dibujador.showError(e.toString());
+            System.exit(1);
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+            System.exit(1);
+        }
     }
 }

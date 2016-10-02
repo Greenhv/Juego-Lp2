@@ -1,5 +1,9 @@
 package lp2.juegolp2.Artefactos;
 
+import com.thoughtworks.xstream.XStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -8,12 +12,7 @@ import java.util.*;
 public class Arma extends Artefacto
 {
     public static ArrayList<Arma> armasDisp;
-    static {
-        armasDisp = new ArrayList<>();
-        armasDisp.add(new Arma(5, 10, "Daga"));
-        armasDisp.add(new Arma(10, 15, "Espada"));
-        armasDisp.add(new Arma(15, 20, "Hacha"));
-    }
+    
     private int dmg_min;
     private int dmg_max;
 
@@ -65,5 +64,13 @@ public class Arma extends Artefacto
         // Se imprime el daño promedio
         String str = getNombre() + " - " + Integer.toString((dmg_min+dmg_max)/2);
         return str;
+    }
+    
+    public static void loadXML(XStream xstream) 
+        throws FileNotFoundException, IOException
+    {
+        FileReader reader = new FileReader("armas.xml");
+        armasDisp = (ArrayList<Arma>)xstream.fromXML(reader);
+        reader.close();
     }
 }

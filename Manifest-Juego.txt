@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Class-Path: lp2.juegolp2.Artefactos.jar lp2.juegolp2.Facilidades.jar lp2.juegolp2.Mundo.jar lp2.juegolp2.Interfaz.jar
+Class-Path: lib/lp2.juegolp2.Artefactos.jar lib/lp2.juegolp2.Facilidades.jar lib/lp2.juegolp2.Mundo.jar lib/lp2.juegolp2.Interfaz.jar lib/xpp3_min-1.1.4c.jar lib/xstream-1.4.9.jar
 Main-Class: lp2.juegolp2.Juego.Main

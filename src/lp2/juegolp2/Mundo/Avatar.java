@@ -13,7 +13,7 @@ public class Avatar extends Entidad
     public Avatar(String nombre)
     {
         super(nombre);
-        this.nivel = 1;
+        this.nivel = 5;
         this.saco = new Saco();
         setMaxHP(nivel*10);
         super.initHP();

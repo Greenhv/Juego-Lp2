@@ -1,5 +1,9 @@
 package lp2.juegolp2.Artefactos;
 
+import com.thoughtworks.xstream.XStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -8,12 +12,7 @@ import java.util.*;
 public class Armadura extends Artefacto
 {
     public static ArrayList<Armadura> armadurasDisp;
-    static {
-        armadurasDisp = new ArrayList<>();
-        armadurasDisp.add(new Armadura(5, "Armadura de Cuero"));
-        armadurasDisp.add(new Armadura(10, "Armadura de Metal"));
-        armadurasDisp.add(new Armadura(15, "Armadura Oscura"));
-    }
+    
     private int defensa;
 
     public Armadura(int def, String nombre)
@@ -62,5 +61,13 @@ public class Armadura extends Artefacto
     {
         String str = getNombre() + " - " + Integer.toString(defensa);
         return str;
+    }
+    
+    public static void loadXML(XStream xstream) 
+        throws FileNotFoundException, IOException
+    {
+        FileReader reader = new FileReader("armaduras.xml");
+        armadurasDisp = (ArrayList<Armadura>)xstream.fromXML(reader);
+        reader.close();
     }
 }

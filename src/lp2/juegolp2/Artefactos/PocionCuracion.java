@@ -1,5 +1,9 @@
 package lp2.juegolp2.Artefactos;
 
+import com.thoughtworks.xstream.XStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class PocionCuracion extends Artefacto
@@ -60,5 +64,12 @@ public class PocionCuracion extends Artefacto
     {
         String str = getNombre() + " - " + Integer.toString(puntos_vida) + "HP";
         return str;
+    }
+    public static void loadXML(XStream xstream) 
+        throws FileNotFoundException, IOException
+    {
+        FileReader reader = new FileReader("pociones.xml");
+        pocionesDisp = (ArrayList<PocionCuracion>)xstream.fromXML(reader);
+        reader.close();
     }
 }

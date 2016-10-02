@@ -33,7 +33,7 @@ public class Juego {
         "usar"
     };
     // Rango de niveles de enemigos de un laberinto
-    private static final int enemyLevelRange = 5;
+    private static final int enemyLevelRange = 2;
     
     private Avatar jugador;
     private Aliado aliado;
@@ -127,7 +127,10 @@ public class Juego {
     
     private String[] getCommandFromString(String line)
     {
-        return line.trim().split(" ");
+        // Remueve espacios al inicio y al final
+        // Luego reemplaza espacios en medio de la cadena con ";"
+        // Finalmente, separa tokens por ";"
+        return line.trim().replaceAll("\\s+", ";").split(";");
     }
     
     private boolean verifyCommand(String[] cmd)

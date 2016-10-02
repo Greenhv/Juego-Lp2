@@ -318,7 +318,6 @@ public class Juego {
         if (artefacto != null) {
             this.jugador.pickupItem(artefacto);
             laberintoActual.removeArtefacto(pos);
-            
             this.dibujador.showMessage("Has recogido un artefacto.");
             return Result.PLAYING;
         }
@@ -326,7 +325,7 @@ public class Juego {
         Enemigo enemigo = laberintoActual.getEnemigo(pos);
         if (enemigo != null) {
             Result res = this.battle(this.jugador, enemigo);
-            if (res == Result.PLAYING) {
+            if (res == Result.PLAYING && enemigo.getCurrentHP() <= 0) {
                 laberintoActual.removeEnemigo(enemigo.getPosition());
             }
             return res;
@@ -460,22 +459,20 @@ public class Juego {
         switch (artefacto.type()) {
             case ARMA:
                 Arma arma = (Arma) artefacto;
-                //
                 this.jugador.pickupItem(this.jugador.getArma());
                 this.jugador.setArma(arma);
-                this.jugador.dropItem(choice);
                 break;
             case ARMADURA:
                 Armadura armadura = (Armadura) artefacto;
                 this.jugador.pickupItem(this.jugador.getArmadura());
                 this.jugador.setArmadura(armadura);
-                this.jugador.dropItem(choice);
                 break;
             case POCION:
                 PocionCuracion pocion = (PocionCuracion) artefacto;
                 this.jugador.heal(pocion);
                 break;
         }
+        this.jugador.dropItem(choice-1);
     }
     
     private void pauseScreen()

@@ -206,9 +206,6 @@ public class Juego {
         this.gestorLaberinto.agregaPlayer(jugador);
     }
     
-    /**
-     * Modificación: Función que inicializa el aliado
-     */
     private void initAliado()
     {
         /**
@@ -293,7 +290,7 @@ public class Juego {
     
     private void moverEnemigos(Laberinto lab)
     {
-        lab.moverEnemigos();
+        lab.moverEnemigos(this.jugador.getPosition());
     }
     
     private Result interactuar(String mov, Laberinto laberintoActual)

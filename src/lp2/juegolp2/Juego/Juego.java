@@ -1,5 +1,11 @@
 package lp2.juegolp2.Juego;
 
+import com.thoughtworks.xstream.*;
+import com.thoughtworks.xstream.io.xml.*;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Artefactos.*;
@@ -27,7 +33,7 @@ public class Juego {
         "usar"
     };
     // Rango de niveles de enemigos de un laberinto
-    private static final int enemyLevelRange = 5;
+    private static final int enemyLevelRange = 2;
     
     private Avatar jugador;
     private Aliado aliado;
@@ -35,12 +41,14 @@ public class Juego {
     private Dibujador dibujador;
     private int currentLabIndex;
     private int numLaberintos;
+    private XStream xmlSerializer;
     
     private Juego()
     {
         this.gestorLaberinto = new GestorLaberinto();
         this.dibujador = new Dibujador();
         this.currentLabIndex = 0;
+        xmlSerializer = new XStream(new StaxDriver());
     }
     
     public static Juego getInstance()
@@ -68,6 +76,7 @@ public class Juego {
     // Configura lo necesario para jugar
     public void init()
     {
+        this.initArtefactos();
         this.initMap();
         // Obten datos y crea jugador
         this.initPlayer();
@@ -109,14 +118,19 @@ public class Juego {
                         break;
                 }
             }
-            if (result != Result.PLAYING)
+            if (result != Result.PLAYING) {
+                this.closeGame();
                 return result;
+            }
         }
     }
     
     private String[] getCommandFromString(String line)
     {
-        return line.trim().split(" ");
+        // Remueve espacios al inicio y al final
+        // Luego reemplaza espacios en medio de la cadena con ";"
+        // Finalmente, separa tokens por ";"
+        return line.trim().replaceAll("\\s+", ";").split(";");
     }
     
     private boolean verifyCommand(String[] cmd)
@@ -176,24 +190,6 @@ public class Juego {
         this.pauseScreen();
     }
     
-    public Result result()
-    {
-        // Verifica si el jugador ha perdido o gano, o si sigue jugando
-        /**
-         * Si el jugador está en la posición siguiente del último laberinto, 
-         * ha ganado
-         */
-        if (this.currentLabIndex == this.gestorLaberinto.size()-1
-            &&
-            this.jugador.getPosition().equals(this.gestorLaberinto.get(numLaberintos).getSiguiente())) {
-            return Result.WIN; 
-        }
-        if (this.jugador.getCurrentHP() == 0) {
-            return Result.LOSE;
-        }
-        return Result.WIN;
-    }
-    
     private void initPlayer()
     {
         Scanner scan = new Scanner(System.in);
@@ -201,17 +197,15 @@ public class Juego {
         String nombre = scan.nextLine();
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
-        Arma armaIni = Arma.armasDisp[0];
-        Armadura armaduraIni = Armadura.armadurasDisp[0];
+        Arma armaIni = Arma.armasDisp.get(0);
+        Armadura armaduraIni = Armadura.armadurasDisp.get(0);
+        
         this.jugador = new Avatar(nombre, avatarPos);
         this.jugador.setArma(armaIni);
         this.jugador.setArmadura(armaduraIni);
         this.gestorLaberinto.agregaPlayer(jugador);
     }
     
-    /**
-     * Modificación: Función que inicializa el aliado
-     */
     private void initAliado()
     {
         /**
@@ -233,24 +227,7 @@ public class Juego {
          */
         int numArt = (int) (Math.random() * 6) + 5;
         for (int i = 0; i < numArt; ++i) {
-            // Obtiene el tipo de artefacto que poner
-            int tipo = (int) (Math.random() * 3);
-            Artefacto.Tipo type = Artefacto.Tipo.values()[tipo];
-            int index;
-            switch (type) {
-                case ARMA:
-                    index = (int) (Math.random() * Arma.armasDisp.length);
-                    this.aliado.pickupItem(Arma.armasDisp[index]);
-                    break;
-                case ARMADURA:
-                    index = (int) (Math.random() * Armadura.armadurasDisp.length);
-                    this.aliado.pickupItem(Armadura.armadurasDisp[index]);
-                    break;
-                case POCION:
-                    index = (int) (Math.random() * PocionCuracion.pocionesDisp.length);
-                    this.aliado.pickupItem(PocionCuracion.pocionesDisp[index]);
-                    break;
-            }
+            this.aliado.pickupItem(Artefacto.random());
         }
     }
     
@@ -286,8 +263,9 @@ public class Juego {
     private void moverAvatar(String mov, Laberinto laberintoActual) 
     {
         Direction dir = Direction.valueOf(mov);
-        // Si no se puede mover a la posición seleccionada, se envía un mensaje
-        if (!laberintoActual.validPlayerPosition(this.jugador.getPosition().copy().move(dir))) {
+        Position newPos = this.jugador.getPosition().copy().move(dir);
+        // Si no se puede mover a la posición seleccionada, mostramos un mensaje
+        if (!laberintoActual.validPlayerPosition(newPos)) {
             this.dibujador.showError("No se puede mover a esa posición");
             pauseScreen();
             return;
@@ -303,12 +281,16 @@ public class Juego {
         } else {
             currCell.setContenido(Celda.Contenido.LIBRE);
         }
-        this.jugador.move(dir);
+        if (newPos.equals(this.aliado.getPosition())) {
+            laberintoActual.moverEntidad(aliado, dir.opposite());
+        }
+        this.jugador.setPosition(newPos);
+        laberintoActual.actualizarJugador(this.jugador.getPosition());
     }
     
     private void moverEnemigos(Laberinto lab)
     {
-        lab.moverEnemigos();
+        lab.moverEnemigos(this.jugador.getPosition());
     }
     
     private Result interactuar(String mov, Laberinto laberintoActual)
@@ -333,7 +315,6 @@ public class Juego {
         if (artefacto != null) {
             this.jugador.pickupItem(artefacto);
             laberintoActual.removeArtefacto(pos);
-            
             this.dibujador.showMessage("Has recogido un artefacto.");
             return Result.PLAYING;
         }
@@ -341,7 +322,7 @@ public class Juego {
         Enemigo enemigo = laberintoActual.getEnemigo(pos);
         if (enemigo != null) {
             Result res = this.battle(this.jugador, enemigo);
-            if (res == Result.PLAYING) {
+            if (res == Result.PLAYING && enemigo.getCurrentHP() <= 0) {
                 laberintoActual.removeEnemigo(enemigo.getPosition());
             }
             return res;
@@ -453,7 +434,7 @@ public class Juego {
             System.out.print("Ingrese el artefacto a utilizar ('q' para salir): ");
             try {
                 choice = scan.nextInt();
-                if (choice < 0 || choice >= numItems)
+                if (choice < 1 || choice > numItems)
                     validChoice = false;
             } catch (InputMismatchException ex) {
                 choice = scan.next().charAt(0);
@@ -465,7 +446,7 @@ public class Juego {
         if (choice == 'q')
             return;
         
-        Artefacto artefacto = this.jugador.getArtefacto(choice);
+        Artefacto artefacto = this.jugador.getArtefacto(choice-1);
         /**
          * Usa artefacto
          * 
@@ -475,22 +456,20 @@ public class Juego {
         switch (artefacto.type()) {
             case ARMA:
                 Arma arma = (Arma) artefacto;
-                //
                 this.jugador.pickupItem(this.jugador.getArma());
                 this.jugador.setArma(arma);
-                this.jugador.dropItem(choice);
                 break;
             case ARMADURA:
                 Armadura armadura = (Armadura) artefacto;
                 this.jugador.pickupItem(this.jugador.getArmadura());
                 this.jugador.setArmadura(armadura);
-                this.jugador.dropItem(choice);
                 break;
             case POCION:
                 PocionCuracion pocion = (PocionCuracion) artefacto;
                 this.jugador.heal(pocion);
                 break;
         }
+        this.jugador.dropItem(choice-1);
     }
     
     private void pauseScreen()
@@ -506,5 +485,60 @@ public class Juego {
         LOSE,
         WIN,
         PLAYING
+    }
+    
+    public void closeGame()
+    {
+        this.serializeArtefactos();
+        this.serializeArmas();
+        this.serializeArmaduras();
+    }
+    
+    public void serializeArmaduras()
+    {
+        try {
+            FileWriter fw = new FileWriter("armaduras.xml");
+            xmlSerializer.toXML(Armadura.armadurasDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    public void serializeArmas()
+    {
+        try {
+            FileWriter fw = new FileWriter("armas.xml");
+            xmlSerializer.toXML(Arma.armasDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    public void serializeArtefactos()
+    {
+        try {
+            FileWriter fw = new FileWriter("pociones.xml");
+            xmlSerializer.toXML(PocionCuracion.pocionesDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    public void initArtefactos()
+    {
+        try {
+            PocionCuracion.loadXML(xmlSerializer);
+            Arma.loadXML(xmlSerializer);
+            Armadura.loadXML(xmlSerializer);
+        } catch (FileNotFoundException e) {
+            this.dibujador.showError(e.toString());
+            System.exit(1);
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+            System.exit(1);
+        }
     }
 }

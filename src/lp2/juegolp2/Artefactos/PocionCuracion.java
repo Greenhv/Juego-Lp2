@@ -1,33 +1,58 @@
 package lp2.juegolp2.Artefactos;
 
+import com.thoughtworks.xstream.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+
 public class PocionCuracion extends Artefacto
 {
-    public static PocionCuracion[] pocionesDisp;
+    public static ArrayList<PocionCuracion> pocionesDisp;
     static {
-        pocionesDisp = new PocionCuracion[2];
-        pocionesDisp[0] = new PocionCuracion(5, "Pocion");
-        pocionesDisp[1] = new PocionCuracion(10, "Super Pocion");
+        pocionesDisp = new ArrayList<>();
+        pocionesDisp.add(new PocionCuracion(5, "Pocion"));
+        pocionesDisp.add(new PocionCuracion(10, "Super Pocion"));
+        pocionesDisp.add(new PocionCuracion(20, "Hyper Pocion"));
+        pocionesDisp.add(new PocionCuracion(50, "Max Pocion"));
     }
     private int puntos_vida;
     
-    public PocionCuracion(int puntos_vida)
-    {
-        if (puntos_vida <= 0)
-            throw new IllegalArgumentException("A potion's health points can't be lower than zero");
-        this.puntos_vida = puntos_vida;
-    }
-    
     public PocionCuracion(int puntos_vida, String nombre)
     {
-        this(puntos_vida);
-        setNombre(nombre);
+        super(nombre);
+        this.setHP(puntos_vida);
     }
 
+    public PocionCuracion(PocionCuracion pocion)
+    {
+        this(pocion.getHP(), pocion.getNombre());
+    }
+    
     public int getHP()
     {
         return this.puntos_vida;
     }
-
+    
+    public void setHP(int puntos_vida)
+    {
+        if (puntos_vida <= 0)
+            throw new IllegalArgumentException(
+                "Los puntos de vida de una poción no pueden ser negativos"
+            );
+        this.puntos_vida = puntos_vida;
+    }
+    
+    public static PocionCuracion random()
+    {
+        return pocionesDisp.get((int) (Math.random() * pocionesDisp.size())).copy();
+    }
+    
+    public PocionCuracion copy()
+    {
+        return new PocionCuracion(this);
+    }
+    
     @Override
     public Artefacto.Tipo type()
     {
@@ -39,5 +64,12 @@ public class PocionCuracion extends Artefacto
     {
         String str = getNombre() + " - " + Integer.toString(puntos_vida) + "HP";
         return str;
+    }
+    public static void loadXML(XStream xstream) 
+        throws FileNotFoundException, IOException
+    {
+        FileReader reader = new FileReader("pociones.xml");
+        pocionesDisp = (ArrayList<PocionCuracion>)xstream.fromXML(reader);
+        reader.close();
     }
 }

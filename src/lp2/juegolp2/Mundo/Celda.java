@@ -10,6 +10,7 @@ public class Celda
     private int columna;
     private Tipo tipo;
     private Contenido contenido;
+    private Contenido contPrevio;
 
     public Celda()
     {
@@ -42,12 +43,18 @@ public class Celda
 
     public void setContenido(Contenido contenido)
     {
+        this.contPrevio = this.contenido;
         this.contenido = contenido;
     }
     
     public Contenido getContenido()
     {
         return this.contenido;
+    }
+    
+    public Contenido getContenidoPrevio()
+    {
+        return this.contPrevio;
     }
     
     public void draw()

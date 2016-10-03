@@ -57,6 +57,15 @@ public abstract class Entidad
     
     public void damage(int dmg)
     {
+        if (this.getArmadura() != null) {
+            int def = this.getArmadura().getDefensa();
+            if ((def - dmg) > 0) {
+                this.getArmadura().setDefensa(def-dmg);
+            } else {
+                this.setArmadura(null);
+                dmg -= def;
+            }
+        }
         if ((this.currHP - dmg) < 0)
             this.currHP = 0;
         else 

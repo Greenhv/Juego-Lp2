@@ -1,16 +1,18 @@
 package lp2.juegolp2.Artefactos;
 
+import com.thoughtworks.xstream.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+
 /**
  * Created by pmvb on 01/09/16.
  */
 public class Arma extends Artefacto
 {
-    public static Arma[] armasDisp;
-    static {
-        armasDisp = new Arma[2];
-        armasDisp[0] = new Arma(1, 5, "Daga");
-        armasDisp[1] = new Arma(4, 8, "Espada");
-    }
+    public static ArrayList<Arma> armasDisp;
+    
     private int dmg_min;
     private int dmg_max;
 
@@ -29,12 +31,27 @@ public class Arma extends Artefacto
         this(dmg_min, dmg_max);
         this.setNombre(nombre);
     }
+    
+    public Arma(Arma arma)
+    {
+        this(arma.dmg_min, arma.dmg_max, arma.getNombre());
+    }
 
     public int damage()
     {
         return (int) (Math.random() * (dmg_max-dmg_min+1) + dmg_min);
     }
 
+    public static Arma random()
+    {
+        return armasDisp.get((int) (Math.random() * armasDisp.size())).copy();
+    }
+    
+    public Arma copy()
+    {
+        return new Arma(this);
+    }
+    
     @Override
     public Artefacto.Tipo type()
     {
@@ -47,5 +64,13 @@ public class Arma extends Artefacto
         // Se imprime el daño promedio
         String str = getNombre() + " - " + Integer.toString((dmg_min+dmg_max)/2);
         return str;
+    }
+    
+    public static void loadXML(XStream xstream) 
+        throws FileNotFoundException, IOException
+    {
+        FileReader reader = new FileReader("armas.xml");
+        armasDisp = (ArrayList<Arma>)xstream.fromXML(reader);
+        reader.close();
     }
 }

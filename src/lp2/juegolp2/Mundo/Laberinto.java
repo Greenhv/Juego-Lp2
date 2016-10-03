@@ -154,7 +154,6 @@ public class Laberinto
             int random_number = (int) (Math.random() * 10) % 4;
             if(close_cells.get(random_number) != null)
                 return close_cells.get(random_number);
-            //return null;
         }
     }
     
@@ -267,6 +266,11 @@ public class Laberinto
         this.get(X, Y).setContenido(Celda.Contenido.JUGADOR);
     }
     
+    public void actualizarJugador(Position pos)
+    {
+        this.actualizarJugador(pos.getX(), pos.getY());
+    }
+    
     public boolean inBounds(int x, int y)
     {
         return !(x < 0 || y < 0 || x >= getAlto() || y >= getAncho());
@@ -284,9 +288,11 @@ public class Laberinto
         if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1){
             return false;
         }
-        return (this.get(x, y).getContenido() == Celda.Contenido.LIBRE ||
-                this.get(x, y).getContenido() == Celda.Contenido.ANTERIOR ||
-                this.get(x, y).getContenido() == Celda.Contenido.SIGUIENTE);
+        Celda.Contenido cont = this.get(x, y).getContenido();
+        return (cont == Celda.Contenido.LIBRE ||
+                cont == Celda.Contenido.ANTERIOR ||
+                cont == Celda.Contenido.SIGUIENTE ||
+                cont == Celda.Contenido.ALIADO);
     }
     
     public boolean validPlayerPosition(Position pos)
@@ -300,10 +306,10 @@ public class Laberinto
     {   
         int nivel = this.niveles[(int) (Math.random() * niveles.length)];
         Enemigo enemigo = Enemigo.random(nivel);
-        this.addEnemigo(pos, enemigo);
+        this.addEnemigo(enemigo, pos);
     }
     
-    public void addEnemigo(Position pos, Enemigo enemigo)
+    public void addEnemigo(Enemigo enemigo, Position pos)
     {
         enemigo.setPosition(pos);
         // Si ya hay un enemigo en esa posición, termina
@@ -316,23 +322,16 @@ public class Laberinto
     }
     
     public void addArtefacto(Position pos){
-        Artefacto artefacto;
-        int index = (int) (Math.random() * 3);
-        switch(index){
-            case 1:
-                artefacto = new Armadura(10);
-                this.artefactos.put(pos,artefacto);
-                break;
-            case 2:
-                artefacto = new PocionCuracion(10);
-                this.artefactos.put(pos,artefacto);
-                break;
-            case 3:
-                artefacto = new Arma(5, 15);
-                this.artefactos.put(pos,artefacto);
-                break;
+        Artefacto artefacto = Artefacto.random();
+        this.addArtefacto(artefacto, pos);
+    }
+    
+    public void addArtefacto(Artefacto artefacto, Position pos)
+    {
+        if (artefacto != null) {
+            this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
+            this.artefactos.put(pos, artefacto);
         }
-        this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
     }
     
     public double getPctEnemigo()
@@ -348,43 +347,121 @@ public class Laberinto
         this.pct_enemigo = pct;
     }
     
-    /**
-     * Modificación Lab2: El método moverEnemigos se ha generalizado en un
-     * método moverEntidad, ejecutado por cada enemigo en el laberinto
-     */
-    public void moverEnemigos()
+    private int getCuadranteRespectoPosicion(Position src, Position dest)
     {
-        for (int i = 0; i < this.enemigos.size(); ++i) {
-            moverEntidad(this.enemigos.get(i));
+        if (src.getX() >= dest.getX()
+            &&
+            src.getY() <= dest.getY()) {
+            // Primer cuadrante
+            return 0;
+        } else if (src.getX() >= dest.getX()
+            &&
+            src.getY() > dest.getY()) {
+            // Segundo cuadrante
+            return 1;
+        } else if (src.getX() < dest.getX()
+            &&
+            src.getY() >= dest.getY()) {
+            // Tercer cuadrante
+            return 2;
+        } else {
+            // Cuarto cuadrante
+            return 3;
         }
     }
+    
+    public void moverEnemigos(Position playerPos)
+    {
+        for (int i = 0; i < this.enemigos.size(); ++i) {
+            Enemigo enemigo = this.enemigos.get(i);
+            Direction dir = getValidDirectionClosestTo(playerPos, enemigo.getPosition());
+            // Si no se puede mover en esa dirección, se mueve en una dirección aleatoria
+            if (!moverEntidad(enemigo, dir)) {
+                moverEntidad(enemigo);
+            }
+        }
+    }
+    
+    public Direction getValidDirectionClosestTo(Position src, Position dest)
+    {
+        int cuadrante = getCuadranteRespectoPosicion(src, dest);
+        Direction[] directions = getDirectionsInQuadrant(cuadrante);
+        Direction minDir = directions[0];
+        double minDistance = 1000;
+        
+        for (Direction dir : directions) {
+            Position newPos = src.copy().move(dir);
+            boolean validPosition = this.validPlayerPosition(newPos);
+            if (validPosition && (newPos.distanceTo(dest) < minDistance)) {
+                minDir = dir;
+                minDistance = newPos.distanceTo(dest);
+            }
+        }
+        
+        return minDir;
+    }
+    
+    public Direction[] getDirectionsInQuadrant(int cuadrante)
+    {
+        int numDirections = Direction.values().length/4 + 1;
+        int initIndex = 0;
+        // Lo dejo así por si es necesario moverse en diagonales
+        switch (cuadrante) {
+            case 0:
+               initIndex = 0;
+               break;
+            case 1:
+                initIndex = 1;
+                break;
+            case 2:
+                initIndex = 2;
+                break;
+            case 3:
+                initIndex = 3;
+                break;
+        }
+        Direction[] validDirections = Direction.values();
+        Direction[] directions = new Direction[numDirections];
+        for (int i = 0; i < numDirections; ++i) {
+            directions[i] = validDirections[(initIndex+i) % validDirections.length];
+        }
+        
+        return directions;
+    }
+    
     /**
      * Mueve una entidad en una dirección aleatoria, haciendo uso de la sobrecarga
      * del método: moverEntidad(Entidad, Direction)
      * 
      * @param ent 
      */
-    public void moverEntidad(Entidad ent)
+    public boolean moverEntidad(Entidad ent)
     {
         Direction[] dirs = Direction.values();
         int index = (int) (Math.random() * 4);
         Direction dir = dirs[index];
-        this.moverEntidad(ent, dir);
+        return this.moverEntidad(ent, dir);
     }
     
-    public void moverEntidad(Entidad ent, Direction dir)
+    public boolean moverEntidad(Entidad ent, Direction dir)
     {
         // Si es una posición válida, mueve la entidad y termina
         if (validPlayerPosition(ent.getPosition().copy().move(dir))) {
-            this.get(ent.getPosition()).setContenido(Celda.Contenido.LIBRE);
+            this.get(ent.getPosition()).setContenido(this.get(ent.getPosition()).getContenidoPrevio());
             ent.move(dir);
             Celda.Contenido cont = Celda.Contenido.ALIADO;
             if (ent instanceof Aliado)
                 cont = Celda.Contenido.ALIADO;
             else if (ent instanceof Enemigo)
                 cont = Celda.Contenido.ENEMIGO;
+            else if (ent instanceof Avatar)
+                cont = Celda.Contenido.JUGADOR;
             this.get(ent.getPosition()).setContenido(cont);
+            
+            return true;
         }
+        
+        return false;
     }
     
     public Artefacto getArtefacto(Position pos)

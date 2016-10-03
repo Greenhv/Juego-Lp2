@@ -36,5 +36,24 @@ public abstract class Artefacto
         ARMA
     }
     
+    public static Artefacto random()
+    {
+        int tipo = (int) (Math.random() * Artefacto.Tipo.values().length);
+        Artefacto.Tipo type = Artefacto.Tipo.values()[tipo];
+        Artefacto artefacto = null;
+        switch (type) {
+            case POCION:
+                artefacto = PocionCuracion.random();
+                break;
+            case ARMA:
+                artefacto = Arma.random();
+                break;
+            case ARMADURA:
+                artefacto = Armadura.random();
+                break;
+        }
+        return artefacto;
+    }
+    
     public abstract String toString();
 }

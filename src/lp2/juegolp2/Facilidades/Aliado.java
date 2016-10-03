@@ -24,10 +24,6 @@ public class Aliado extends Avatar
         consejos[4] = "Si tienes baja vida, huye de los enemigos";
     }
     
-    public Aliado(String nombre)
-    {
-        super(nombre);
-    }
     public Aliado(String nombre, Position pos)
     {
         super(nombre, pos);

@@ -96,4 +96,9 @@ public class Position
     {
         return new Position(getX(), getY());
     }
+    
+    public double distanceTo(Position pos)
+    {
+        return Math.sqrt(Math.pow(this.X-pos.X, 2) + Math.pow(this.Y-pos.Y, 2));
+    }
 }

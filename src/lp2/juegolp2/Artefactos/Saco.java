@@ -25,9 +25,9 @@ public class Saco
         this.saco.add(item);
     }
 
-    public void removeItem(int index)
+    public Artefacto removeItem(int index)
     {
-        this.saco.remove(index);
+        return this.saco.remove(index);
     }
     
     public int size()
@@ -45,7 +45,6 @@ public class Saco
         String str = "";
         for (int i = 0; i < saco.size(); ++i)
             str += Integer.toString(i+1) + ". " + saco.get(i) + "\n";
-        str += "\n";
         return str;
     }
 }

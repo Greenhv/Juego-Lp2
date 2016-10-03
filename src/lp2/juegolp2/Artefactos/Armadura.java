@@ -1,35 +1,55 @@
 package lp2.juegolp2.Artefactos;
 
+import com.thoughtworks.xstream.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+
 /**
  * Created by pmvb on 01/09/16.
  */
 public class Armadura extends Artefacto
 {
-    public static Armadura[] armadurasDisp;
-    static {
-        armadurasDisp = new Armadura[2];
-        armadurasDisp[0] = new Armadura(4, "Armadura de Cuero");
-        armadurasDisp[1] = new Armadura(8, "Armadura de Metal");
-    }
+    public static ArrayList<Armadura> armadurasDisp;
+    
     private int defensa;
 
-    public Armadura(int def)
-    {
-        super();
-        this.defensa = def;
-    }
-    
     public Armadura(int def, String nombre)
     {
-        this(def);
-        setNombre(nombre);
+        super(nombre);
+        setDefensa(def);
+    }
+    
+    public Armadura(Armadura armadura)
+    {
+        this(armadura.getDefensa(), armadura.getNombre());
     }
     
     public int getDefensa()
     {
         return defensa;
     }
+    
+    public void setDefensa(int def)
+    {
+        if (def <= 0)
+            throw new IllegalArgumentException(
+                "La defensa de una armadura debe ser mayor que cero"
+            );
+        this.defensa = def;
+    }
 
+    public static Armadura random()
+    {
+        return armadurasDisp.get((int) (Math.random() * armadurasDisp.size())).copy();
+    }
+    
+    public Armadura copy()
+    {
+        return new Armadura(this);
+    }
+    
     @Override
     public Artefacto.Tipo type()
     {
@@ -41,5 +61,13 @@ public class Armadura extends Artefacto
     {
         String str = getNombre() + " - " + Integer.toString(defensa);
         return str;
+    }
+    
+    public static void loadXML(XStream xstream) 
+        throws FileNotFoundException, IOException
+    {
+        FileReader reader = new FileReader("armaduras.xml");
+        armadurasDisp = (ArrayList<Armadura>)xstream.fromXML(reader);
+        reader.close();
     }
 }

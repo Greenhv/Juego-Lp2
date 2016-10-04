@@ -349,19 +349,19 @@ public class Laberinto
     
     private int getCuadranteRespectoPosicion(Position src, Position dest)
     {
-        if (src.getX() >= dest.getX()
+        if (dest.getX() <= src.getX()
             &&
-            src.getY() <= dest.getY()) {
+            dest.getY() >= src.getY()) {
             // Primer cuadrante
             return 0;
-        } else if (src.getX() >= dest.getX()
+        } else if (dest.getX() >= src.getX()
             &&
-            src.getY() > dest.getY()) {
+            dest.getY() >= src.getY()) {
             // Segundo cuadrante
             return 1;
-        } else if (src.getX() < dest.getX()
+        } else if (dest.getX() >= src.getX()
             &&
-            src.getY() >= dest.getY()) {
+            dest.getY() < src.getY()) {
             // Tercer cuadrante
             return 2;
         } else {
@@ -374,7 +374,7 @@ public class Laberinto
     {
         for (int i = 0; i < this.enemigos.size(); ++i) {
             Enemigo enemigo = this.enemigos.get(i);
-            Direction dir = getValidDirectionClosestTo(playerPos, enemigo.getPosition());
+            Direction dir = getValidDirectionClosestTo(enemigo.getPosition(), playerPos);
             // Si no se puede mover en esa dirección, se mueve en una dirección aleatoria
             if (!moverEntidad(enemigo, dir)) {
                 moverEntidad(enemigo);

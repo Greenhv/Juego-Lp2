@@ -203,10 +203,28 @@ public class Juego {
         this.jugador = new Avatar(nombre, avatarPos);
         this.jugador.setArma(armaIni);
         this.jugador.setArmadura(armaduraIni);
-        this.gestorLaberinto.agregaPlayer(jugador);
+        this.gestorLaberinto.get(currentLabIndex).agregaPlayer(jugador);
     }
     
     private void initAliado()
+    {
+        Position posAliado = initPosAliado(this.jugador);
+        aliado = new Aliado("ALIADO", posAliado);
+        this.gestorLaberinto.get(currentLabIndex).get(posAliado).setContenido(Celda.Contenido.ALIADO);
+        /**
+         * Llena el saco del aliado
+         */
+        int numArt = (int) (Math.random() * 6) + 5;
+        for (int i = 0; i < numArt; ++i) {
+            this.aliado.pickupItem(Artefacto.random());
+        }
+        /**
+         * Agrega el aliado al laberinto
+         */
+        this.gestorLaberinto.get(currentLabIndex).agregaAliado(this.aliado);
+    }
+    
+    private Position initPosAliado(Avatar jugador)
     {
         /**
          * Encuentra una posición inicial para el aliado
@@ -220,15 +238,7 @@ public class Juego {
                 break;
             }
         }
-        aliado = new Aliado("ALIADO", posAliado);
-        this.gestorLaberinto.get(currentLabIndex).get(posAliado).setContenido(Celda.Contenido.ALIADO);
-        /**
-         * Llena el saco del aliado
-         */
-        int numArt = (int) (Math.random() * 6) + 5;
-        for (int i = 0; i < numArt; ++i) {
-            this.aliado.pickupItem(Artefacto.random());
-        }
+        return posAliado;
     }
     
     private void initMap()
@@ -247,6 +257,7 @@ public class Juego {
             } else {
                 laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
                 this.jugador.setPosition(laberintoActual.getAnterior());
+                this.gestorLaberinto.get(currentLabIndex).agregaAliado(this.aliado);
             }
         } else if(this.jugador.getPosition().equals(laberintoActual.getAnterior())){
             if(this.currentLabIndex >= 1){
@@ -315,7 +326,7 @@ public class Juego {
         if (artefacto != null) {
             this.jugador.pickupItem(artefacto);
             laberintoActual.removeArtefacto(pos);
-            this.dibujador.showMessage("Has recogido un artefacto.");
+            this.dibujador.showMessage("Has recogido un artefacto: " + artefacto);
             return Result.PLAYING;
         }
         // Verifico si hay un enemigo en esa posicion
@@ -340,7 +351,8 @@ public class Juego {
             System.out.print("Heroe: " + jugador.getNombre());
             System.out.print(" - Vida Actual: " + jugador.getCurrentHP());
             System.out.print(" \t\t vs \t\tEnemigo: " + enemigo.getNombre());
-            System.out.println(" - Vida Actual: " + enemigo.getCurrentHP());
+            System.out.println(" - Vida Actual: " + enemigo.getCurrentHP() + 
+                    "Defensa: " + enemigo.getArmadura().getDefensa());
             System.out.println("Acciones disponibles: *help *atacar *huir *usar");
             System.out.print("Accion a tomar: ");
             String[] cmd = getCommandFromString(scan.nextLine());

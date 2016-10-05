@@ -302,6 +302,16 @@ public class Laberinto
         return validPlayerPosition(x, y);
     }
     
+    public boolean validEnemyPosition(Position pos)
+    {
+        int x = pos.getX();
+        int y = pos.getY();
+        Celda.Contenido cont = this.get(x, y).getContenido();
+        return (cont == Celda.Contenido.LIBRE ||
+                cont == Celda.Contenido.ANTERIOR ||
+                cont == Celda.Contenido.SIGUIENTE);
+    }
+    
     public void addEnemigo(Position pos)
     {   
         int nivel = this.niveles[(int) (Math.random() * niveles.length)];
@@ -446,8 +456,10 @@ public class Laberinto
     public boolean moverEntidad(Entidad ent, Direction dir)
     {
         // Si es una posición válida, mueve la entidad y termina
-        if (validPlayerPosition(ent.getPosition().copy().move(dir))) {
-            this.get(ent.getPosition()).setContenido(this.get(ent.getPosition()).getContenidoPrevio());
+        Position newPos = ent.getPosition().copy().move(dir);
+        boolean valid = (ent instanceof Enemigo) ? validEnemyPosition(newPos) : validPlayerPosition(newPos);
+        if (valid) {
+            this.get(ent.getPosition()).setContenido(Celda.Contenido.LIBRE);
             ent.move(dir);
             Celda.Contenido cont = Celda.Contenido.ALIADO;
             if (ent instanceof Aliado)
@@ -497,5 +509,15 @@ public class Laberinto
                 enemigos.remove(i);
         // Y de la celda
         this.get(pos).setContenido(Celda.Contenido.LIBRE);
+    }
+    
+    public void agregaPlayer(Avatar jugador)
+    {
+        this.get(jugador.getPosition()).setContenido(Celda.Contenido.JUGADOR);
+    }
+    
+    public void agregaAliado(Aliado aliado)
+    {
+        this.get(aliado.getPosition()).setContenido(Celda.Contenido.ALIADO);
     }
 }

@@ -98,12 +98,6 @@ public class GestorLaberinto
         }
     }
     
-    public void agregaPlayer(Avatar jugador)
-    {
-        Laberinto laberinto = this.laberintos.get(0);
-        laberinto.get(jugador.getPosition()).setContenido(Celda.Contenido.JUGADOR);
-    }
-    
     public int size()
     {
         return laberintos.size();

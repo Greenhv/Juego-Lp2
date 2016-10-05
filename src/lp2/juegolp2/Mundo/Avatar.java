@@ -21,6 +21,8 @@ public class Avatar extends Entidad
     
     public void pickupItem(Artefacto item)
     {
+        if (item == null)
+            return;
         if (item.type() == Artefacto.Tipo.ARMA && this.getArma() == null) {
             this.setArma((Arma) item);
         } else if (item.type() == Artefacto.Tipo.ARMADURA && this.getArmadura() == null) {

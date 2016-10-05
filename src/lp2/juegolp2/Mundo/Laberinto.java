@@ -353,20 +353,20 @@ public class Laberinto
             &&
             dest.getY() >= src.getY()) {
             // Primer cuadrante
-            return 0;
-        } else if (dest.getX() >= src.getX()
-            &&
-            dest.getY() >= src.getY()) {
-            // Segundo cuadrante
             return 1;
+        } else if (dest.getX() <= src.getX()
+            &&
+            dest.getY() <= src.getY()) {
+            // Segundo cuadrante
+            return 2;
         } else if (dest.getX() >= src.getX()
             &&
-            dest.getY() < src.getY()) {
+            dest.getY() <= src.getY()) {
             // Tercer cuadrante
-            return 2;
+            return 3;
         } else {
             // Cuarto cuadrante
-            return 3;
+            return 4;
         }
     }
     
@@ -407,17 +407,17 @@ public class Laberinto
         int initIndex = 0;
         // Lo dejo así por si es necesario moverse en diagonales
         switch (cuadrante) {
-            case 0:
+            case 1:
                initIndex = 0;
                break;
-            case 1:
-                initIndex = 1;
-                break;
             case 2:
-                initIndex = 2;
+                initIndex = 3;
                 break;
             case 3:
-                initIndex = 3;
+                initIndex = 2;
+                break;
+            case 4:
+                initIndex = 1;
                 break;
         }
         Direction[] validDirections = Direction.values();

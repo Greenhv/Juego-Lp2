@@ -1,0 +1,3 @@
+ALIADOS:2
+ALIADO:nombre aliado1/CONSEJOS:3@No te acerques a los enemigos si no estás preparado.5@Trata de recoger artefactos antes de pelear con un enemigo.1@Si el laberinto es muy difícil, regresa al anterior.2
+ALIADO:nombre aliado2/CONSEJOS:2@No dejes que los enemigos te acorralen.5@Si tienes baja vida, huye de los enemigos.2

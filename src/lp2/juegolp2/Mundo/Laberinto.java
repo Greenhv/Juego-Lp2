@@ -1,8 +1,6 @@
 package lp2.juegolp2.Mundo;
 
-import lp2.juegolp2.Entidades.Avatar;
-import lp2.juegolp2.Entidades.Entidad;
-import lp2.juegolp2.Entidades.Enemigo;
+import lp2.juegolp2.Entidades.*;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Facilidades.*;
 
@@ -14,40 +12,38 @@ import java.util.*;
  */
 public class Laberinto
 {
-    /*
+    /**
      * Ancho de un laberinto
      */
     private int ancho;
 
-    /*
+    /**
      * Alto de un laberinto
      */
     private int alto;
 
-    /*
+    /**
      * El laberinto mismo
      */
     public Celda[][] laberinto;
 
-    /*
+    /**
      * La probabilidad de que un enemigo aparezca en una celda
      */
     private double pct_enemigo;
 
-    /*
+    /**
      * Niveles posibles de enmigos en el laberinto
      */
     private int[] niveles;
     
     /**
      * Posicion de la celda para acceder al siguiente laberinto
-     * 
      */
     private Position anterior;
     
     /**
      * Posicion de la celda para acceder al siguiente laberinto
-     * 
      */
     private Position siguiente;
     
@@ -60,6 +56,11 @@ public class Laberinto
      * Enemigos en el laberinto
      */
     private ArrayList<Enemigo> enemigos;
+    
+    /**
+     * Aliados en el laberinto
+     */
+    private ArrayList<Aliado> aliados;
     
     public Laberinto(int ancho, int alto, double pct_enemigo, int[] niveles)
     {

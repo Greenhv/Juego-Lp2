@@ -1,6 +1,6 @@
 package lp2.juegolp2.Interfaz;
 
-import lp2.juegolp2.Mundo.Avatar;
+import lp2.juegolp2.Entidades.Avatar;
 import lp2.juegolp2.Mundo.Position;
 import lp2.juegolp2.Mundo.Laberinto;
 /**

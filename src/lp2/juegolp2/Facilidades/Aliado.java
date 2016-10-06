@@ -5,6 +5,7 @@
  */
 package lp2.juegolp2.Facilidades;
 
+import lp2.juegolp2.Entidades.Avatar;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Mundo.*;
 

@@ -1,5 +1,8 @@
 package lp2.juegolp2.Mundo;
 
+import lp2.juegolp2.Entidades.Avatar;
+import lp2.juegolp2.Entidades.Entidad;
+import lp2.juegolp2.Entidades.Enemigo;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Facilidades.*;
 

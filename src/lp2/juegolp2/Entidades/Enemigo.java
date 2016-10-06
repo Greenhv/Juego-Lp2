@@ -1,4 +1,4 @@
-package lp2.juegolp2.Mundo;
+package lp2.juegolp2.Entidades;
 
 import lp2.juegolp2.Artefactos.*;
 /**

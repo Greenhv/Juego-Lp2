@@ -1,5 +1,8 @@
 package lp2.juegolp2.Juego;
 
+import lp2.juegolp2.Entidades.Avatar;
+import lp2.juegolp2.Entidades.Entidad;
+import lp2.juegolp2.Entidades.Enemigo;
 import com.thoughtworks.xstream.*;
 import com.thoughtworks.xstream.io.xml.*;
 import java.io.FileNotFoundException;

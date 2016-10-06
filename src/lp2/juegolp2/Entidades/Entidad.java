@@ -1,6 +1,8 @@
-package lp2.juegolp2.Mundo;
+package lp2.juegolp2.Entidades;
 
 import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Mundo.Direction;
+import lp2.juegolp2.Mundo.Position;
 
 /**
  *

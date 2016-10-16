@@ -69,6 +69,7 @@ public class Laberinto
         this.setAlto(alto);
         this.artefactos = new HashMap<>();
         this.enemigos = new ArrayList<>();
+        this.aliados = new ArrayList<>();
         laberinto = new Celda[alto][ancho];
         this.niveles = Arrays.copyOfRange(niveles, 0, niveles.length);
         

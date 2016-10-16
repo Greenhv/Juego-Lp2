@@ -102,4 +102,9 @@ public class GestorLaberinto
     {
         return laberintos.size();
     }
+    
+    public void initAliados()
+    {
+        
+    }
 }

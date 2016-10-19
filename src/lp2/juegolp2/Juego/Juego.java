@@ -486,47 +486,12 @@ public class Juego {
         PLAYING
     }
     
-    public void closeGame()
+    private void closeGame()
     {
         this.serializeArtefactos();
-        this.serializeArmas();
-        this.serializeArmaduras();
     }
     
-    public void serializeArmaduras()
-    {
-        try {
-            FileWriter fw = new FileWriter("armaduras.xml");
-            xmlSerializer.toXML(Armadura.armadurasDisp, fw);
-            fw.close();
-        } catch (IOException e) {
-            this.dibujador.showError(e.toString());
-        }
-    }
-    
-    public void serializeArmas()
-    {
-        try {
-            FileWriter fw = new FileWriter("armas.xml");
-            xmlSerializer.toXML(Arma.armasDisp, fw);
-            fw.close();
-        } catch (IOException e) {
-            this.dibujador.showError(e.toString());
-        }
-    }
-    
-    public void serializeArtefactos()
-    {
-        try {
-            FileWriter fw = new FileWriter("pociones.xml");
-            xmlSerializer.toXML(PocionCuracion.pocionesDisp, fw);
-            fw.close();
-        } catch (IOException e) {
-            this.dibujador.showError(e.toString());
-        }
-    }
-    
-    public void initArtefactos()
+    private void initArtefactos()
     {
         try {
             PocionCuracion.loadXML(xmlSerializer);
@@ -538,6 +503,46 @@ public class Juego {
         } catch (IOException e) {
             this.dibujador.showError(e.toString());
             System.exit(1);
+        }
+    }
+    
+    private void serializeArtefactos()
+    {
+        this.serializePociones();
+        this.serializeArmas();
+        this.serializeArmaduras();
+    }
+    
+    private void serializeArmaduras()
+    {
+        try {
+            FileWriter fw = new FileWriter("armaduras.xml");
+            xmlSerializer.toXML(Armadura.armadurasDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    private void serializeArmas()
+    {
+        try {
+            FileWriter fw = new FileWriter("armas.xml");
+            xmlSerializer.toXML(Arma.armasDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    private void serializePociones()
+    {
+        try {
+            FileWriter fw = new FileWriter("pociones.xml");
+            xmlSerializer.toXML(PocionCuracion.pocionesDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
         }
     }
 }

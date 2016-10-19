@@ -1,6 +1,7 @@
 package lp2.juegolp2.Entidades;
 
 import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Mundo.Celda;
 /**
  *
  * @author pmvb
@@ -52,5 +53,11 @@ public class Enemigo extends Entidad
         str += "Armadura: " + ((getArmadura() == null) ? "Ninguna" : getArmadura().toString()) + "\n";
         
         return str;
+    }
+    
+    @Override
+    public Celda.Contenido getContenidoCelda()
+    {
+        return Celda.Contenido.ENEMIGO;
     }
 }

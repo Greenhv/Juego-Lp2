@@ -1,6 +1,7 @@
 package lp2.juegolp2.Entidades;
 
 import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Mundo.Celda;
 import lp2.juegolp2.Mundo.Position;
 /**
  *
@@ -88,6 +89,12 @@ public class Avatar extends Entidad
         ++this.nivel;
         this.setMaxHP(nivel*10);
         this.initHP();
+    }
+    
+    @Override
+    public Celda.Contenido getContenidoCelda()
+    {
+        return Celda.Contenido.JUGADOR;
     }
 }
 

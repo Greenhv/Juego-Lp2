@@ -34,9 +34,8 @@ public class GestorLaberinto
     public void crearLaberintos(int numLaberintos, int enemy_range)
     {
         for (int i = 0; i < numLaberintos; ++i) {
-            // M y N  entre 20 y 30
-            int M = (int) ((Math.random()*11) + 20);
-            int N = (int) ((Math.random()*11) + 20);
+            int M = (int) ((Math.random()*6) + 5);
+            int N = (int) ((Math.random()*6) + 5);
             int[] niveles = IntStream.rangeClosed(i+1, (i+1)*enemy_range).toArray();
             this.laberintos.add(this.Crear(M, N, niveles));
         }
@@ -57,7 +56,7 @@ public class GestorLaberinto
         for (int i = 1; i < lab.getAlto()-1; ++i) {
             for (int j = 1; j < lab.getAncho()-1; ++j) {
                 // Si está libre, la añado a la lista
-                if (lab.get(i, j).getContenido() == Celda.Contenido.LIBRE) {
+                if (lab.get(i, j).getContenido().contains(Celda.Contenido.LIBRE)) {
                     libres.add(new Position(i, j));
                 }
             }

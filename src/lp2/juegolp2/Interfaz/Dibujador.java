@@ -1,8 +1,7 @@
 package lp2.juegolp2.Interfaz;
 
-import lp2.juegolp2.Entidades.Avatar;
-import lp2.juegolp2.Mundo.Position;
-import lp2.juegolp2.Mundo.Laberinto;
+import lp2.juegolp2.Mundo.*;
+import lp2.juegolp2.Entidades.*;
 /**
  *
  * @author pmvb
@@ -36,7 +35,7 @@ public class Dibujador
         
         for(int i = xIni; i <= xFin; i++){
             for(int j = yIni; j <= yFin;j++){
-                System.out.print(laberinto.get(i, j).getContenido().asChar());
+                laberinto.get(i, j).draw();
             }
             System.out.println();
         }

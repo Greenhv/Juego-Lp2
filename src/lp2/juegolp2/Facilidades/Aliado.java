@@ -35,4 +35,10 @@ public class Aliado extends Avatar
     {
         this.consejos.add(consejo);
     }
+    
+    @Override
+    public Celda.Contenido getContenidoCelda()
+    {
+        return Celda.Contenido.ALIADO;
+    }
 }

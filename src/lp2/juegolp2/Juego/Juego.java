@@ -213,7 +213,7 @@ public class Juego {
     {
         Position posAliado = initPosAliado(this.jugador);
         aliado = new Aliado("ALIADO", posAliado);
-        this.gestorLaberinto.get(currentLabIndex).get(posAliado).setContenido(Celda.Contenido.ALIADO);
+        this.gestorLaberinto.get(currentLabIndex).get(posAliado).addContenido(Celda.Contenido.ALIADO);
         /**
          * Llena el saco del aliado
          */
@@ -221,10 +221,6 @@ public class Juego {
         for (int i = 0; i < numArt; ++i) {
             this.aliado.pickupItem(Artefacto.random());
         }
-        /**
-         * Agrega el aliado al laberinto
-         */
-        this.gestorLaberinto.get(currentLabIndex).agregaAliado(this.aliado);
     }
     
     private Position initPosAliado(Avatar jugador)
@@ -284,22 +280,10 @@ public class Juego {
             pauseScreen();
             return;
         }
-        Position playerPos = this.jugador.getPosition();
-        Celda currCell = laberintoActual.get(playerPos);
-        if (playerPos.equals(laberintoActual.getAnterior())) {
-            // Si está sobre la celda ANTERIOR antes de moverse, lo pinta de nuevo
-            currCell.setContenido(Celda.Contenido.ANTERIOR);
-        } else if (playerPos.equals(laberintoActual.getSiguiente())) {
-            // Si está sobre la celda SIGUIENTE antes de moverse, lo pinta de nuevo
-            currCell.setContenido(Celda.Contenido.SIGUIENTE);
-        } else {
-            currCell.setContenido(Celda.Contenido.LIBRE);
-        }
+        laberintoActual.moverEntidad(jugador, dir);
         if (newPos.equals(this.aliado.getPosition())) {
             laberintoActual.moverEntidad(aliado, dir.opposite());
         }
-        this.jugador.setPosition(newPos);
-        laberintoActual.actualizarJugador(this.jugador.getPosition());
     }
     
     private void moverEnemigos(Laberinto lab)
@@ -312,7 +296,7 @@ public class Juego {
         Direction dir = Direction.valueOf(mov);
         Position pos = this.jugador.getPosition().copy().move(dir);
         // Si no se puede interactuar con la posición seleccionada, se envía un mensaje
-        if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED) {
+        if (laberintoActual.get(pos).getContenido().contains(Celda.Contenido.PARED)) {
             this.dibujador.showError("No se puede interactuar con esa celda");
             this.pauseScreen();
             return Result.PLAYING;

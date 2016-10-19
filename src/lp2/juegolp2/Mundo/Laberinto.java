@@ -246,7 +246,7 @@ public class Laberinto
     public void setAnterior(Position anterior) 
     {
         this.anterior = anterior;
-        this.get(anterior).setContenido(Celda.Contenido.ANTERIOR);
+        this.get(anterior).addContenido(Celda.Contenido.ANTERIOR);
     }
 
     /**
@@ -263,12 +263,12 @@ public class Laberinto
     public void setSiguiente(Position sig)
     {
         this.siguiente = sig;
-        this.get(sig).setContenido(Celda.Contenido.SIGUIENTE);
+        this.get(sig).addContenido(Celda.Contenido.SIGUIENTE);
     }
     
     public void actualizarJugador(int X, int Y)
     {
-        this.get(X, Y).setContenido(Celda.Contenido.JUGADOR);
+        this.get(X, Y).addContenido(Celda.Contenido.JUGADOR);
     }
     
     public void actualizarJugador(Position pos)
@@ -293,11 +293,11 @@ public class Laberinto
         if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1){
             return false;
         }
-        Celda.Contenido cont = this.get(x, y).getContenido();
-        return (cont == Celda.Contenido.LIBRE ||
-                cont == Celda.Contenido.ANTERIOR ||
-                cont == Celda.Contenido.SIGUIENTE ||
-                cont == Celda.Contenido.ALIADO);
+        Set<Celda.Contenido> cont = this.get(x, y).getContenido();
+        return (cont.contains(Celda.Contenido.LIBRE) ||
+                cont.contains(Celda.Contenido.ANTERIOR) ||
+                cont.contains(Celda.Contenido.SIGUIENTE) ||
+                cont.contains(Celda.Contenido.ALIADO));
     }
     
     public boolean validPlayerPosition(Position pos)
@@ -311,10 +311,10 @@ public class Laberinto
     {
         int x = pos.getX();
         int y = pos.getY();
-        Celda.Contenido cont = this.get(x, y).getContenido();
-        return (cont == Celda.Contenido.LIBRE ||
-                cont == Celda.Contenido.ANTERIOR ||
-                cont == Celda.Contenido.SIGUIENTE);
+        Set<Celda.Contenido> cont = this.get(x, y).getContenido();
+        return (cont.contains(Celda.Contenido.LIBRE) ||
+                cont.contains(Celda.Contenido.ANTERIOR) ||
+                cont.contains(Celda.Contenido.SIGUIENTE));
     }
     
     public void addEnemigo(Position pos)
@@ -333,7 +333,7 @@ public class Laberinto
                 return;
         }
         this.enemigos.add(enemigo);
-        this.get(pos).setContenido(Celda.Contenido.ENEMIGO);
+        this.get(pos).addContenido(Celda.Contenido.ENEMIGO);
     }
     
     public void addArtefacto(Position pos){
@@ -344,7 +344,7 @@ public class Laberinto
     public void addArtefacto(Artefacto artefacto, Position pos)
     {
         if (artefacto != null) {
-            this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
+            this.get(pos).addContenido(Celda.Contenido.ARTEFACTO);
             this.artefactos.put(pos, artefacto);
         }
     }
@@ -464,16 +464,9 @@ public class Laberinto
         Position newPos = ent.getPosition().copy().move(dir);
         boolean valid = (ent instanceof Enemigo) ? validEnemyPosition(newPos) : validPlayerPosition(newPos);
         if (valid) {
-            this.get(ent.getPosition()).setContenido(Celda.Contenido.LIBRE);
+            this.get(ent.getPosition()).removeContenido(ent.getContenidoCelda());
             ent.move(dir);
-            Celda.Contenido cont = Celda.Contenido.ALIADO;
-            if (ent instanceof Aliado)
-                cont = Celda.Contenido.ALIADO;
-            else if (ent instanceof Enemigo)
-                cont = Celda.Contenido.ENEMIGO;
-            else if (ent instanceof Avatar)
-                cont = Celda.Contenido.JUGADOR;
-            this.get(ent.getPosition()).setContenido(cont);
+            this.get(ent.getPosition()).addContenido(ent.getContenidoCelda());
             
             return true;
         }
@@ -489,12 +482,12 @@ public class Laberinto
     public void removeArtefacto(Position pos)
     {
         this.artefactos.remove(pos);
-        this.get(pos).setContenido(Celda.Contenido.LIBRE);
+        this.get(pos).removeContenido(Celda.Contenido.ARTEFACTO);
     }
     
     public void addArtefacto(Position pos, Artefacto art)
     {
-        this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
+        this.get(pos).addContenido(Celda.Contenido.ARTEFACTO);
         this.artefactos.put(pos, art);
     }
     
@@ -513,16 +506,16 @@ public class Laberinto
             if (enemigos.get(i).getPosition().equals(pos))
                 enemigos.remove(i);
         // Y de la celda
-        this.get(pos).setContenido(Celda.Contenido.LIBRE);
+        this.get(pos).removeContenido(Celda.Contenido.ENEMIGO);
     }
     
     public void agregaPlayer(Avatar jugador)
     {
-        this.get(jugador.getPosition()).setContenido(Celda.Contenido.JUGADOR);
+        this.get(jugador.getPosition()).addContenido(Celda.Contenido.JUGADOR);
     }
     
     public void agregaAliado(Aliado aliado)
     {
-        this.get(aliado.getPosition()).setContenido(Celda.Contenido.ALIADO);
+        this.get(aliado.getPosition()).addContenido(Celda.Contenido.ALIADO);
     }
 }

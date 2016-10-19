@@ -452,7 +452,7 @@ public class Laberinto
     public boolean moverEntidad(Entidad ent)
     {
         Direction[] dirs = Direction.values();
-        int index = (int) (Math.random() * 4);
+        int index = (int) (Math.random() * dirs.length);
         Direction dir = dirs[index];
         return this.moverEntidad(ent, dir);
     }
@@ -513,8 +513,52 @@ public class Laberinto
         this.get(jugador.getPosition()).addContenido(Celda.Contenido.JUGADOR);
     }
     
-    public void agregaAliado(Aliado aliado)
+    public void removePlayer(Avatar jugador)
     {
+        this.get(jugador.getPosition()).removeContenido(Celda.Contenido.JUGADOR);
+    }
+    
+    public void addAliado(Aliado aliado)
+    {
+        ArrayList<Position> libres = this.getCeldasLibres();
+        int posIndex = (int) (Math.random() * libres.size());
+        aliado.setPosition(libres.get(posIndex));
         this.get(aliado.getPosition()).addContenido(Celda.Contenido.ALIADO);
+        this.aliados.add(aliado);
+    }
+    
+    public ArrayList<Position> getCeldasLibres()
+    {
+        ArrayList<Position> libres = new ArrayList<>();
+        for (int i = 1; i < this.getAlto()-1; ++i) {
+            for (int j = 1; j < this.getAncho()-1; ++j) {
+                // Si está libre, la añado a la lista
+                if (this.get(i, j).esLibre()) {
+                    libres.add(new Position(i, j));
+                }
+            }
+        }
+        return libres;
+    }
+    
+    public ArrayList<Aliado> aliados()
+    {
+        return this.aliados;
+    }
+    
+    public void moverAliados()
+    {
+        for (Aliado aliado : this.aliados) {
+            this.moverEntidad(aliado);
+        }
+    }
+    
+    public Aliado aliadoEnPos(Position pos)
+    {
+        for (Aliado aliado : this.aliados) {
+            if (aliado.getPosition().equals(pos))
+                return aliado;
+        }
+        return null;
     }
 }

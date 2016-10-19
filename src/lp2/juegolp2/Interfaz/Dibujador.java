@@ -1,5 +1,6 @@
 package lp2.juegolp2.Interfaz;
 
+import java.util.Scanner;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Entidades.*;
 /**
@@ -67,7 +68,17 @@ public class Dibujador
         System.out.println(" - Vida Actual: " + enemigo.getCurrentHP() + 
                 " - Defensa: " + 
                 ((enemigo.getArmadura() == null) ? 0 : enemigo.getArmadura().getDefensa()));
-        System.out.println("Acciones disponibles: *help *atacar *huir *usar");
-        System.out.print("Accion a tomar: ");
+    }
+    
+    public void showPrompt(String prompt)
+    {
+        System.out.print(prompt);
+    }
+    
+    public void showPauseScreen()
+    {
+        System.out.println("Presione Enter para continuar...");
+        Scanner scan = new Scanner(System.in);
+        scan.nextLine();
     }
 }

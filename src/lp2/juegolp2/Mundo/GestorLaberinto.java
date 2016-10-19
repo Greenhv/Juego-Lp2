@@ -1,6 +1,7 @@
 package lp2.juegolp2.Mundo;
 
 import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Facilidades.*;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -52,15 +53,7 @@ public class GestorLaberinto
     private void configLaberinto(Laberinto lab)
     {
         // Crea lista de celdas libres
-        ArrayList<Position> libres = new ArrayList<>();
-        for (int i = 1; i < lab.getAlto()-1; ++i) {
-            for (int j = 1; j < lab.getAncho()-1; ++j) {
-                // Si está libre, la añado a la lista
-                if (lab.get(i, j).getContenido().contains(Celda.Contenido.LIBRE)) {
-                    libres.add(new Position(i, j));
-                }
-            }
-        }
+        ArrayList<Position> libres = lab.getCeldasLibres();
         
         // Agrega anterior
         int index = (int) (Math.random()*libres.size());
@@ -72,21 +65,7 @@ public class GestorLaberinto
         lab.setSiguiente(libres.get(index));
         libres.remove(index);
         
-        // Agrega artefactos
-        //index = (int) (Math.random()*100) % (libres.size()/2);
-        int numero_artefactos = 15; //variable temporal que indica el numero de artefactos por laberinto
-        int artefactos_colocados = 0;
-        int index_artefacto;
-        
-        while(artefactos_colocados < numero_artefactos){
-            index_artefacto = (int) (Math.random() * 100);
-            if(index_artefacto < libres.size()){
-                lab.addArtefacto(libres.get(index_artefacto));
-                artefactos_colocados++;
-            }
-        }
-        
-        // Agrega enemigos
+        // Agrega enemigos y artefactos
         for (int i = 0; i < libres.size(); ++i) {
             if (Math.random() <= lab.getPctEnemigo()) {
                 lab.addEnemigo(libres.get(i));
@@ -102,8 +81,9 @@ public class GestorLaberinto
         return laberintos.size();
     }
     
-    public void initAliados()
+    public void addAliado(Aliado aliado)
     {
-        
+        int labIndex = (int) (Math.random() * this.size());
+        this.get(labIndex).addAliado(aliado);
     }
 }

@@ -122,6 +122,11 @@ public class Celda
     {
         return this.getTipo() == Tipo.PARED;
     }
+    
+    public boolean esLibre()
+    {
+        return this.contenido.first() == Celda.Contenido.LIBRE;
+    }
 
     public enum Tipo
     {

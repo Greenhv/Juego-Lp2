@@ -1,19 +1,14 @@
 package lp2.juegolp2.Juego;
 
-import lp2.juegolp2.Entidades.Avatar;
-import lp2.juegolp2.Entidades.Entidad;
-import lp2.juegolp2.Entidades.Enemigo;
 import com.thoughtworks.xstream.*;
 import com.thoughtworks.xstream.io.xml.*;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Interfaz.*;
 import lp2.juegolp2.Facilidades.*;
+import lp2.juegolp2.Entidades.*;
 
 /**
  * Singleton, no debería haber más de una instancia de Juego
@@ -39,7 +34,7 @@ public class Juego {
     private static final int enemyLevelRange = 2;
     
     private Avatar jugador;
-    private Aliado aliado;
+    
     private GestorLaberinto gestorLaberinto;
     private Dibujador dibujador;
     private int currentLabIndex;
@@ -83,19 +78,17 @@ public class Juego {
         this.initMap();
         // Obten datos y crea jugador
         this.initPlayer();
-        this.initAliado();
+        this.initAliados();
     }
 
     public Result play()
     {
         Scanner scan = new Scanner(System.in);
-        Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
         while(true){
+            Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
             this.dibujador.dibujarLaberinto(laberintoActual, this.jugador.getPosition());
             this.dibujador.dibujarInfoJugador(this.jugador);
-            System.out.println("ALIADO:");
-            this.dibujador.dibujarInfoJugador(this.aliado);
-            System.out.print("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles) : ");
+            this.dibujador.showPrompt("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles): ");
             
             String[] cmd = this.getCommandFromString(scan.nextLine());
             Result result = Result.PLAYING;
@@ -196,7 +189,7 @@ public class Juego {
     private void initPlayer()
     {
         Scanner scan = new Scanner(System.in);
-        System.out.print("Ingrese su nombre: ");
+        this.dibujador.showPrompt("Ingrese su nombre: ");
         String nombre = scan.nextLine();
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
@@ -209,35 +202,68 @@ public class Juego {
         this.gestorLaberinto.get(currentLabIndex).agregaPlayer(jugador);
     }
     
-    private void initAliado()
+    private void initAliados()
     {
-        Position posAliado = initPosAliado(this.jugador);
-        aliado = new Aliado("ALIADO", posAliado);
-        this.gestorLaberinto.get(currentLabIndex).get(posAliado).addContenido(Celda.Contenido.ALIADO);
-        /**
-         * Llena el saco del aliado
-         */
-        int numArt = (int) (Math.random() * 6) + 5;
-        for (int i = 0; i < numArt; ++i) {
-            this.aliado.pickupItem(Artefacto.random());
-        }
+        ArrayList<Aliado> aliados = readAliadosTxt("aliados.txt");
+        
+        for (int i = 0; i < aliados.size(); ++i) {
+            /**
+             * Llena el saco del aliado
+             */
+            int numArt = (int) (Math.random() * 6) + 5;
+            for (int j = 0; j < numArt; ++j) {
+                aliados.get(i).pickupItem(Artefacto.random());
+            }
+            /**
+            * Agrega aliados a los laberintos
+            */
+            this.gestorLaberinto.addAliado(aliados.get(i));
+        }   
     }
     
-    private Position initPosAliado(Avatar jugador)
+    private ArrayList<Aliado> readAliadosTxt(String filename)
     {
-        /**
-         * Encuentra una posición inicial para el aliado
-         */
-        Position posAliado = new Position(this.jugador.getPosition());
-        Laberinto labActual = this.gestorLaberinto.get(currentLabIndex);
-        for (Direction dir : Direction.values()) {
-            Position newPos = posAliado.copy().move(dir);
-            if (labActual.validPlayerPosition(newPos)) {
-                posAliado.move(dir);
-                break;
+        ArrayList<Aliado> aliados = new ArrayList<>();
+        try {
+            RandomAccessFile file = new RandomAccessFile(filename, "r");
+            String line = file.readLine();
+            int numAliados = Integer.parseInt(line.split(":")[1]);
+            for (int i = 0; i < numAliados; ++i) {
+                line = file.readLine();
+                Aliado aliado = readAliadoFromString(line);
+                aliados.add(aliado);
             }
+        } catch (Exception ex) {
+            this.dibujador.showError(ex.toString());
+            ex.printStackTrace();
+            System.exit(1);
         }
-        return posAliado;
+        return aliados;
+    }
+    
+    private Aliado readAliadoFromString(String line)
+    {
+        String strAliado = line.split("ALIADO:")[1];
+        String[] datosAliado = strAliado.split("/");
+        // Obten nombre aliado
+        String nomAliado = datosAliado[0];
+               
+        // Crea lista de consejos
+        ArrayList<Consejo> listaConsejos = new ArrayList<>();
+                
+        // Obten consejos aliado
+        String strConsejos = datosAliado[1];
+        String[] datosConsejos = strConsejos.split(":")[1].split("@");
+        int numConsejos = Integer.parseInt(datosConsejos[0]);
+        for (int j = 1; j <= numConsejos; ++j) {
+            String[] consejo = datosConsejos[j].split("\\.");
+            String strConsejo = consejo[0];
+            int nivelConsejo = Integer.parseInt(consejo[1]);
+            Consejo objConsejo = new Consejo(strConsejo, nivelConsejo);
+            listaConsejos.add(objConsejo);
+        }
+
+        return new Aliado(nomAliado, listaConsejos);
     }
     
     private void initMap()
@@ -251,12 +277,13 @@ public class Juego {
         Result res = Result.PLAYING;
         this.moverAvatar(mov, laberintoActual);
         if(this.jugador.getPosition().equals(laberintoActual.getSiguiente())){
+            laberintoActual.removePlayer(jugador);
             if(++this.currentLabIndex == this.gestorLaberinto.size()) {
                 res = Result.WIN;
             } else {
                 laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
-                this.jugador.setPosition(laberintoActual.getAnterior());
-                this.gestorLaberinto.get(currentLabIndex).agregaAliado(this.aliado);
+                jugador.setPosition(laberintoActual.getAnterior());
+                laberintoActual.agregaPlayer(jugador);
             }
         } else if(this.jugador.getPosition().equals(laberintoActual.getAnterior())){
             if(this.currentLabIndex >= 1){
@@ -265,8 +292,7 @@ public class Juego {
                 this.jugador.setPosition(laberintoActual.getSiguiente());
             }
         }
-        this.moverEnemigos(laberintoActual);
-        laberintoActual.moverEntidad(aliado);
+        this.moverEntidades(laberintoActual);
         return res;
     }
     
@@ -281,14 +307,16 @@ public class Juego {
             return;
         }
         laberintoActual.moverEntidad(jugador, dir);
-        if (newPos.equals(this.aliado.getPosition())) {
+        Aliado aliado = laberintoActual.aliadoEnPos(newPos);
+        if (aliado != null) {
             laberintoActual.moverEntidad(aliado, dir.opposite());
         }
     }
     
-    private void moverEnemigos(Laberinto lab)
+    private void moverEntidades(Laberinto lab)
     {
         lab.moverEnemigos(this.jugador.getPosition());
+        lab.moverAliados();
     }
     
     private Result interactuar(String mov, Laberinto laberintoActual)
@@ -327,7 +355,8 @@ public class Juego {
             return Result.PLAYING;
         }
         
-        if (aliado.getPosition().equals(pos)) {
+        Aliado aliado = laberintoActual.aliadoEnPos(pos);
+        if (aliado != null) {
             this.dibujador.showMessage("Consejo de tu aliado: " + aliado.getConsejo());
         }
         return Result.PLAYING;
@@ -338,6 +367,7 @@ public class Juego {
         Scanner scan = new Scanner(System.in);
         while(true) {
             this.dibujador.showBattleInterface(jugador, enemigo);
+            this.dibujador.showPrompt("Accion a tomar (Ingrese help para ver las acciones disponibles): ");
             String[] cmd = getCommandFromString(scan.nextLine());
             if (!this.verifyBattleCommand(cmd)) {
                 this.dibujador.showError("No se ha ingresado un comando válido");
@@ -426,7 +456,7 @@ public class Juego {
         Scanner scan = new Scanner(System.in);
         do {
             validChoice = true;
-            System.out.print("Ingrese el artefacto a utilizar ('q' para salir): ");
+            this.dibujador.showPrompt("Ingrese el artefacto a utilizar ('q' para salir): ");
             try {
                 choice = scan.nextInt();
                 if (choice < 1 || choice > numItems)
@@ -446,9 +476,7 @@ public class Juego {
     
     private void pauseScreen()
     {
-        System.out.println("Presione Enter para continuar...");
-        Scanner scan = new Scanner(System.in);
-        scan.nextLine();
+        this.dibujador.showPauseScreen();
     }
     
     public enum Result

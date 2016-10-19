@@ -25,6 +25,13 @@ public class Aliado extends Avatar
         consejos = new ArrayList<>();
     }
     
+    public Aliado(String nombre, ArrayList<Consejo> consejos)
+    {
+        this(nombre);
+        this.consejos = consejos;
+        Collections.sort(consejos);
+    }
+    
     public String getConsejo()
     {
         int index = (int) (Math.random() * consejos.size());
@@ -34,6 +41,7 @@ public class Aliado extends Avatar
     public void addConsejo(Consejo consejo)
     {
         this.consejos.add(consejo);
+        Collections.sort(consejos);
     }
     
     @Override

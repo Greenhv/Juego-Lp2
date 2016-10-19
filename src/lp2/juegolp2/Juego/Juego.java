@@ -445,30 +445,7 @@ public class Juego {
         if (choice == 'q')
             return;
         
-        Artefacto artefacto = this.jugador.getArtefacto(choice-1);
-        /**
-         * Usa artefacto
-         * 
-         * Si es un arma o armadura, lo cambia por los que tiene actualmente
-         * Si es una pocion, la utiliza
-         */
-        switch (artefacto.type()) {
-            case ARMA:
-                Arma arma = (Arma) artefacto;
-                this.jugador.pickupItem(this.jugador.getArma());
-                this.jugador.setArma(arma);
-                break;
-            case ARMADURA:
-                Armadura armadura = (Armadura) artefacto;
-                this.jugador.pickupItem(this.jugador.getArmadura());
-                this.jugador.setArmadura(armadura);
-                break;
-            case POCION:
-                PocionCuracion pocion = (PocionCuracion) artefacto;
-                this.jugador.heal(pocion);
-                break;
-        }
-        this.jugador.dropItem(choice-1);
+        this.jugador.useItem(choice-1);
     }
     
     private void pauseScreen()

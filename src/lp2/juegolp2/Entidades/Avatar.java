@@ -96,5 +96,33 @@ public class Avatar extends Entidad
     {
         return Celda.Contenido.JUGADOR;
     }
+    
+    public void useItem(int index)
+    {
+        Artefacto artefacto = this.getArtefacto(index);
+        /**
+         * Usa artefacto
+         * 
+         * Si es un arma o armadura, lo cambia por los que tiene actualmente
+         * Si es una pocion, la utiliza
+         */
+        switch (artefacto.type()) {
+            case ARMA:
+                Arma arma = (Arma) artefacto;
+                this.pickupItem(this.getArma());
+                this.setArma(arma);
+                break;
+            case ARMADURA:
+                Armadura armadura = (Armadura) artefacto;
+                this.pickupItem(this.getArmadura());
+                this.setArmadura(armadura);
+                break;
+            case POCION:
+                PocionCuracion pocion = (PocionCuracion) artefacto;
+                this.heal(pocion);
+                break;
+        }
+        this.dropItem(index);
+    }
 }
 

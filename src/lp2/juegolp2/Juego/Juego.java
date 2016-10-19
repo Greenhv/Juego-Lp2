@@ -308,14 +308,6 @@ public class Juego {
     
     private Result interactuar(Laberinto laberintoActual, Position pos)
     {
-        // Verifico si hay un artefacto
-        Artefacto artefacto = laberintoActual.getArtefacto(pos);
-        if (artefacto != null) {
-            this.jugador.pickupItem(artefacto);
-            laberintoActual.removeArtefacto(pos);
-            this.dibujador.showMessage("Has recogido un artefacto: " + artefacto);
-            return Result.PLAYING;
-        }
         // Verifico si hay un enemigo en esa posicion
         Enemigo enemigo = laberintoActual.getEnemigo(pos);
         if (enemigo != null) {
@@ -325,6 +317,16 @@ public class Juego {
             }
             return res;
         }
+        
+        // Verifico si hay un artefacto
+        Artefacto artefacto = laberintoActual.getArtefacto(pos);
+        if (artefacto != null) {
+            this.jugador.pickupItem(artefacto);
+            laberintoActual.removeArtefacto(pos);
+            this.dibujador.showMessage("Has recogido un artefacto: " + artefacto);
+            return Result.PLAYING;
+        }
+        
         if (aliado.getPosition().equals(pos)) {
             this.dibujador.showMessage("Consejo de tu aliado: " + aliado.getConsejo());
         }
@@ -335,13 +337,7 @@ public class Juego {
     {   
         Scanner scan = new Scanner(System.in);
         while(true) {
-            System.out.print("Heroe: " + jugador.getNombre());
-            System.out.print(" - Vida Actual: " + jugador.getCurrentHP());
-            System.out.print(" \t\t vs \t\tEnemigo: " + enemigo.getNombre());
-            System.out.println(" - Vida Actual: " + enemigo.getCurrentHP() + 
-                    "Defensa: " + enemigo.getArmadura().getDefensa());
-            System.out.println("Acciones disponibles: *help *atacar *huir *usar");
-            System.out.print("Accion a tomar: ");
+            this.dibujador.showBattleInterface(jugador, enemigo);
             String[] cmd = getCommandFromString(scan.nextLine());
             if (!this.verifyBattleCommand(cmd)) {
                 this.dibujador.showError("No se ha ingresado un comando válido");
@@ -366,7 +362,7 @@ public class Juego {
             }
             // El enemigo murio luego de la accion del jugador ?
             if(enemigo.getCurrentHP() == 0) {
-                System.out.println("El " + enemigo.getNombre() + " a sido derrotado!");
+                this.dibujador.showMessage("El " + enemigo.getNombre() + " a sido derrotado!");
                 return Result.PLAYING;
             }
             

@@ -58,4 +58,16 @@ public class Dibujador
     {
         System.out.println(msg);
     }
+    
+    public void showBattleInterface(Avatar jugador, Entidad enemigo)
+    {
+        System.out.print("Heroe: " + jugador.getNombre());
+        System.out.print(" - Vida Actual: " + jugador.getCurrentHP());
+        System.out.print(" \t\t vs \t\tEnemigo: " + enemigo.getNombre());
+        System.out.println(" - Vida Actual: " + enemigo.getCurrentHP() + 
+                " - Defensa: " + 
+                ((enemigo.getArmadura() == null) ? 0 : enemigo.getArmadura().getDefensa()));
+        System.out.println("Acciones disponibles: *help *atacar *huir *usar");
+        System.out.print("Accion a tomar: ");
+    }
 }

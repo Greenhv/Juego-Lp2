@@ -294,10 +294,8 @@ public class Laberinto
             return false;
         }
         Set<Celda.Contenido> cont = this.get(x, y).getContenido();
-        return (cont.contains(Celda.Contenido.LIBRE) ||
-                cont.contains(Celda.Contenido.ANTERIOR) ||
-                cont.contains(Celda.Contenido.SIGUIENTE) ||
-                cont.contains(Celda.Contenido.ALIADO));
+        return !cont.contains(Celda.Contenido.ENEMIGO) &&
+               !cont.contains(Celda.Contenido.PARED);
     }
     
     public boolean validPlayerPosition(Position pos)
@@ -312,9 +310,10 @@ public class Laberinto
         int x = pos.getX();
         int y = pos.getY();
         Set<Celda.Contenido> cont = this.get(x, y).getContenido();
-        return (cont.contains(Celda.Contenido.LIBRE) ||
-                cont.contains(Celda.Contenido.ANTERIOR) ||
-                cont.contains(Celda.Contenido.SIGUIENTE));
+        return !cont.contains(Celda.Contenido.ALIADO) &&
+               !cont.contains(Celda.Contenido.JUGADOR) &&
+               !cont.contains(Celda.Contenido.ENEMIGO) &&
+               !cont.contains(Celda.Contenido.PARED);
     }
     
     public void addEnemigo(Position pos)

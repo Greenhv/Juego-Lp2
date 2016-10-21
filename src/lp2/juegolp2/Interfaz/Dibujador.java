@@ -1,8 +1,11 @@
 package lp2.juegolp2.Interfaz;
 
 import java.util.Scanner;
+import java.awt.*;
+import javax.swing.*;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Entidades.*;
+
 /**
  *
  * @author pmvb
@@ -52,7 +55,9 @@ public class Dibujador
     
     public void showError(String err)
     {
-        System.out.println(err);
+        JFrame ventana = new JFrame();
+        JOptionPane.showMessageDialog(ventana, err, "Error", JOptionPane.ERROR_MESSAGE);
+        ventana.dispose();
     }
     
     public void showMessage(String msg)
@@ -70,9 +75,12 @@ public class Dibujador
                 ((enemigo.getArmadura() == null) ? 0 : enemigo.getArmadura().getDefensa()));
     }
     
-    public void showPrompt(String prompt)
+    public String showInputPrompt(String prompt)
     {
-        System.out.print(prompt);
+        JFrame ventana = new JFrame();
+        String input = JOptionPane.showInputDialog(ventana, prompt, "", JOptionPane.PLAIN_MESSAGE);
+        ventana.dispose();
+        return input;
     }
     
     public void showPauseScreen()
@@ -80,5 +88,13 @@ public class Dibujador
         System.out.println("Presione Enter para continuar...");
         Scanner scan = new Scanner(System.in);
         scan.nextLine();
+    }
+    
+    public void showStory(String story, String playerName)
+    {
+        story = story.replaceAll("\\{playerName\\}", playerName);
+        JFrame ventana = new JFrame();
+        JOptionPane.showMessageDialog(ventana, story, "Historia", JOptionPane.PLAIN_MESSAGE);
+        ventana.dispose();
     }
 }

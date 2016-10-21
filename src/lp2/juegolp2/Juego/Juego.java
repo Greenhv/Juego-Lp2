@@ -57,18 +57,20 @@ public class Juego {
     // Introducción al juego      
     public void historia(){
         String nJugador = this.jugador.getNombre();        
-        System.out.println("A través del tiempo y el espacio se abren puertas.");
-        System.out.println("Mundo paralelos se crean todos los días con acciones pequeñas.");
-        System.out.println("Hay mundos maravillosos con historias y leyendas nunca antes contadas");
-        System.out.println("Sin embargo...");
-        System.out.println("No todos los mundos son amigables.");
-        System.out.print("Un día normal de su vida, " + nJugador);
-        System.out.println(" es transportado hacia el fantástico mundo de Aether.");
-        System.out.println("Aether está dominado por el demonio Azazel");
-        System.out.println("Azazel planea unir los mundos y convertirse en el amo supremo");
-        System.out.println(nJugador + " lo detendrá, no porque lo desee, sino porque es el único que puede hacerlo.");
-        System.out.println("Avanza, " + nJugador);
-        this.pauseScreen();
+        String story = 
+            "A través del tiempo y el espacio se abren puertas.\n"
+            + "Mundo paralelos se crean todos los días con acciones pequeñas.\n"
+            + "Hay mundos maravillosos con historias y leyendas nunca antes contadas\n"
+            + "Sin embargo...\n"
+            + "No todos los mundos son amigables.\n"
+            + "Un día normal de su vida, {playerName} "
+            + "es transportado hacia el fantástico mundo de Aether.\n"
+            + "Aether está dominado por el demonio Azazel. "
+            + "Azazel planea unir los mundos y convertirse en el amo supremo\n"
+            + "{playerName} lo detendrá, no porque lo desee, sino porque es el único que puede hacerlo.\n"
+            + "Avanza, {playerName}\n";
+        this.dibujador.showStory(story, nJugador);
+        //this.pauseScreen();
     }
     
     // Configura lo necesario para jugar
@@ -88,9 +90,9 @@ public class Juego {
             Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
             this.dibujador.dibujarLaberinto(laberintoActual, this.jugador.getPosition());
             this.dibujador.dibujarInfoJugador(this.jugador);
-            this.dibujador.showPrompt("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles): ");
+            String input = this.dibujador.showInputPrompt("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles): ");
             
-            String[] cmd = this.getCommandFromString(scan.nextLine());
+            String[] cmd = this.getCommandFromString(input);
             Result result = Result.PLAYING;
             if (!this.verifyCommand(cmd)) {
                 this.dibujador.showError("No se ha ingresado un comando válido");
@@ -188,9 +190,7 @@ public class Juego {
     
     private void initPlayer()
     {
-        Scanner scan = new Scanner(System.in);
-        this.dibujador.showPrompt("Ingrese su nombre: ");
-        String nombre = scan.nextLine();
+        String nombre = this.dibujador.showInputPrompt("Ingrese su nombre: ");
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
         Arma armaIni = Arma.armasDisp.get(0);
@@ -363,12 +363,13 @@ public class Juego {
     }
     
     private Result battle(Avatar jugador, Entidad enemigo)
-    {   
-        Scanner scan = new Scanner(System.in);
+    {
         while(true) {
             this.dibujador.showBattleInterface(jugador, enemigo);
-            this.dibujador.showPrompt("Accion a tomar (Ingrese help para ver las acciones disponibles): ");
-            String[] cmd = getCommandFromString(scan.nextLine());
+            String input = this.dibujador.showInputPrompt(
+                "Accion a tomar (Ingrese help para ver las acciones disponibles): "
+            );
+            String[] cmd = getCommandFromString(input);
             if (!this.verifyBattleCommand(cmd)) {
                 this.dibujador.showError("No se ha ingresado un comando válido");
                 this.showBattleHelp();
@@ -453,16 +454,17 @@ public class Juego {
         System.out.println(this.jugador.getSaco());
         boolean validChoice;
         int choice;
-        Scanner scan = new Scanner(System.in);
         do {
             validChoice = true;
-            this.dibujador.showPrompt("Ingrese el artefacto a utilizar ('q' para salir): ");
+            String input = this.dibujador.showInputPrompt(
+                "Ingrese el artefacto a utilizar ('q' para salir): "
+            );
             try {
-                choice = scan.nextInt();
+                choice = Integer.parseInt(input);
                 if (choice < 1 || choice > numItems)
                     validChoice = false;
-            } catch (InputMismatchException ex) {
-                choice = scan.next().charAt(0);
+            } catch (NumberFormatException ex) {
+                choice = input.trim().charAt(0);
                 if (choice != 'q')
                     validChoice = false;
             }

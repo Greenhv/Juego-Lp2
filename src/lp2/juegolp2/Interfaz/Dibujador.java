@@ -14,11 +14,13 @@ public class Dibujador
 {   
     int anchoVisible;
     int altoVisible;
+    private GameWindow window;
     
     public Dibujador() 
     {
         this.anchoVisible = 5;
         this.altoVisible = 10;
+        this.window = new GameWindow();
     }
     
     public void flush()
@@ -55,14 +57,22 @@ public class Dibujador
     
     public void showError(String err)
     {
-        JFrame ventana = new JFrame();
-        JOptionPane.showMessageDialog(ventana, err, "Error", JOptionPane.ERROR_MESSAGE);
-        ventana.dispose();
+        this.showMessage("Error", err, JOptionPane.ERROR_MESSAGE);
     }
     
     public void showMessage(String msg)
     {
-        System.out.println(msg);
+        this.showMessage("Mensaje", msg);
+    }
+    
+    public void showMessage(String title, String msg)
+    {
+        this.showMessage(title, msg, JOptionPane.PLAIN_MESSAGE);
+    }
+    
+    public void showMessage(String title, String msg, int JOptionMsgType)
+    {
+        JOptionPane.showMessageDialog(this.window, msg, title, JOptionMsgType);
     }
     
     public void showBattleInterface(Avatar jugador, Entidad enemigo)
@@ -77,9 +87,7 @@ public class Dibujador
     
     public String showInputPrompt(String prompt)
     {
-        JFrame ventana = new JFrame();
-        String input = JOptionPane.showInputDialog(ventana, prompt, "", JOptionPane.PLAIN_MESSAGE);
-        ventana.dispose();
+        String input = JOptionPane.showInputDialog(this.window, prompt, "", JOptionPane.PLAIN_MESSAGE);
         return input;
     }
     
@@ -96,5 +104,15 @@ public class Dibujador
         JFrame ventana = new JFrame();
         JOptionPane.showMessageDialog(ventana, story, "Historia", JOptionPane.PLAIN_MESSAGE);
         ventana.dispose();
+    }
+    
+    public void closeWindow()
+    {
+        this.window.dispose();
+    }
+    
+    public GameWindow getWindow()
+    {
+        return this.window;
     }
 }

@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.*;
 import com.thoughtworks.xstream.io.xml.*;
 import java.io.*;
 import java.util.*;
+import javax.swing.JOptionPane;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Interfaz.*;
@@ -47,6 +48,9 @@ public class Juego {
         this.dibujador = new Dibujador();
         this.currentLabIndex = 0;
         xmlSerializer = new XStream(new StaxDriver());
+        
+        this.init();
+        this.historia();
     }
     
     public static Juego getInstance()
@@ -83,17 +87,17 @@ public class Juego {
         this.initAliados();
     }
 
-    public Result play()
+    public void play()
     {
         Scanner scan = new Scanner(System.in);
-        while(true){
+        Result result = Result.PLAYING;
+        while(result == Result.PLAYING) {
             Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
             this.dibujador.dibujarLaberinto(laberintoActual, this.jugador.getPosition());
             this.dibujador.dibujarInfoJugador(this.jugador);
             String input = this.dibujador.showInputPrompt("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles): ");
             
             String[] cmd = this.getCommandFromString(input);
-            Result result = Result.PLAYING;
             if (!this.verifyCommand(cmd)) {
                 this.dibujador.showError("No se ha ingresado un comando válido");
                 this.showHelp();
@@ -116,15 +120,27 @@ public class Juego {
                         break;
                 }
             }
-            if (result != Result.PLAYING) {
-                this.closeGame();
-                return result;
-            }
         }
+        switch (result) {
+            case QUIT:
+                this.dibujador.showMessage(
+                    "Has decidido terminar el juego. Gracias por jugar."
+                );
+                break;
+            case WIN:
+                this.dibujador.showMessage("Has ganado !");
+                break;
+            case LOSE:
+                this.dibujador.showMessage("Has perdido :(");
+                break;
+        }
+        this.closeGame();
     }
     
     private String[] getCommandFromString(String line)
     {
+        if (line == null)
+            return null;
         // Remueve espacios al inicio y al final
         // Luego reemplaza espacios en medio de la cadena con ";"
         // Finalmente, separa tokens por ";"
@@ -134,7 +150,7 @@ public class Juego {
     private boolean verifyCommand(String[] cmd)
     {
         // Si no ha ingresado ningun comando
-        if (cmd.length <= 0)
+        if (cmd == null || cmd.length <= 0)
             return false;
         // Limpia la entrada
         cmd[0] = cmd[0].toLowerCase();
@@ -155,42 +171,46 @@ public class Juego {
     
     public void showHelp()
     {
-        System.out.println("Comandos disponibles: ");
+        String help = "Comandos disponibles: \n";
         /**
          * Ayuda
          */
-        System.out.println("help:\t\tMuestra este mensaje de ayuda");
+        help += "help: Muestra este mensaje de ayuda\n";
         /**
          * Mover
          */
-        System.out.println("mover <dir>:\t\tMueve al jugador en la direccion dir");
-        System.out.println("\t\t\tDonde dir puede ser:");
-        System.out.println("\t\t\t'UP': arriba");
-        System.out.println("\t\t\t'DOWN': abajo");
-        System.out.println("\t\t\t'RIGHT': derecha");
-        System.out.println("\t\t\t'LEFT': izquierda");
+        help += "mover <dir>: Mueve al jugador en la direccion dir\n";
+        help += "Donde dir puede ser:\n";
+        help += "'UP': arriba\n";
+        help += "'DOWN': abajo\n";
+        help += "'RIGHT': derecha\n";
+        help += "'LEFT': izquierda\n";
         /**
          * Interactuar
          */
-        System.out.println("interactuar <dir>:\tInteractua con la celda adyacente en la direccion dir");
-        System.out.println("\t\t\tDonde dir puede tener los mismos valores que al mover el jugador");
+        help += "interactuar <dir>:\tInteractua con la celda adyacente en la direccion dir\n";
+        help += "\t\t\tDonde dir puede tener los mismos valores que al mover el jugador\n";
         /**
          * Usar
          */
-        System.out.println("usar:\t\t\tUsa un artefacto de tu saco");
+        help += "usar:\t\t\tUsa un artefacto de tu saco\n";
         /**
          * Salir
          */
-        System.out.println("salir:\t\t\tTermina el juego inmediatamente.");
-        /**
-         * Pause the screen
-         */
-        this.pauseScreen();
+        help += "salir:\t\t\tTermina el juego inmediatamente.\n";
+        
+        this.dibujador.showMessage("Ayuda", help);
     }
     
     private void initPlayer()
     {
-        String nombre = this.dibujador.showInputPrompt("Ingrese su nombre: ");
+        String nombre;
+        do {
+            nombre = this.dibujador.showInputPrompt("Ingrese su nombre: ");
+            if (nombre == null) {
+                this.dibujador.showError("Debe escribir un nombre");
+            }
+        } while (nombre == null);
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
         Arma armaIni = Arma.armasDisp.get(0);
@@ -409,30 +429,31 @@ public class Juego {
     
     public void showBattleHelp()
     {
-        System.out.println("Comandos de batalla disponibles: ");
+        String help = "Comandos de batalla disponibles: \n";
         /**
          * Ayuda
          */
-        System.out.println("help:\t\tMuestra este mensaje de ayuda");
+        help += "help:\t\tMuestra este mensaje de ayuda\n";
         /**
          * Atacar
          */
-        System.out.println("atacar:\t\tAtacar al enemigo con tu arma equipada");
+        help += "atacar:\t\tAtacar al enemigo con tu arma equipada\n";
         /**
          * Usar
          */
-        System.out.println("usar:\t\tUsar un artefacto de tu inventorio");
+        help += "usar:\t\tUsar un artefacto de tu inventorio\n";
         /**
          * Huir
          */
-        System.out.println("huir:\t\tTermina la batalla inmediatamente");
-        this.pauseScreen();
+        help += "huir:\t\tTermina la batalla inmediatamente\n";
+        
+        this.dibujador.showMessage("Ayuda", help);
     }
     
     public boolean verifyBattleCommand(String[] cmd)
     {
         // Si no ha ingresado ningun comando
-        if (cmd.length <= 0)
+        if (cmd == null || cmd.length <= 0)
             return false;
         // Limpia la entrada
         cmd[0] = cmd[0].toLowerCase();
@@ -473,6 +494,9 @@ public class Juego {
         if (choice == 'q')
             return;
         
+        this.dibujador.showMessage(
+            "Has usado el objeto " + this.jugador.getArtefacto(choice-1).getNombre()
+        );
         this.jugador.useItem(choice-1);
     }
     
@@ -491,6 +515,7 @@ public class Juego {
     
     private void closeGame()
     {
+        this.dibujador.closeWindow();
         this.serializeArtefactos();
     }
     

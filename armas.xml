@@ -1,1 +1,17 @@
-<?xml version="1.0" ?><list><lp2.juegolp2.Artefactos.Arma><nombre>Daga</nombre><dmg__min>5</dmg__min><dmg__max>15</dmg__max></lp2.juegolp2.Artefactos.Arma><lp2.juegolp2.Artefactos.Arma><nombre>Espada</nombre><dmg__min>10</dmg__min><dmg__max>15</dmg__max></lp2.juegolp2.Artefactos.Arma><lp2.juegolp2.Artefactos.Arma><nombre>Hacha</nombre><dmg__min>15</dmg__min><dmg__max>20</dmg__max></lp2.juegolp2.Artefactos.Arma></list>
+<list>
+  <lp2.juegolp2.Artefactos.Arma>
+    <nombre>Daga</nombre>
+    <dmg__min>5</dmg__min>
+    <dmg__max>15</dmg__max>
+  </lp2.juegolp2.Artefactos.Arma>
+  <lp2.juegolp2.Artefactos.Arma>
+    <nombre>Espada</nombre>
+    <dmg__min>10</dmg__min>
+    <dmg__max>15</dmg__max>
+  </lp2.juegolp2.Artefactos.Arma>
+  <lp2.juegolp2.Artefactos.Arma>
+    <nombre>Hacha</nombre>
+    <dmg__min>15</dmg__min>
+    <dmg__max>20</dmg__max>
+  </lp2.juegolp2.Artefactos.Arma>
+</list>

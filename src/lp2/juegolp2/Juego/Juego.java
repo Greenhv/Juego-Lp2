@@ -1,10 +1,8 @@
 package lp2.juegolp2.Juego;
 
 import com.thoughtworks.xstream.*;
-import com.thoughtworks.xstream.io.xml.*;
 import java.io.*;
 import java.util.*;
-import javax.swing.JOptionPane;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Interfaz.*;
@@ -47,7 +45,7 @@ public class Juego {
         this.gestorLaberinto = new GestorLaberinto();
         this.dibujador = new Dibujador();
         this.currentLabIndex = 0;
-        xmlSerializer = new XStream(new StaxDriver());
+        xmlSerializer = new XStream();
         
         this.init();
         this.historia();

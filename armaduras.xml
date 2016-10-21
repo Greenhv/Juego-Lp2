@@ -1,1 +1,14 @@
-<?xml version="1.0" ?><list><lp2.juegolp2.Artefactos.Armadura><nombre>Armadura de Cuero</nombre><defensa>5</defensa></lp2.juegolp2.Artefactos.Armadura><lp2.juegolp2.Artefactos.Armadura><nombre>Armadura de Metal</nombre><defensa>10</defensa></lp2.juegolp2.Artefactos.Armadura><lp2.juegolp2.Artefactos.Armadura><nombre>Armadura Oscura</nombre><defensa>15</defensa></lp2.juegolp2.Artefactos.Armadura></list>
+<list>
+  <lp2.juegolp2.Artefactos.Armadura>
+    <nombre>Armadura de Cuero</nombre>
+    <defensa>5</defensa>
+  </lp2.juegolp2.Artefactos.Armadura>
+  <lp2.juegolp2.Artefactos.Armadura>
+    <nombre>Armadura de Metal</nombre>
+    <defensa>10</defensa>
+  </lp2.juegolp2.Artefactos.Armadura>
+  <lp2.juegolp2.Artefactos.Armadura>
+    <nombre>Armadura Oscura</nombre>
+    <defensa>15</defensa>
+  </lp2.juegolp2.Artefactos.Armadura>
+</list>

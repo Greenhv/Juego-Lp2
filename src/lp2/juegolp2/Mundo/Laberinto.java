@@ -406,7 +406,8 @@ public class Laberinto
         for (Direction dir : directions) {
             Position newPos = src.copy().move(dir);
             boolean validPosition = this.validPlayerPosition(newPos);
-            if (validPosition && (newPos.distanceTo(dest) < minDistance)) {
+            double distance = newPos.distanceTo(dest);
+            if ((validPosition && distance < minDistance) || distance == 0) {
                 minDir = dir;
                 minDistance = newPos.distanceTo(dest);
             }

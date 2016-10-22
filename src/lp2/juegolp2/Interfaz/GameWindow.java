@@ -12,15 +12,20 @@ public class GameWindow extends JFrame
     private JPanel mainPanel;
     private JPanel mapPanel;
     private JPanel sidebar;
+    private int tileSize = 32;
+    private int altoMapa;
+    private int anchoMapa;
     
-    public GameWindow()
+    public GameWindow(int altoMapa, int anchoMapa)
     {
+        this.altoMapa = altoMapa;
+        this.anchoMapa = anchoMapa;
+        
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         
         this.mainPanel = new JPanel();
         mainPanel.setBackground(Color.black);
-        mainPanel.setPreferredSize(new Dimension(640, 480));
         mainPanel.setLayout(new BorderLayout());
         
         this.mapPanel = new JPanel();

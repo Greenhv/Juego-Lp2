@@ -20,7 +20,7 @@ public class Dibujador
     {
         this.anchoVisible = 5;
         this.altoVisible = 10;
-        this.window = new GameWindow();
+        this.window = new GameWindow(altoVisible, anchoVisible);
     }
     
     public void flush()

@@ -2,15 +2,13 @@ package lp2.juegolp2.Juego;
 
 import com.thoughtworks.xstream.*;
 import com.thoughtworks.xstream.io.xml.*;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Interfaz.*;
 import lp2.juegolp2.Facilidades.*;
+import lp2.juegolp2.Entidades.*;
 
 /**
  * Singleton, no debería haber más de una instancia de Juego
@@ -36,7 +34,7 @@ public class Juego {
     private static final int enemyLevelRange = 2;
     
     private Avatar jugador;
-    private Aliado aliado;
+    
     private GestorLaberinto gestorLaberinto;
     private Dibujador dibujador;
     private int currentLabIndex;
@@ -80,19 +78,17 @@ public class Juego {
         this.initMap();
         // Obten datos y crea jugador
         this.initPlayer();
-        this.initAliado();
+        this.initAliados();
     }
 
     public Result play()
     {
         Scanner scan = new Scanner(System.in);
-        Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
         while(true){
+            Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
             this.dibujador.dibujarLaberinto(laberintoActual, this.jugador.getPosition());
             this.dibujador.dibujarInfoJugador(this.jugador);
-            System.out.println("ALIADO:");
-            this.dibujador.dibujarInfoJugador(this.aliado);
-            System.out.print("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles) : ");
+            this.dibujador.showPrompt("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles): ");
             
             String[] cmd = this.getCommandFromString(scan.nextLine());
             Result result = Result.PLAYING;
@@ -193,7 +189,7 @@ public class Juego {
     private void initPlayer()
     {
         Scanner scan = new Scanner(System.in);
-        System.out.print("Ingrese su nombre: ");
+        this.dibujador.showPrompt("Ingrese su nombre: ");
         String nombre = scan.nextLine();
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
@@ -206,39 +202,68 @@ public class Juego {
         this.gestorLaberinto.get(currentLabIndex).agregaPlayer(jugador);
     }
     
-    private void initAliado()
+    private void initAliados()
     {
-        Position posAliado = initPosAliado(this.jugador);
-        aliado = new Aliado("ALIADO", posAliado);
-        this.gestorLaberinto.get(currentLabIndex).get(posAliado).setContenido(Celda.Contenido.ALIADO);
-        /**
-         * Llena el saco del aliado
-         */
-        int numArt = (int) (Math.random() * 6) + 5;
-        for (int i = 0; i < numArt; ++i) {
-            this.aliado.pickupItem(Artefacto.random());
-        }
-        /**
-         * Agrega el aliado al laberinto
-         */
-        this.gestorLaberinto.get(currentLabIndex).agregaAliado(this.aliado);
+        ArrayList<Aliado> aliados = readAliadosTxt("aliados.txt");
+        
+        for (int i = 0; i < aliados.size(); ++i) {
+            /**
+             * Llena el saco del aliado
+             */
+            int numArt = (int) (Math.random() * 6) + 5;
+            for (int j = 0; j < numArt; ++j) {
+                aliados.get(i).pickupItem(Artefacto.random());
+            }
+            /**
+            * Agrega aliados a los laberintos
+            */
+            this.gestorLaberinto.addAliado(aliados.get(i));
+        }   
     }
     
-    private Position initPosAliado(Avatar jugador)
+    private ArrayList<Aliado> readAliadosTxt(String filename)
     {
-        /**
-         * Encuentra una posición inicial para el aliado
-         */
-        Position posAliado = new Position(this.jugador.getPosition());
-        Laberinto labActual = this.gestorLaberinto.get(currentLabIndex);
-        for (Direction dir : Direction.values()) {
-            Position newPos = posAliado.copy().move(dir);
-            if (labActual.validPlayerPosition(newPos)) {
-                posAliado.move(dir);
-                break;
+        ArrayList<Aliado> aliados = new ArrayList<>();
+        try {
+            RandomAccessFile file = new RandomAccessFile(filename, "r");
+            String line = file.readLine();
+            int numAliados = Integer.parseInt(line.split(":")[1]);
+            for (int i = 0; i < numAliados; ++i) {
+                line = file.readLine();
+                Aliado aliado = readAliadoFromString(line);
+                aliados.add(aliado);
             }
+        } catch (Exception ex) {
+            this.dibujador.showError(ex.toString());
+            ex.printStackTrace();
+            System.exit(1);
         }
-        return posAliado;
+        return aliados;
+    }
+    
+    private Aliado readAliadoFromString(String line)
+    {
+        String strAliado = line.split("ALIADO:")[1];
+        String[] datosAliado = strAliado.split("/");
+        // Obten nombre aliado
+        String nomAliado = datosAliado[0];
+               
+        // Crea lista de consejos
+        ArrayList<Consejo> listaConsejos = new ArrayList<>();
+                
+        // Obten consejos aliado
+        String strConsejos = datosAliado[1];
+        String[] datosConsejos = strConsejos.split(":")[1].split("@");
+        int numConsejos = Integer.parseInt(datosConsejos[0]);
+        for (int j = 1; j <= numConsejos; ++j) {
+            String[] consejo = datosConsejos[j].split("\\.");
+            String strConsejo = consejo[0];
+            int nivelConsejo = Integer.parseInt(consejo[1]);
+            Consejo objConsejo = new Consejo(strConsejo, nivelConsejo);
+            listaConsejos.add(objConsejo);
+        }
+
+        return new Aliado(nomAliado, listaConsejos);
     }
     
     private void initMap()
@@ -252,12 +277,13 @@ public class Juego {
         Result res = Result.PLAYING;
         this.moverAvatar(mov, laberintoActual);
         if(this.jugador.getPosition().equals(laberintoActual.getSiguiente())){
+            laberintoActual.removePlayer(jugador);
             if(++this.currentLabIndex == this.gestorLaberinto.size()) {
                 res = Result.WIN;
             } else {
                 laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
-                this.jugador.setPosition(laberintoActual.getAnterior());
-                this.gestorLaberinto.get(currentLabIndex).agregaAliado(this.aliado);
+                jugador.setPosition(laberintoActual.getAnterior());
+                laberintoActual.agregaPlayer(jugador);
             }
         } else if(this.jugador.getPosition().equals(laberintoActual.getAnterior())){
             if(this.currentLabIndex >= 1){
@@ -266,8 +292,7 @@ public class Juego {
                 this.jugador.setPosition(laberintoActual.getSiguiente());
             }
         }
-        this.moverEnemigos(laberintoActual);
-        laberintoActual.moverEntidad(aliado);
+        this.moverEntidades(laberintoActual);
         return res;
     }
     
@@ -281,27 +306,17 @@ public class Juego {
             pauseScreen();
             return;
         }
-        Position playerPos = this.jugador.getPosition();
-        Celda currCell = laberintoActual.get(playerPos);
-        if (playerPos.equals(laberintoActual.getAnterior())) {
-            // Si está sobre la celda ANTERIOR antes de moverse, lo pinta de nuevo
-            currCell.setContenido(Celda.Contenido.ANTERIOR);
-        } else if (playerPos.equals(laberintoActual.getSiguiente())) {
-            // Si está sobre la celda SIGUIENTE antes de moverse, lo pinta de nuevo
-            currCell.setContenido(Celda.Contenido.SIGUIENTE);
-        } else {
-            currCell.setContenido(Celda.Contenido.LIBRE);
-        }
-        if (newPos.equals(this.aliado.getPosition())) {
+        laberintoActual.moverEntidad(jugador, dir);
+        Aliado aliado = laberintoActual.aliadoEnPos(newPos);
+        if (aliado != null) {
             laberintoActual.moverEntidad(aliado, dir.opposite());
         }
-        this.jugador.setPosition(newPos);
-        laberintoActual.actualizarJugador(this.jugador.getPosition());
     }
     
-    private void moverEnemigos(Laberinto lab)
+    private void moverEntidades(Laberinto lab)
     {
         lab.moverEnemigos(this.jugador.getPosition());
+        lab.moverAliados();
     }
     
     private Result interactuar(String mov, Laberinto laberintoActual)
@@ -309,7 +324,7 @@ public class Juego {
         Direction dir = Direction.valueOf(mov);
         Position pos = this.jugador.getPosition().copy().move(dir);
         // Si no se puede interactuar con la posición seleccionada, se envía un mensaje
-        if (laberintoActual.get(pos).getContenido() == Celda.Contenido.PARED) {
+        if (laberintoActual.get(pos).getContenido().contains(Celda.Contenido.PARED)) {
             this.dibujador.showError("No se puede interactuar con esa celda");
             this.pauseScreen();
             return Result.PLAYING;
@@ -321,14 +336,6 @@ public class Juego {
     
     private Result interactuar(Laberinto laberintoActual, Position pos)
     {
-        // Verifico si hay un artefacto
-        Artefacto artefacto = laberintoActual.getArtefacto(pos);
-        if (artefacto != null) {
-            this.jugador.pickupItem(artefacto);
-            laberintoActual.removeArtefacto(pos);
-            this.dibujador.showMessage("Has recogido un artefacto: " + artefacto);
-            return Result.PLAYING;
-        }
         // Verifico si hay un enemigo en esa posicion
         Enemigo enemigo = laberintoActual.getEnemigo(pos);
         if (enemigo != null) {
@@ -338,7 +345,18 @@ public class Juego {
             }
             return res;
         }
-        if (aliado.getPosition().equals(pos)) {
+        
+        // Verifico si hay un artefacto
+        Artefacto artefacto = laberintoActual.getArtefacto(pos);
+        if (artefacto != null) {
+            this.jugador.pickupItem(artefacto);
+            laberintoActual.removeArtefacto(pos);
+            this.dibujador.showMessage("Has recogido un artefacto: " + artefacto);
+            return Result.PLAYING;
+        }
+        
+        Aliado aliado = laberintoActual.aliadoEnPos(pos);
+        if (aliado != null) {
             this.dibujador.showMessage("Consejo de tu aliado: " + aliado.getConsejo());
         }
         return Result.PLAYING;
@@ -348,13 +366,8 @@ public class Juego {
     {   
         Scanner scan = new Scanner(System.in);
         while(true) {
-            System.out.print("Heroe: " + jugador.getNombre());
-            System.out.print(" - Vida Actual: " + jugador.getCurrentHP());
-            System.out.print(" \t\t vs \t\tEnemigo: " + enemigo.getNombre());
-            System.out.println(" - Vida Actual: " + enemigo.getCurrentHP() + 
-                    "Defensa: " + enemigo.getArmadura().getDefensa());
-            System.out.println("Acciones disponibles: *help *atacar *huir *usar");
-            System.out.print("Accion a tomar: ");
+            this.dibujador.showBattleInterface(jugador, enemigo);
+            this.dibujador.showPrompt("Accion a tomar (Ingrese help para ver las acciones disponibles): ");
             String[] cmd = getCommandFromString(scan.nextLine());
             if (!this.verifyBattleCommand(cmd)) {
                 this.dibujador.showError("No se ha ingresado un comando válido");
@@ -379,7 +392,7 @@ public class Juego {
             }
             // El enemigo murio luego de la accion del jugador ?
             if(enemigo.getCurrentHP() == 0) {
-                System.out.println("El " + enemigo.getNombre() + " a sido derrotado!");
+                this.dibujador.showMessage("El " + enemigo.getNombre() + " a sido derrotado!");
                 return Result.PLAYING;
             }
             
@@ -443,7 +456,7 @@ public class Juego {
         Scanner scan = new Scanner(System.in);
         do {
             validChoice = true;
-            System.out.print("Ingrese el artefacto a utilizar ('q' para salir): ");
+            this.dibujador.showPrompt("Ingrese el artefacto a utilizar ('q' para salir): ");
             try {
                 choice = scan.nextInt();
                 if (choice < 1 || choice > numItems)
@@ -458,37 +471,12 @@ public class Juego {
         if (choice == 'q')
             return;
         
-        Artefacto artefacto = this.jugador.getArtefacto(choice-1);
-        /**
-         * Usa artefacto
-         * 
-         * Si es un arma o armadura, lo cambia por los que tiene actualmente
-         * Si es una pocion, la utiliza
-         */
-        switch (artefacto.type()) {
-            case ARMA:
-                Arma arma = (Arma) artefacto;
-                this.jugador.pickupItem(this.jugador.getArma());
-                this.jugador.setArma(arma);
-                break;
-            case ARMADURA:
-                Armadura armadura = (Armadura) artefacto;
-                this.jugador.pickupItem(this.jugador.getArmadura());
-                this.jugador.setArmadura(armadura);
-                break;
-            case POCION:
-                PocionCuracion pocion = (PocionCuracion) artefacto;
-                this.jugador.heal(pocion);
-                break;
-        }
-        this.jugador.dropItem(choice-1);
+        this.jugador.useItem(choice-1);
     }
     
     private void pauseScreen()
     {
-        System.out.println("Presione Enter para continuar...");
-        Scanner scan = new Scanner(System.in);
-        scan.nextLine();
+        this.dibujador.showPauseScreen();
     }
     
     public enum Result
@@ -499,47 +487,12 @@ public class Juego {
         PLAYING
     }
     
-    public void closeGame()
+    private void closeGame()
     {
         this.serializeArtefactos();
-        this.serializeArmas();
-        this.serializeArmaduras();
     }
     
-    public void serializeArmaduras()
-    {
-        try {
-            FileWriter fw = new FileWriter("armaduras.xml");
-            xmlSerializer.toXML(Armadura.armadurasDisp, fw);
-            fw.close();
-        } catch (IOException e) {
-            this.dibujador.showError(e.toString());
-        }
-    }
-    
-    public void serializeArmas()
-    {
-        try {
-            FileWriter fw = new FileWriter("armas.xml");
-            xmlSerializer.toXML(Arma.armasDisp, fw);
-            fw.close();
-        } catch (IOException e) {
-            this.dibujador.showError(e.toString());
-        }
-    }
-    
-    public void serializeArtefactos()
-    {
-        try {
-            FileWriter fw = new FileWriter("pociones.xml");
-            xmlSerializer.toXML(PocionCuracion.pocionesDisp, fw);
-            fw.close();
-        } catch (IOException e) {
-            this.dibujador.showError(e.toString());
-        }
-    }
-    
-    public void initArtefactos()
+    private void initArtefactos()
     {
         try {
             PocionCuracion.loadXML(xmlSerializer);
@@ -551,6 +504,46 @@ public class Juego {
         } catch (IOException e) {
             this.dibujador.showError(e.toString());
             System.exit(1);
+        }
+    }
+    
+    private void serializeArtefactos()
+    {
+        this.serializePociones();
+        this.serializeArmas();
+        this.serializeArmaduras();
+    }
+    
+    private void serializeArmaduras()
+    {
+        try {
+            FileWriter fw = new FileWriter("armaduras.xml");
+            xmlSerializer.toXML(Armadura.armadurasDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    private void serializeArmas()
+    {
+        try {
+            FileWriter fw = new FileWriter("armas.xml");
+            xmlSerializer.toXML(Arma.armasDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
+        }
+    }
+    
+    private void serializePociones()
+    {
+        try {
+            FileWriter fw = new FileWriter("pociones.xml");
+            xmlSerializer.toXML(PocionCuracion.pocionesDisp, fw);
+            fw.close();
+        } catch (IOException e) {
+            this.dibujador.showError(e.toString());
         }
     }
 }

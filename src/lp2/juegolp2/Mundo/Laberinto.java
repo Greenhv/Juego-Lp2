@@ -1,5 +1,6 @@
 package lp2.juegolp2.Mundo;
 
+import lp2.juegolp2.Entidades.*;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Facilidades.*;
 
@@ -11,40 +12,38 @@ import java.util.*;
  */
 public class Laberinto
 {
-    /*
+    /**
      * Ancho de un laberinto
      */
     private int ancho;
 
-    /*
+    /**
      * Alto de un laberinto
      */
     private int alto;
 
-    /*
+    /**
      * El laberinto mismo
      */
     public Celda[][] laberinto;
 
-    /*
+    /**
      * La probabilidad de que un enemigo aparezca en una celda
      */
     private double pct_enemigo;
 
-    /*
+    /**
      * Niveles posibles de enmigos en el laberinto
      */
     private int[] niveles;
     
     /**
      * Posicion de la celda para acceder al siguiente laberinto
-     * 
      */
     private Position anterior;
     
     /**
      * Posicion de la celda para acceder al siguiente laberinto
-     * 
      */
     private Position siguiente;
     
@@ -58,6 +57,11 @@ public class Laberinto
      */
     private ArrayList<Enemigo> enemigos;
     
+    /**
+     * Aliados en el laberinto
+     */
+    private ArrayList<Aliado> aliados;
+    
     public Laberinto(int ancho, int alto, double pct_enemigo, int[] niveles)
     {
         this.setPctEnemigo(pct_enemigo);
@@ -65,6 +69,7 @@ public class Laberinto
         this.setAlto(alto);
         this.artefactos = new HashMap<>();
         this.enemigos = new ArrayList<>();
+        this.aliados = new ArrayList<>();
         laberinto = new Celda[alto][ancho];
         this.niveles = Arrays.copyOfRange(niveles, 0, niveles.length);
         
@@ -241,7 +246,7 @@ public class Laberinto
     public void setAnterior(Position anterior) 
     {
         this.anterior = anterior;
-        this.get(anterior).setContenido(Celda.Contenido.ANTERIOR);
+        this.get(anterior).addContenido(Celda.Contenido.ANTERIOR);
     }
 
     /**
@@ -258,12 +263,12 @@ public class Laberinto
     public void setSiguiente(Position sig)
     {
         this.siguiente = sig;
-        this.get(sig).setContenido(Celda.Contenido.SIGUIENTE);
+        this.get(sig).addContenido(Celda.Contenido.SIGUIENTE);
     }
     
     public void actualizarJugador(int X, int Y)
     {
-        this.get(X, Y).setContenido(Celda.Contenido.JUGADOR);
+        this.get(X, Y).addContenido(Celda.Contenido.JUGADOR);
     }
     
     public void actualizarJugador(Position pos)
@@ -288,11 +293,9 @@ public class Laberinto
         if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1){
             return false;
         }
-        Celda.Contenido cont = this.get(x, y).getContenido();
-        return (cont == Celda.Contenido.LIBRE ||
-                cont == Celda.Contenido.ANTERIOR ||
-                cont == Celda.Contenido.SIGUIENTE ||
-                cont == Celda.Contenido.ALIADO);
+        Set<Celda.Contenido> cont = this.get(x, y).getContenido();
+        return !cont.contains(Celda.Contenido.ENEMIGO) &&
+               !cont.contains(Celda.Contenido.PARED);
     }
     
     public boolean validPlayerPosition(Position pos)
@@ -306,10 +309,11 @@ public class Laberinto
     {
         int x = pos.getX();
         int y = pos.getY();
-        Celda.Contenido cont = this.get(x, y).getContenido();
-        return (cont == Celda.Contenido.LIBRE ||
-                cont == Celda.Contenido.ANTERIOR ||
-                cont == Celda.Contenido.SIGUIENTE);
+        Set<Celda.Contenido> cont = this.get(x, y).getContenido();
+        return !cont.contains(Celda.Contenido.ALIADO) &&
+               !cont.contains(Celda.Contenido.JUGADOR) &&
+               !cont.contains(Celda.Contenido.ENEMIGO) &&
+               !cont.contains(Celda.Contenido.PARED);
     }
     
     public void addEnemigo(Position pos)
@@ -328,7 +332,7 @@ public class Laberinto
                 return;
         }
         this.enemigos.add(enemigo);
-        this.get(pos).setContenido(Celda.Contenido.ENEMIGO);
+        this.get(pos).addContenido(Celda.Contenido.ENEMIGO);
     }
     
     public void addArtefacto(Position pos){
@@ -339,7 +343,7 @@ public class Laberinto
     public void addArtefacto(Artefacto artefacto, Position pos)
     {
         if (artefacto != null) {
-            this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
+            this.get(pos).addContenido(Celda.Contenido.ARTEFACTO);
             this.artefactos.put(pos, artefacto);
         }
     }
@@ -448,7 +452,7 @@ public class Laberinto
     public boolean moverEntidad(Entidad ent)
     {
         Direction[] dirs = Direction.values();
-        int index = (int) (Math.random() * 4);
+        int index = (int) (Math.random() * dirs.length);
         Direction dir = dirs[index];
         return this.moverEntidad(ent, dir);
     }
@@ -459,16 +463,9 @@ public class Laberinto
         Position newPos = ent.getPosition().copy().move(dir);
         boolean valid = (ent instanceof Enemigo) ? validEnemyPosition(newPos) : validPlayerPosition(newPos);
         if (valid) {
-            this.get(ent.getPosition()).setContenido(Celda.Contenido.LIBRE);
+            this.get(ent.getPosition()).removeContenido(ent.getContenidoCelda());
             ent.move(dir);
-            Celda.Contenido cont = Celda.Contenido.ALIADO;
-            if (ent instanceof Aliado)
-                cont = Celda.Contenido.ALIADO;
-            else if (ent instanceof Enemigo)
-                cont = Celda.Contenido.ENEMIGO;
-            else if (ent instanceof Avatar)
-                cont = Celda.Contenido.JUGADOR;
-            this.get(ent.getPosition()).setContenido(cont);
+            this.get(ent.getPosition()).addContenido(ent.getContenidoCelda());
             
             return true;
         }
@@ -484,12 +481,12 @@ public class Laberinto
     public void removeArtefacto(Position pos)
     {
         this.artefactos.remove(pos);
-        this.get(pos).setContenido(Celda.Contenido.LIBRE);
+        this.get(pos).removeContenido(Celda.Contenido.ARTEFACTO);
     }
     
     public void addArtefacto(Position pos, Artefacto art)
     {
-        this.get(pos).setContenido(Celda.Contenido.ARTEFACTO);
+        this.get(pos).addContenido(Celda.Contenido.ARTEFACTO);
         this.artefactos.put(pos, art);
     }
     
@@ -508,16 +505,60 @@ public class Laberinto
             if (enemigos.get(i).getPosition().equals(pos))
                 enemigos.remove(i);
         // Y de la celda
-        this.get(pos).setContenido(Celda.Contenido.LIBRE);
+        this.get(pos).removeContenido(Celda.Contenido.ENEMIGO);
     }
     
     public void agregaPlayer(Avatar jugador)
     {
-        this.get(jugador.getPosition()).setContenido(Celda.Contenido.JUGADOR);
+        this.get(jugador.getPosition()).addContenido(Celda.Contenido.JUGADOR);
     }
     
-    public void agregaAliado(Aliado aliado)
+    public void removePlayer(Avatar jugador)
     {
-        this.get(aliado.getPosition()).setContenido(Celda.Contenido.ALIADO);
+        this.get(jugador.getPosition()).removeContenido(Celda.Contenido.JUGADOR);
+    }
+    
+    public void addAliado(Aliado aliado)
+    {
+        ArrayList<Position> libres = this.getCeldasLibres();
+        int posIndex = (int) (Math.random() * libres.size());
+        aliado.setPosition(libres.get(posIndex));
+        this.get(aliado.getPosition()).addContenido(Celda.Contenido.ALIADO);
+        this.aliados.add(aliado);
+    }
+    
+    public ArrayList<Position> getCeldasLibres()
+    {
+        ArrayList<Position> libres = new ArrayList<>();
+        for (int i = 1; i < this.getAlto()-1; ++i) {
+            for (int j = 1; j < this.getAncho()-1; ++j) {
+                // Si está libre, la añado a la lista
+                if (this.get(i, j).esLibre()) {
+                    libres.add(new Position(i, j));
+                }
+            }
+        }
+        return libres;
+    }
+    
+    public ArrayList<Aliado> aliados()
+    {
+        return this.aliados;
+    }
+    
+    public void moverAliados()
+    {
+        for (Aliado aliado : this.aliados) {
+            this.moverEntidad(aliado);
+        }
+    }
+    
+    public Aliado aliadoEnPos(Position pos)
+    {
+        for (Aliado aliado : this.aliados) {
+            if (aliado.getPosition().equals(pos))
+                return aliado;
+        }
+        return null;
     }
 }

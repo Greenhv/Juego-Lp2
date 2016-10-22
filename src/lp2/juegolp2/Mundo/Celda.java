@@ -1,5 +1,7 @@
 package lp2.juegolp2.Mundo;
 
+import java.util.*;
+
 /**
  *
  * @author pmvb
@@ -9,13 +11,13 @@ public class Celda
     private int fila;
     private int columna;
     private Tipo tipo;
-    private Contenido contenido;
-    private Contenido contPrevio;
+    private TreeSet<Contenido> contenido;
 
     public Celda()
     {
         this.tipo = Tipo.PARED;
-        this.contenido = Contenido.PARED;
+        this.contenido = new TreeSet<>(new ComparadorContenidoCelda());
+        this.addContenido(Celda.Contenido.PARED);
     }
     
     public Celda(int fila, int columna)
@@ -28,7 +30,7 @@ public class Celda
     public Celda(Tipo tipo, Contenido contenido)
     {
         this.tipo = tipo;
-        this.contenido = contenido;
+        this.contenido.add(contenido);
     }
     
     public void setTipo(Tipo tipo)
@@ -41,25 +43,34 @@ public class Celda
         return this.tipo;
     }
 
-    public void setContenido(Contenido contenido)
+    public boolean addContenido(Contenido contenido)
     {
-        this.contPrevio = this.contenido;
-        this.contenido = contenido;
+        if (contenido == Contenido.PARED) {
+            this.contenido.clear();
+        } else {
+            this.contenido.remove(Contenido.PARED);
+        }
+        return this.contenido.add(contenido);
     }
     
-    public Contenido getContenido()
+    public TreeSet<Contenido> getContenido()
     {
         return this.contenido;
     }
     
-    public Contenido getContenidoPrevio()
+    public boolean removeContenido(Contenido contenido)
     {
-        return this.contPrevio;
+        return this.contenido.remove(contenido);
     }
     
+    /**
+     * Este método dibujará el contenido de una celda.
+     * Cuando implementemos los gráficos, deberá dibujar solo la celda,
+     * su contenido de dibujará por separado
+     */
     public void draw()
     {
-        System.out.print(this.contenido.asChar());
+        System.out.print(this.contenido.first().asChar());
     }
 
     /**
@@ -94,7 +105,7 @@ public class Celda
     public void markAsInside()
     {
         this.setTipo(Tipo.ADENTRO);
-        this.setContenido(Contenido.LIBRE);
+        this.addContenido(Contenido.LIBRE);
     }
     
     public void markAsOutside()
@@ -111,31 +122,12 @@ public class Celda
     {
         return this.getTipo() == Tipo.PARED;
     }
-
-    /**
-     * Contenidos posibles de una celda
-     *
-     */
-    public enum Contenido {
-        PARED('#'),
-        LIBRE(' '), 
-        ARTEFACTO('A'), 
-        ENEMIGO('E'), 
-        SIGUIENTE('+'),
-        ANTERIOR('-'), 
-        JUGADOR('O'),
-        ALIADO('F');
-
-        public char asChar() {
-            return asChar;
-        }
-        private final char asChar;
-
-        private Contenido(char asChar) {
-            this.asChar = asChar;
-        }
-    }
     
+    public boolean esLibre()
+    {
+        return this.contenido.first() == Celda.Contenido.LIBRE;
+    }
+
     public enum Tipo
     {
         PARED,
@@ -143,5 +135,52 @@ public class Celda
         AFUERA,
         ANTERIOR,
         SIGUIENTE,
+    }
+    
+    /**
+     * Contenidos posibles de una celda
+     *
+     */
+    public enum Contenido {
+        PARED('#', 0),
+        LIBRE(' ', 1), 
+        SIGUIENTE('+', 2),
+        ANTERIOR('-', 2), 
+        ARTEFACTO('A', 3), 
+        ENEMIGO('E', 4), 
+        ALIADO('F', 4),
+        JUGADOR('O', 5);
+
+        private final char asChar;
+        private final int priority;
+        
+        private Contenido(char asChar, int priority) {
+            this.asChar = asChar;
+            this.priority = priority;
+        }
+        
+        public char asChar() {
+            return asChar;
+        }
+        
+        public int priority()
+        {
+            return priority;
+        }
+        
+        @Override
+        public String toString()
+        {
+            return "Contenido: '" + asChar + "' - Prioridad: " + priority;
+        }
+    }
+}
+
+class ComparadorContenidoCelda implements Comparator<Celda.Contenido>
+{
+    public int compare(Celda.Contenido cont1, Celda.Contenido cont2)
+    {
+        int res = -(cont1.priority() - cont2.priority());
+        return (res != 0) ? res : cont1.compareTo(cont2);
     }
 }

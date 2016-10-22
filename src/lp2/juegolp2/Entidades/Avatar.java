@@ -1,6 +1,8 @@
-package lp2.juegolp2.Mundo;
+package lp2.juegolp2.Entidades;
 
 import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Mundo.Celda;
+import lp2.juegolp2.Mundo.Position;
 /**
  *
  * @author pmvb
@@ -10,9 +12,20 @@ public class Avatar extends Entidad
     private int nivel;
     private Saco saco;
     
+    public Avatar(String nombre)
+    {
+        super(nombre);
+        init();
+    }
+    
     public Avatar(String nombre, Position pos)
     {
         super(nombre, pos);
+        init();
+    }
+    
+    private void init()
+    {
         this.nivel = 5;
         this.saco = new Saco();
         setMaxHP(nivel*10);
@@ -76,6 +89,40 @@ public class Avatar extends Entidad
         ++this.nivel;
         this.setMaxHP(nivel*10);
         this.initHP();
+    }
+    
+    @Override
+    public Celda.Contenido getContenidoCelda()
+    {
+        return Celda.Contenido.JUGADOR;
+    }
+    
+    public void useItem(int index)
+    {
+        Artefacto artefacto = this.getArtefacto(index);
+        /**
+         * Usa artefacto
+         * 
+         * Si es un arma o armadura, lo cambia por los que tiene actualmente
+         * Si es una pocion, la utiliza
+         */
+        switch (artefacto.type()) {
+            case ARMA:
+                Arma arma = (Arma) artefacto;
+                this.pickupItem(this.getArma());
+                this.setArma(arma);
+                break;
+            case ARMADURA:
+                Armadura armadura = (Armadura) artefacto;
+                this.pickupItem(this.getArmadura());
+                this.setArmadura(armadura);
+                break;
+            case POCION:
+                PocionCuracion pocion = (PocionCuracion) artefacto;
+                this.heal(pocion);
+                break;
+        }
+        this.dropItem(index);
     }
 }
 

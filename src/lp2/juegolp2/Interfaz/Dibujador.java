@@ -1,8 +1,8 @@
 package lp2.juegolp2.Interfaz;
 
-import lp2.juegolp2.Mundo.Avatar;
-import lp2.juegolp2.Mundo.Position;
-import lp2.juegolp2.Mundo.Laberinto;
+import java.util.Scanner;
+import lp2.juegolp2.Mundo.*;
+import lp2.juegolp2.Entidades.*;
 /**
  *
  * @author pmvb
@@ -36,7 +36,7 @@ public class Dibujador
         
         for(int i = xIni; i <= xFin; i++){
             for(int j = yIni; j <= yFin;j++){
-                System.out.print(laberinto.get(i, j).getContenido().asChar());
+                laberinto.get(i, j).draw();
             }
             System.out.println();
         }
@@ -58,5 +58,27 @@ public class Dibujador
     public void showMessage(String msg)
     {
         System.out.println(msg);
+    }
+    
+    public void showBattleInterface(Avatar jugador, Entidad enemigo)
+    {
+        System.out.print("Heroe: " + jugador.getNombre());
+        System.out.print(" - Vida Actual: " + jugador.getCurrentHP());
+        System.out.print(" \t\t vs \t\tEnemigo: " + enemigo.getNombre());
+        System.out.println(" - Vida Actual: " + enemigo.getCurrentHP() + 
+                " - Defensa: " + 
+                ((enemigo.getArmadura() == null) ? 0 : enemigo.getArmadura().getDefensa()));
+    }
+    
+    public void showPrompt(String prompt)
+    {
+        System.out.print(prompt);
+    }
+    
+    public void showPauseScreen()
+    {
+        System.out.println("Presione Enter para continuar...");
+        Scanner scan = new Scanner(System.in);
+        scan.nextLine();
     }
 }

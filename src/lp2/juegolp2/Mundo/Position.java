@@ -1,7 +1,5 @@
 package lp2.juegolp2.Mundo;
 
-import java.util.HashMap;
-
 public class Position
 {
     private int X;

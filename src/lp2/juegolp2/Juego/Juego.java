@@ -308,6 +308,7 @@ public class Juego {
                 this.currentLabIndex--;
                 laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
                 this.jugador.setPosition(laberintoActual.getSiguiente());
+                laberintoActual.agregaPlayer(jugador);
             }
         }
         this.moverEntidades(laberintoActual);
@@ -321,7 +322,7 @@ public class Juego {
         // Si no se puede mover a la posición seleccionada, mostramos un mensaje
         if (!laberintoActual.validPlayerPosition(newPos)) {
             this.dibujador.showError("No se puede mover a esa posición");
-            pauseScreen();
+            //pauseScreen();
             return;
         }
         laberintoActual.moverEntidad(jugador, dir);
@@ -344,11 +345,11 @@ public class Juego {
         // Si no se puede interactuar con la posición seleccionada, se envía un mensaje
         if (laberintoActual.get(pos).getContenido().contains(Celda.Contenido.PARED)) {
             this.dibujador.showError("No se puede interactuar con esa celda");
-            this.pauseScreen();
+            //this.pauseScreen();
             return Result.PLAYING;
         }
         Result res = this.interactuar(laberintoActual, pos);
-        this.pauseScreen();
+        //this.pauseScreen();
         return res;
     }
     
@@ -382,7 +383,8 @@ public class Juego {
     
     private Result battle(Avatar jugador, Entidad enemigo)
     {
-        while(true) {
+        Result res = Result.PLAYING;
+        while(res == Result.PLAYING) {
             this.dibujador.showBattleInterface(jugador, enemigo);
             String input = this.dibujador.showInputPrompt(
                 "Accion a tomar (Ingrese help para ver las acciones disponibles): "
@@ -391,6 +393,7 @@ public class Juego {
             if (!this.verifyBattleCommand(cmd)) {
                 this.dibujador.showError("No se ha ingresado un comando válido");
                 this.showBattleHelp();
+                continue;
             }
             boolean attacked = false;
             // Accion del Avatar
@@ -403,7 +406,9 @@ public class Juego {
                     attacked = true;
                     break;
                 case "huir":
-                    return Result.PLAYING;
+                    this.dibujador.showMessage("Has huido del enemigo");
+                    res = Result.BATTLE_RUN;
+                    break;
                 case "usar":
                     // Mostrar el inventario, luego pedir indice.
                     this.useItem();
@@ -412,17 +417,21 @@ public class Juego {
             // El enemigo murio luego de la accion del jugador ?
             if(enemigo.getCurrentHP() == 0) {
                 this.dibujador.showMessage("El " + enemigo.getNombre() + " a sido derrotado!");
-                return Result.PLAYING;
-            }
-            
-            // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
-            if (attacked)
+                res = Result.BATTLE_WIN;
+            } else if (attacked) {
+                // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
                 jugador.damage(enemigo.getArma().damage());
+            }
             
             // El jugador murio luego de la accion del Enemigo ?
             if(jugador.getCurrentHP() == 0)
-                return Result.LOSE;
+                res = Result.LOSE;
         }
+        if (res != Result.LOSE) {
+            res = Result.PLAYING;
+        }
+        this.dibujador.hideBattleInterface();
+        return res;
     }
     
     public void showBattleHelp()
@@ -466,7 +475,7 @@ public class Juego {
         int numItems = this.jugador.getNumItems();
         if (numItems == 0) {
             this.dibujador.showError("No tiene artefactos en su saco.");
-            pauseScreen();
+            //pauseScreen();
             return;
         }
         System.out.println("Saco:");
@@ -508,7 +517,9 @@ public class Juego {
         QUIT,
         LOSE,
         WIN,
-        PLAYING
+        PLAYING,
+        BATTLE_WIN,
+        BATTLE_RUN,
     }
     
     private void closeGame()

@@ -1,5 +1,6 @@
 package lp2.juegolp2.Mundo;
 
+import java.awt.*;
 import java.util.*;
 
 /**
@@ -68,8 +69,11 @@ public class Celda
      * Cuando implementemos los gráficos, deberá dibujar solo la celda,
      * su contenido de dibujará por separado
      */
-    public void draw()
+    public void draw(Graphics g, double x, double y)
     {
+        g.setColor(Color.white);
+        g.drawRect((int)x, (int)y, 32, 32);
+        //System.out.println("Dibuja celda en: " + x + ", " + y);
         System.out.print(this.contenido.first().asChar());
     }
 

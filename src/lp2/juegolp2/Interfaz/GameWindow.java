@@ -11,8 +11,7 @@ public class GameWindow extends JFrame
 {
     private JPanel mainPanel;
     private JPanel mapPanel;
-    private JPanel sidebar;
-    private int tileSize = 32;
+    private Sidebar sidebar;
     private int altoMapa;
     private int anchoMapa;
     
@@ -21,26 +20,31 @@ public class GameWindow extends JFrame
         this.altoMapa = altoMapa;
         this.anchoMapa = anchoMapa;
         
+        this.init();
+        this.initComponents();
+        
+        this.pack();
+        this.createBufferStrategy(2);
+        this.setVisible(true);
+    }
+    
+    private void init()
+    {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         
-        this.mainPanel = new JPanel();
-        mainPanel.setBackground(Color.black);
-        mainPanel.setLayout(new BorderLayout());
+        this.setBackground(Color.black);
+        this.setLayout(new BorderLayout());
         
-        this.mapPanel = new JPanel();
-        mapPanel.setPreferredSize(new Dimension(480, 480));
-        mapPanel.setBackground(Color.yellow);
-        mainPanel.add(mapPanel, BorderLayout.CENTER);
+    }
+    
+    private void initComponents()
+    {
+        this.mapPanel = new Map(640, 640);
+        this.add(mapPanel, BorderLayout.CENTER);
         
-        this.sidebar = new JPanel();
-        sidebar.setPreferredSize(new Dimension(160, 480));
-        sidebar.setBackground(Color.red);
-        mainPanel.add(sidebar, BorderLayout.LINE_END);
-        
-        this.add(mainPanel);
-        this.pack();
-        this.setVisible(true);
+        this.sidebar = new Sidebar(350, 640);
+        this.add(sidebar, BorderLayout.LINE_END);
     }
     
     public JPanel getMapPanel()
@@ -48,7 +52,7 @@ public class GameWindow extends JFrame
         return this.mapPanel;
     }
     
-    public JPanel getSideBar()
+    public Sidebar getSideBar()
     {
         return this.sidebar;
     }

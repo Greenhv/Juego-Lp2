@@ -24,7 +24,7 @@ public class Position
 
     public String toString()
     {
-        return "(" + getX() + ", " + getY() + ")";
+        return "(" + X + ", " + Y + ")";
     }
     
     @Override
@@ -46,9 +46,9 @@ public class Position
     
     public boolean equals(Position pos)
     {
-        return (this.getX() == pos.getX())
+        return (this.X == pos.X)
                &&
-               (this.getY() == pos.getY());
+               (this.Y == pos.Y);
     }
 
     public int getX()
@@ -75,16 +75,16 @@ public class Position
     {
         switch (dir) {
             case UP:
-                this.setX(this.getX() - 1);
+                this.Y--;
                 break;
             case RIGHT:
-                this.setY(this.getY() + 1);
+                this.X++;
                 break;
             case DOWN:
-                this.setX(this.getX() + 1);
+                this.Y++;
                 break;
             case LEFT:
-                this.setY(this.getY() - 1);
+                this.X--;
                 break;
         }
         return this.copy();

@@ -19,7 +19,6 @@ public class Dibujador
     public static int tileSize = 32;
     private GameWindow window;
     private BufferStrategy bs;
-    private Point mapCenter;
     private ImageLoader imgLoader;
     
     public Dibujador()
@@ -28,8 +27,6 @@ public class Dibujador
         this.altoVisible = 10;
         this.window = new GameWindow(altoVisible, anchoVisible);
         this.bs = window.getBufferStrategy();
-        JPanel mapPanel = this.window.getMapPanel();
-        this.mapCenter = new Point(mapPanel.getWidth()/2, mapPanel.getHeight()/2);
         this.imgLoader = new ImageLoader();
     }
     
@@ -55,12 +52,16 @@ public class Dibujador
         int yCeldaFin = (Y + this.altoVisible) >= laberinto.getAlto() ? (laberinto.getAlto()-1) : (Y + this.altoVisible);
         
         // Coordenadas del mapa desde las cuales se dibuja
-        int xMapIni = mapCenter.x - tileSize/2 - (xCeldaFin-xCeldaIni)*tileSize;
+        JPanel mapPanel = this.window.getMapPanel();
+        Point mapCenter = new Point(mapPanel.getWidth()/2, mapPanel.getHeight()/2);
+        int xMapIni = mapCenter.x - (xCeldaFin-xCeldaIni)*tileSize;
         xMapIni = (xMapIni < 0) ? 0 : xMapIni;
-        int yMapIni = mapCenter.y - tileSize/2 - (yCeldaFin-yCeldaIni)*tileSize;
+        int yMapIni = mapCenter.y - (yCeldaFin-yCeldaIni)*tileSize;
         yMapIni = (yMapIni < 0) ? 0 : yMapIni;
+        
         System.out.println("Centro: " + mapCenter.toString());
         System.out.println("xMapIni: " + xMapIni + ", yMapIni: " + yMapIni);
+        
         for(int i = yCeldaIni; i <= yCeldaFin; i++){
             for(int j = xCeldaIni; j <= xCeldaFin;j++){
                 int xImg = xMapIni + j*tileSize;
@@ -69,17 +70,23 @@ public class Dibujador
             }
             System.out.println();
         }
+        if (bs.contentsLost()) {
+            System.out.println("Buffer contents lost");
+        } else {
+            bs.show();
+        }
+        g.dispose();
     }
     
     public void dibujarInfoJugador(Avatar jugador)
     {
-        String info = "Nombre: " + jugador.getNombre() + "\n";
-        info += "HP: " + jugador.getCurrentHP() + "/" + jugador.getMaxHP() + "\n";
-        info += "Nivel: " + jugador.getNivel() + "\n";
-        info += "Arma: " + ((jugador.getArma() == null) ? "Ninguna" : jugador.getArma().toString()) + "\n";
-        info += "Armadura: " + ((jugador.getArmadura() == null) ? "Ninguna" : jugador.getArmadura().toString()) + "\n";
-        info += "Saco: \n";
-        info += ((jugador.getSaco().empty()) ? "Vacío" : jugador.getSaco().toString());
+        String info = "Nombre: " + jugador.getNombre() + "\n"
+                    + "HP: " + jugador.getCurrentHP() + "/" + jugador.getMaxHP() + "\n"
+                    + "Nivel: " + jugador.getNivel() + "\n"
+                    + "Arma: " + ((jugador.getArma() == null) ? "Ninguna" : jugador.getArma().toString()) + "\n"
+                    + "Armadura: " + ((jugador.getArmadura() == null) ? "Ninguna" : jugador.getArmadura().toString()) + "\n"
+                    + "Saco: \n"
+                    + ((jugador.getSaco().empty()) ? "Vacío" : jugador.getSaco().toString());
         this.window.getSideBar().setPlayerInfo(jugador.toString());
     }
     
@@ -107,14 +114,14 @@ public class Dibujador
     {
         this.window.getSideBar().showBattleArea();
         
-        String data = "Heroe: " + jugador.getNombre();
-        data += " - Vida Actual: " + jugador.getCurrentHP();
-        data += " - Defensa: " + 
-                ((jugador.getArmadura() == null) ? 0 : jugador.getArmadura().getDefensa());
-        data += " \nvs\n";
-        data += "Enemigo: " + enemigo.getNombre();
-        data += " - Vida Actual: " + enemigo.getCurrentHP() + " - Defensa: " + 
-                ((enemigo.getArmadura() == null) ? 0 : enemigo.getArmadura().getDefensa());
+        String data = "Heroe: " + jugador.getNombre()
+                    + " - Vida Actual: " + jugador.getCurrentHP()
+                    + " - Defensa: " + 
+                    ((jugador.getArmadura() == null) ? 0 : jugador.getArmadura().getDefensa())
+                    + " \nvs\n"
+                    + "Enemigo: " + enemigo.getNombre()
+                    + " - Vida Actual: " + enemigo.getCurrentHP() + " - Defensa: " + 
+                    ((enemigo.getArmadura() == null) ? 0 : enemigo.getArmadura().getDefensa());
         
         this.window.getSideBar().setBattleInterface(data);
     }

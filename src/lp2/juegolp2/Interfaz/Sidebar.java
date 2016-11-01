@@ -134,6 +134,11 @@ public class Sidebar extends javax.swing.JPanel
         this.battleLabel.setVisible(true);
     }
     
+    public void setCommandPrompt(String prompt)
+    {
+        this.commandLabel.setText(prompt);
+    }
+    
     private void hideCommandArea()
     {
         this.commandButton.setVisible(false);

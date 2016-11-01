@@ -11,11 +11,13 @@ import java.util.stream.IntStream;
  */
 public class GestorLaberinto
 {
-    List<Laberinto> laberintos;
+    private List<Laberinto> laberintos;
+    private ImageLoader imgLoader;
     
-    public GestorLaberinto()
+    public GestorLaberinto(ImageLoader imgLoader)
     {
         this.laberintos = new ArrayList<Laberinto>();
+        this.imgLoader = imgLoader;
     }
     
     public Laberinto get(int n)
@@ -27,7 +29,7 @@ public class GestorLaberinto
     {
         // pct_enemigo: Minimo 5% - Maximo 20%
         double pct = ((Math.random() * 100) % 11 + 5) / 100;
-        Laberinto lab = new Laberinto(2*M+1, 2*N+1, pct, niveles);
+        Laberinto lab = new Laberinto(2*M+1, 2*N+1, pct, niveles, imgLoader);
         configLaberinto(lab);
         return lab;
     }
@@ -70,7 +72,7 @@ public class GestorLaberinto
             if (Math.random() <= lab.getPctEnemigo()) {
                 lab.addEnemigo(libres.get(i));
             } else if (Math.random() <= 0.1) {
-                Artefacto artefacto = Artefacto.random();
+                Artefacto artefacto = Artefacto.random(this.imgLoader);
                 lab.addArtefacto(artefacto, libres.get(i));
             }
         }

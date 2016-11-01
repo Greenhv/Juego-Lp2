@@ -1,37 +1,35 @@
 package lp2.juegolp2.Mundo;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
+import lp2.juegolp2.Facilidades.ImageLoader;
+import lp2.juegolp2.Facilidades.WorldObject;
 
 /**
  *
  * @author pmvb
  */
-public class Celda
+public class Celda extends WorldObject
 {
     private int fila;
     private int columna;
     private Tipo tipo;
     private TreeSet<Contenido> contenido;
 
-    public Celda()
+    public Celda(ImageLoader imgLoader)
     {
+        super(imgLoader);
         this.tipo = Tipo.PARED;
         this.contenido = new TreeSet<>(new ComparadorContenidoCelda());
         this.addContenido(Celda.Contenido.PARED);
     }
     
-    public Celda(int fila, int columna)
+    public Celda(int fila, int columna, ImageLoader imgLoader)
     {
-        this();
+        this(imgLoader);
         this.fila = fila;
         this.columna = columna;
-    }
-
-    public Celda(Tipo tipo, Contenido contenido)
-    {
-        this.tipo = tipo;
-        this.contenido.add(contenido);
     }
     
     public void setTipo(Tipo tipo)
@@ -47,6 +45,7 @@ public class Celda
     public boolean addContenido(Contenido contenido)
     {
         if (contenido == Contenido.PARED) {
+            this.sprite.setImage("wallTile");
             this.contenido.clear();
         } else {
             this.contenido.remove(Contenido.PARED);
@@ -71,8 +70,19 @@ public class Celda
      */
     public void draw(Graphics g, double x, double y)
     {
-        g.setColor(Color.white);
-        g.drawRect((int)x, (int)y, 32, 32);
+        String imgName = "";
+        Contenido contenido = this.contenido.first();
+        if (this.contenido.contains(Celda.Contenido.ANTERIOR)) {
+            imgName = "anteriorTile";
+        } else if (this.contenido.contains(Celda.Contenido.SIGUIENTE)) {
+            imgName = "siguienteTile";
+        } else if (contenido != Celda.Contenido.PARED) {
+            imgName = "freeDungeonTile";
+        }
+        if (imgName != "") {
+            this.sprite.setImage(imgName);
+        }
+        this.sprite.paint(g, x, y);
         //System.out.println("Dibuja celda en: " + x + ", " + y);
         System.out.print(this.contenido.first().asChar());
     }

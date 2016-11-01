@@ -9,7 +9,6 @@ import javax.swing.*;
  */
 public class GameWindow extends JFrame
 {
-    private JPanel mainPanel;
     private JPanel mapPanel;
     private Sidebar sidebar;
     private int altoMapa;
@@ -21,11 +20,9 @@ public class GameWindow extends JFrame
         this.anchoMapa = anchoMapa;
         
         this.init();
-        this.initComponents();
         
         this.pack();
         this.createBufferStrategy(2);
-        this.setVisible(true);
     }
     
     private void init()
@@ -33,9 +30,8 @@ public class GameWindow extends JFrame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         
-        this.setBackground(Color.black);
         this.setLayout(new BorderLayout());
-        
+        this.initComponents();
     }
     
     private void initComponents()

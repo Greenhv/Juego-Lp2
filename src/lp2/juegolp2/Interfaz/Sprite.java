@@ -3,6 +3,7 @@ package lp2.juegolp2.Interfaz;
 import java.awt.*;
 import java.awt.image.*;
 import java.util.*;
+import lp2.juegolp2.Facilidades.ImageLoader;
 
 public class Sprite
 {
@@ -54,10 +55,7 @@ public class Sprite
      */
     protected int imgIndex;
 
-    /**
-     * Referencia al escenario principal.
-     */
-    protected Dibujador dibujador;
+    protected ImageLoader imgLoader;
 
     /**
      * Indica si es visible el componente. Si no lo es,
@@ -85,9 +83,9 @@ public class Sprite
 
 
 
-    public Sprite(Dibujador s)
+    public Sprite(ImageLoader imgLoader)
     {
-        dibujador = s;
+        this.imgLoader = imgLoader;
         x = 0;
         y = 0;
         z = 0;
@@ -165,7 +163,7 @@ public class Sprite
      */
     public boolean setImage(String name)
     {
-        return setImage(dibujador.getImageLoader().getImage(name));
+        return setImage(imgLoader.getImage(name));
     }
 
     /**
@@ -302,6 +300,12 @@ public class Sprite
     {
         this.visible = visible;
     }
+    
+    public void setImageLoader(ImageLoader imgLoader) {
+        if (imgLoader != null) {
+            this.imgLoader = imgLoader;
+        }
+    }
     //  end of SET methods ------------------------------------------
 
 
@@ -333,5 +337,4 @@ public class Sprite
         return visible;
     }
     //  end of BOOLEAN methods --------------------------------------
-}  // end of Objects class
-//  end of Objects.java
+}

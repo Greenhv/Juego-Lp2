@@ -82,11 +82,10 @@ public class ImageLoader extends Loader
     {
         boolean error = false;
         StringTokenizer st = new StringTokenizer(line, " ");
-        
         if (st.countTokens() >= 4) {
             st.nextToken();
             String name = st.nextToken();
-            String nameFile = "";
+            String filename = "";
             int equals = name.indexOf("=");
             int row = 0, col = 0;
             try {
@@ -102,26 +101,24 @@ public class ImageLoader extends Loader
                         return false;
                     }
                 } else { // if =
-                    nameFile = name.substring(equals+1);
+                    filename = name.substring(equals+1);
                     name = name.substring(0, equals);
-                    if (!super.load(nameFile, name)) {
+                    if (!super.load(filename, name)) {
                         return false;
                     }
                 }
                 BufferedImage bi = getImage(name);
-                int w = (int)bi.getWidth()/col;
-                int h = bi.getHeight()/row;
-                int transparency = bi
-                        .getColorModel().getTransparency();
+                int w = (int)bi.getWidth() / col;
+                int h = bi.getHeight() / row;
+                int transparency = bi.getColorModel().getTransparency();
                 
                 BufferedImage img;
                 Graphics g;
                 String nextName = null;
                 equals = -1;
-                for (int i=0; i<row; i++)
-                    for (int j=0; j<col; j++) {
-                        img = gc.createCompatibleImage(
-                            w, h, transparency);
+                for (int i = 0; i < row; i++)
+                    for (int j = 0; j < col; j++) {
+                        img = gc.createCompatibleImage(w, h, transparency);
                         g = img.getGraphics();
                         g.drawImage(bi, 0, 0, w, h,
                             j*w, i*h, (j*w)+w, (i*h)+h, null);
@@ -136,10 +133,8 @@ public class ImageLoader extends Loader
                             }
                         }
                         if (nextName.startsWith(i+"_"+j)) {
-                            loaded.put(nextName.substring(
-                                equals+1), img);
-                            System.out.print(nextName.substring(
-                                equals+1)+" -> "); // TODELETE
+                            loaded.put(nextName.substring(equals+1), img);
+                            System.out.print(nextName.substring(equals+1)+" -> "); // TODELETE
                             nextName = null;
                         } else {
                             loaded.put(name+i+"_"+j, img);
@@ -154,7 +149,7 @@ public class ImageLoader extends Loader
             error = true;
         }
         if (error) {
-            System.err.println("Error format in line: "+line);
+            System.err.println("Format error in line: " + line);
         }
         return error;
     }  // end of loadSprites(String);

@@ -42,8 +42,8 @@ public class Juego {
     
     private Juego()
     {
-        this.gestorLaberinto = new GestorLaberinto();
-        this.dibujador = new Dibujador();
+        this.dibujador = new Dibujador(this);
+        this.gestorLaberinto = new GestorLaberinto(this.dibujador.getImageLoader());
         this.currentLabIndex = 0;
         xmlSerializer = new XStream();
         
@@ -87,37 +87,13 @@ public class Juego {
 
     public void play()
     {
-        Scanner scan = new Scanner(System.in);
+        this.startGame();
         Result result = Result.PLAYING;
         while(result == Result.PLAYING) {
-            Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
-            this.dibujador.dibujarLaberinto(laberintoActual, this.jugador.getPosition());
-            this.dibujador.dibujarInfoJugador(this.jugador);
-            String input = this.dibujador.showInputPrompt("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles): ");
+            this.updateStage();
+            String input = this.dibujador.showInputPrompt("Ingrese su siguiente movimiento (help para ver los comandos disponibles): ");
             
-            String[] cmd = this.getCommandFromString(input);
-            if (!this.verifyCommand(cmd)) {
-                this.dibujador.showError("No se ha ingresado un comando válido");
-                this.showHelp();
-            } else {
-                switch (cmd[0]) {
-                    case "help":
-                        this.showHelp();
-                        break;
-                    case "interactuar":
-                        result = this.interactuar(cmd[1], laberintoActual);
-                        break;
-                    case "mover":
-                        result = this.move(cmd[1], laberintoActual);
-                        break;
-                    case "usar":
-                        this.useItem();
-                        break;
-                    case "salir":
-                        result = Result.QUIT;
-                        break;
-                }
-            }
+            result = this.processInput(input);
         }
         switch (result) {
             case QUIT:
@@ -204,7 +180,7 @@ public class Juego {
     {
         String nombre;
         do {
-            nombre = this.dibujador.showInputPrompt("Ingrese su nombre: ");
+            nombre = this.dibujador.showInputPopup("Ingrese su nombre: ");
             if (nombre == null) {
                 this.dibujador.showError("Debe escribir un nombre");
             }
@@ -214,7 +190,7 @@ public class Juego {
         Arma armaIni = Arma.armasDisp.get(0);
         Armadura armaduraIni = Armadura.armadurasDisp.get(0);
         
-        this.jugador = new Avatar(nombre, avatarPos);
+        this.jugador = new Avatar(nombre, avatarPos, this.dibujador.getImageLoader());
         this.jugador.setArma(armaIni);
         this.jugador.setArmadura(armaduraIni);
         this.gestorLaberinto.get(currentLabIndex).agregaPlayer(jugador);
@@ -230,7 +206,7 @@ public class Juego {
              */
             int numArt = (int) (Math.random() * 6) + 5;
             for (int j = 0; j < numArt; ++j) {
-                aliados.get(i).pickupItem(Artefacto.random());
+                aliados.get(i).pickupItem(Artefacto.random(this.dibujador.getImageLoader()));
             }
             /**
             * Agrega aliados a los laberintos
@@ -248,7 +224,7 @@ public class Juego {
             int numAliados = Integer.parseInt(line.split(":")[1]);
             for (int i = 0; i < numAliados; ++i) {
                 line = file.readLine();
-                Aliado aliado = readAliadoFromString(line);
+                Aliado aliado = Aliado.readAliadoFromString(line, this.dibujador.getImageLoader());
                 aliados.add(aliado);
             }
         } catch (Exception ex) {
@@ -257,31 +233,6 @@ public class Juego {
             System.exit(1);
         }
         return aliados;
-    }
-    
-    private Aliado readAliadoFromString(String line)
-    {
-        String strAliado = line.split("ALIADO:")[1];
-        String[] datosAliado = strAliado.split("/");
-        // Obten nombre aliado
-        String nomAliado = datosAliado[0];
-               
-        // Crea lista de consejos
-        ArrayList<Consejo> listaConsejos = new ArrayList<>();
-                
-        // Obten consejos aliado
-        String strConsejos = datosAliado[1];
-        String[] datosConsejos = strConsejos.split(":")[1].split("@");
-        int numConsejos = Integer.parseInt(datosConsejos[0]);
-        for (int j = 1; j <= numConsejos; ++j) {
-            String[] consejo = datosConsejos[j].split("\\.");
-            String strConsejo = consejo[0];
-            int nivelConsejo = Integer.parseInt(consejo[1]);
-            Consejo objConsejo = new Consejo(strConsejo, nivelConsejo);
-            listaConsejos.add(objConsejo);
-        }
-
-        return new Aliado(nomAliado, listaConsejos);
     }
     
     private void initMap()
@@ -326,7 +277,7 @@ public class Juego {
             return;
         }
         laberintoActual.moverEntidad(jugador, dir);
-        Aliado aliado = laberintoActual.aliadoEnPos(newPos);
+        Aliado aliado = laberintoActual.getAliado(newPos);
         if (aliado != null) {
             laberintoActual.moverEntidad(aliado, dir.opposite());
         }
@@ -374,7 +325,7 @@ public class Juego {
             return Result.PLAYING;
         }
         
-        Aliado aliado = laberintoActual.aliadoEnPos(pos);
+        Aliado aliado = laberintoActual.getAliado(pos);
         if (aliado != null) {
             this.dibujador.showMessage("Consejo de tu aliado: " + aliado.getConsejo());
         }
@@ -416,7 +367,7 @@ public class Juego {
             }
             // El enemigo murio luego de la accion del jugador ?
             if(enemigo.getCurrentHP() == 0) {
-                this.dibujador.showMessage("El " + enemigo.getNombre() + " a sido derrotado!");
+                this.dibujador.showMessage("El enemigo ha sido derrotado!");
                 res = Result.BATTLE_WIN;
             } else if (attacked) {
                 // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
@@ -581,5 +532,47 @@ public class Juego {
         } catch (IOException e) {
             this.dibujador.showError(e.toString());
         }
+    }
+
+    private Result processInput(String input)
+    {
+        Result result = Result.PLAYING;
+        String[] cmd = this.getCommandFromString(input);
+        Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
+        if (!this.verifyCommand(cmd)) {
+            this.dibujador.showError("No se ha ingresado un comando válido");
+            this.showHelp();
+        } else {
+            switch (cmd[0]) {
+                case "help":
+                    this.showHelp();
+                    break;
+                case "interactuar":
+                    result = this.interactuar(cmd[1], laberintoActual);
+                    break;
+                case "mover":
+                    result = this.move(cmd[1], laberintoActual);
+                    break;
+                case "usar":
+                    this.useItem();
+                    break;
+                case "salir":
+                    result = Result.QUIT;
+                    break;
+            }
+        }
+        return result;
+    }
+    
+    private void startGame()
+    {
+        this.dibujador.startGame();
+    }
+    
+    private void updateStage()
+    {
+        Laberinto labActual = this.gestorLaberinto.get(this.currentLabIndex);
+        this.dibujador.dibujarLaberinto(labActual);
+        this.dibujador.dibujarInfoJugador(this.jugador);
     }
 }

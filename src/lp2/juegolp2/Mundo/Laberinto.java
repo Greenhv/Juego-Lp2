@@ -6,6 +6,7 @@ import lp2.juegolp2.Facilidades.*;
 
 import java.util.*;
 import java.awt.*;
+import static lp2.juegolp2.Interfaz.Dibujador.tileSize;
 
 /**
  *
@@ -63,8 +64,12 @@ public class Laberinto
      */
     private ArrayList<Aliado> aliados;
     
-    public Laberinto(int ancho, int alto, double pct_enemigo, int[] niveles)
+    private ImageLoader imgLoader;
+    private Avatar jugador;
+    
+    public Laberinto(int ancho, int alto, double pct_enemigo, int[] niveles, ImageLoader imgLoader)
     {
+        this.imgLoader = imgLoader;
         this.setPctEnemigo(pct_enemigo);
         this.setAncho(ancho);
         this.setAlto(alto);
@@ -76,7 +81,7 @@ public class Laberinto
         this.laberinto = new Celda[alto][ancho];
         for (int i = 0; i < alto; i++){
           for (int j = 0; j < ancho; j++){
-                laberinto[i][j] = new Celda(i,j);
+                laberinto[i][j] = new Celda(i,j, imgLoader);
             }
         }
         this.init();
@@ -315,7 +320,7 @@ public class Laberinto
     public void addEnemigo(Position pos)
     {   
         int nivel = this.niveles[(int) (Math.random() * niveles.length)];
-        Enemigo enemigo = Enemigo.random(nivel);
+        Enemigo enemigo = Enemigo.random(nivel, this.imgLoader);
         this.addEnemigo(enemigo, pos);
         this.get(pos).removeContenido(Celda.Contenido.PARED);
     }
@@ -333,7 +338,7 @@ public class Laberinto
     }
     
     public void addArtefacto(Position pos){
-        Artefacto artefacto = Artefacto.random();
+        Artefacto artefacto = Artefacto.random(this.imgLoader);
         this.addArtefacto(artefacto, pos);
     }
     
@@ -509,6 +514,7 @@ public class Laberinto
     
     public void agregaPlayer(Avatar jugador)
     {
+        this.jugador = jugador;
         this.get(jugador.getPosition()).addContenido(Celda.Contenido.JUGADOR);
     }
     
@@ -552,12 +558,45 @@ public class Laberinto
         }
     }
     
-    public Aliado aliadoEnPos(Position pos)
+    public Aliado getAliado(Position pos)
     {
         for (Aliado aliado : this.aliados) {
             if (aliado.getPosition().equals(pos))
                 return aliado;
         }
         return null;
+    }
+    
+    public Avatar getPlayer()
+    {
+        return this.jugador;
+    }
+    
+    public void drawRegion(Graphics g, Position drawingPos, Position startCoords, Position endCoords)
+    {
+        for(int i = startCoords.getY(); i <= endCoords.getY(); i++){
+            for(int j = startCoords.getX(); j <= endCoords.getX();j++){
+                double xImg = drawingPos.getX() + j * tileSize;
+                double yImg = drawingPos.getY() + i * tileSize;
+                Position celda = new Position(j, i);
+                
+                this.get(j, i).draw(g, xImg, yImg);
+                
+                Enemigo enemigo = this.getEnemigo(celda);
+                Artefacto item = this.getArtefacto(celda);
+                Aliado ally = this.getAliado(celda);
+                
+                if (this.jugador.getPosition().equals(celda)) {
+                    this.jugador.draw(g, xImg, yImg);
+                } else if (enemigo != null) {
+                    enemigo.draw(g, xImg, yImg);
+                } else if (ally != null) {
+                    ally.draw(g, xImg, yImg);
+                } else if (item != null) {
+                    item.draw(g, xImg, yImg);
+                }
+            }
+            System.out.println();
+        }
     }
 }

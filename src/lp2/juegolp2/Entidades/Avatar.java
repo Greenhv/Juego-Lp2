@@ -1,6 +1,7 @@
 package lp2.juegolp2.Entidades;
 
 import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Facilidades.ImageLoader;
 import lp2.juegolp2.Mundo.Celda;
 import lp2.juegolp2.Mundo.Position;
 /**
@@ -12,15 +13,15 @@ public class Avatar extends Entidad
     private int nivel;
     private Saco saco;
     
-    public Avatar(String nombre)
+    public Avatar(String nombre, ImageLoader imgLoader)
     {
-        super(nombre);
+        super(nombre, imgLoader);
         init();
     }
     
-    public Avatar(String nombre, Position pos)
+    public Avatar(String nombre, Position pos, ImageLoader imgLoader)
     {
-        super(nombre, pos);
+        super(nombre, pos, imgLoader);
         init();
     }
     
@@ -30,6 +31,7 @@ public class Avatar extends Entidad
         this.saco = new Saco();
         setMaxHP(nivel*10);
         this.initHP();
+        this.sprite.setImage("brownBearStopDown");
     }
     
     public void pickupItem(Artefacto item)

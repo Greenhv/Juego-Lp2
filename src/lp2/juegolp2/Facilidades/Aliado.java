@@ -11,25 +11,32 @@ import lp2.juegolp2.Mundo.*;
  */
 public class Aliado extends Avatar
 {
-    private ArrayList<Consejo> consejos;
+    private static String[] allyTypes = {
+        "redguy", 
+        "blondegirl",
+        "blueguy",
+        "redgirl",
+        "brownbear",
+        "blackbear",
+        "brunettegirl",
+        "silverguy",
+    };
     
-    public Aliado(String nombre, ImageLoader imgLoader)
-    {
-        super(nombre, imgLoader);
-        consejos = new ArrayList<>();
-    }
+    private ArrayList<Consejo> consejos;
     
     public Aliado(String nombre, Position pos, ImageLoader imgLoader)
     {
         super(nombre, pos, imgLoader);
         consejos = new ArrayList<>();
+        this.sprite.setImage(allyTypes[(int) (Math.random()*allyTypes.length)] + "StopDown");
     }
     
     public Aliado(String nombre, ArrayList<Consejo> consejos, ImageLoader imgLoader)
     {
-        this(nombre, imgLoader);
+        super(nombre, imgLoader);
         this.consejos = consejos;
         Collections.sort(consejos);
+        this.sprite.setImage(allyTypes[(int) (Math.random()*allyTypes.length)] + "StopDown");
     }
     
     public String getConsejo()

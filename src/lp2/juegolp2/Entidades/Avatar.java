@@ -31,7 +31,7 @@ public class Avatar extends Entidad
         this.saco = new Saco();
         setMaxHP(nivel*10);
         this.initHP();
-        this.sprite.setImage("brownBearStopDown");
+        this.sprite.setImage("brownbearStopDown");
     }
     
     public void pickupItem(Artefacto item)

@@ -46,6 +46,8 @@ public class Juego {
         this.gestorLaberinto = new GestorLaberinto(this.dibujador.getImageLoader());
         this.currentLabIndex = 0;
         xmlSerializer = new XStream();
+        xmlSerializer.omitField(new WorldObject(dibujador.getImageLoader()).getClass(), "imgLoader");
+        xmlSerializer.omitField(new WorldObject(dibujador.getImageLoader()).getClass(), "sprite");
         
         this.init();
         this.historia();

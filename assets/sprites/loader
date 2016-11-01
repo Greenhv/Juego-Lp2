@@ -14,16 +14,7 @@
 //1 back2=background2.gif
 //1 back3=background3.gif
 
-// Para las monedas del juego
-//3 coin=coins/coin.gif 4 1
-//3 coinEfect=coins/coinEfect.gif 7 1
-
-// Para los ladrillos
-//3 brick=bricks/brick.gif 4 1
-
-// Para las cajas sorpresa
-//3 box=boxes/surpriseBox.gif 4 1
-//1 voidBox=boxes/voidBox.gif
+1 back1=dungeon_intersection.jpg
 
 3 dungeon=dungeon/dg_features32.gif 13 9 0_5=wallTile 3_7=freeDungeonTile 9_2=siguienteTile 9_3=anteriorTile
 

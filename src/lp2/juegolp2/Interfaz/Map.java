@@ -6,6 +6,7 @@
 package lp2.juegolp2.Interfaz;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  *
@@ -13,16 +14,34 @@ import java.awt.*;
  */
 public class Map extends javax.swing.JPanel
 {
-
+    private GameWindow parent;
+    
     /**
      * Creates new form Map
      */
-    public Map(int width, int height) {
+    public Map(int width, int height, GameWindow parent)
+    {
         initComponents();
+        
         this.setPreferredSize(new Dimension(width, height));
-        this.setBackground(Color.black);
+        this.setBounds(new Rectangle(0, 0, width, height));
+        this.parent = parent;
     }
 
+    @Override
+    public void paint(Graphics g)
+    {
+        BufferedImage img = this.parent.getDibujador().getImageLoader().getImage("back1");
+        Image tmp = img.getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH);
+        BufferedImage back = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g2 = back.createGraphics();
+        g2.drawImage(tmp, 0, 0, null);
+        g2.dispose();
+        
+        g.drawImage(back, 0, 0, null);
+        super.paint(g);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -536,7 +536,7 @@ public class Juego {
         }
     }
 
-    private Result processInput(String input)
+    public Result processInput(String input)
     {
         Result result = Result.PLAYING;
         String[] cmd = this.getCommandFromString(input);
@@ -568,7 +568,7 @@ public class Juego {
     
     private void startGame()
     {
-        this.dibujador.startGame();
+        this.dibujador.startGame(this.gestorLaberinto.get(this.currentLabIndex));
     }
     
     private void updateStage()

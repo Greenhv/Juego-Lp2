@@ -572,28 +572,40 @@ public class Laberinto
         return this.jugador;
     }
     
+    private WorldObject getObjectInPos(Position pos)
+    {
+        WorldObject obj = null;
+        
+        Enemigo enemigo = this.getEnemigo(pos);
+        Artefacto item = this.getArtefacto(pos);
+        Aliado ally = this.getAliado(pos);
+        
+        if (this.jugador.getPosition().equals(pos)) {
+            obj = this.jugador;
+        } else if (enemigo != null) {
+            obj = enemigo;
+        } else if (ally != null) {
+            obj = ally;
+        } else if (item != null) {
+            obj = item;
+        }
+        
+        return obj;
+    }
+    
     public void drawRegion(Graphics g, Position drawingPos, Position startCoords, Position endCoords)
     {
         for(int i = startCoords.getY(); i <= endCoords.getY(); i++){
             for(int j = startCoords.getX(); j <= endCoords.getX();j++){
-                double xImg = drawingPos.getX() + j * tileSize;
-                double yImg = drawingPos.getY() + i * tileSize;
+                double xImg = drawingPos.getX() + (j-startCoords.getX()) * tileSize;
+                double yImg = drawingPos.getY() + (i-startCoords.getY()) * tileSize;
                 Position celda = new Position(j, i);
                 
                 this.get(j, i).draw(g, xImg, yImg);
                 
-                Enemigo enemigo = this.getEnemigo(celda);
-                Artefacto item = this.getArtefacto(celda);
-                Aliado ally = this.getAliado(celda);
-                
-                if (this.jugador.getPosition().equals(celda)) {
-                    this.jugador.draw(g, xImg, yImg);
-                } else if (enemigo != null) {
-                    enemigo.draw(g, xImg, yImg);
-                } else if (ally != null) {
-                    ally.draw(g, xImg, yImg);
-                } else if (item != null) {
-                    item.draw(g, xImg, yImg);
+                WorldObject obj = this.getObjectInPos(celda);
+                if (obj != null) {
+                    obj.draw(g, xImg, yImg);
                 }
             }
             System.out.println();

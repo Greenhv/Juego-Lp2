@@ -28,7 +28,7 @@ public class Dibujador implements Runnable
     {
         this.anchoVisible = 5;
         this.altoVisible = 10;
-        this.window = new GameWindow(altoVisible, anchoVisible);
+        this.window = new GameWindow(altoVisible, anchoVisible, this);
         this.bs = window.getBufferStrategy();
         this.imgLoader = new ImageLoader("assets/sprites", "loader");
         this.imgLoader.startLoader();
@@ -46,7 +46,7 @@ public class Dibujador implements Runnable
         Rectangle mapBounds = mapPanel.getBounds();
         // Obtiene graficos
         Graphics g = this.bs.getDrawGraphics();
-        g.fillRect(mapBounds.x, mapBounds.y, mapBounds.width, mapBounds.height);
+        //g.fillRect(mapBounds.x, mapBounds.y, mapBounds.width, mapBounds.height);
         this.flush();
         //laberinto.draw(g, 0, 0); //Metodo de debug para revisar si el mapa es correctamente Dibujado
         
@@ -60,9 +60,9 @@ public class Dibujador implements Runnable
         
         // Coordenadas del mapa desde las cuales se dibuja
         Point mapCenter = new Point(mapBounds.x + mapBounds.width/2, mapBounds.y + mapBounds.height/2);
-        int xMapIni = 0;//mapCenter.x - (xCeldaFin-xCeldaIni)*tileSize/2;
+        int xMapIni = mapCenter.x - (xCeldaFin-xCeldaIni)*tileSize/2;
         xMapIni = (xMapIni < 0) ? 0 : xMapIni;
-        int yMapIni = 0;//mapCenter.y - (yCeldaFin-yCeldaIni)*tileSize/2;
+        int yMapIni = mapCenter.y - (yCeldaFin-yCeldaIni)*tileSize/2;
         yMapIni = (yMapIni < 0) ? 0 : yMapIni;
         
         System.out.println("Centro: " + mapCenter.toString());
@@ -191,9 +191,17 @@ public class Dibujador implements Runnable
         return this.imgLoader;
     }
     
-    public void startGame()
+    public void startGame(Laberinto laberinto)
     {
+        this.window.getMapPanel().setVisible(true);
+        this.window.getSideBar().setVisible(true);
         this.window.setVisible(true);
+        this.dibujarLaberinto(laberinto);
+    }
+    
+    public void setCommandInput(String input)
+    {
+        this.juego.processInput(input);
     }
     
     public void run()

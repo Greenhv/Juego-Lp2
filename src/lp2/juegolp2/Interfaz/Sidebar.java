@@ -9,12 +9,13 @@ import javax.swing.*;
  */
 public class Sidebar extends javax.swing.JPanel
 {
-
+    private GameWindow parent;
     /**
      * Creates new form Sidebar
      */
-    public Sidebar(int width, int height) {
+    public Sidebar(int width, int height, GameWindow parent) {
         initComponents();
+        this.parent = parent;
         this.setPreferredSize(new Dimension(width, height));
         this.playerInfoArea.setEditable(false);
         this.BattleTextArea.setEditable(false);
@@ -107,8 +108,14 @@ public class Sidebar extends javax.swing.JPanel
     }// </editor-fold>//GEN-END:initComponents
 
     private void commandButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_commandButtonMouseClicked
-        // TODO add your handling code here:
+        setInput();
     }//GEN-LAST:event_commandButtonMouseClicked
+    
+    private void setInput()
+    {
+        String input = this.commandTextField.getText();
+        this.parent.setCommandInput(input);
+    }
     
     public void setPlayerInfo(String info)
     {

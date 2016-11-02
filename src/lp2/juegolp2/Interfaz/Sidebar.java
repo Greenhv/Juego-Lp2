@@ -17,12 +17,26 @@ public class Sidebar extends javax.swing.JPanel
         initComponents();
         this.parent = parent;
         this.setPreferredSize(new Dimension(width, height));
+        
+        init();
+    }
+
+    private void init()
+    {
+        this.jScrollPane1.setBorder(BorderFactory.createEmptyBorder());
         this.playerInfoArea.setEditable(false);
+        this.playerInfoArea.setOpaque(false);
+        //this.playerInfoArea.setBorder(BorderFactory.createEmptyBorder());
+        
+        this.jScrollPane2.setBorder(BorderFactory.createEmptyBorder());
         this.BattleTextArea.setEditable(false);
+        this.BattleTextArea.setOpaque(false);
+        //this.BattleTextArea.setBorder(BorderFactory.createEmptyBorder());
+        
         this.hideBattleArea();
         this.hideCommandArea();
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -92,7 +106,7 @@ public class Sidebar extends javax.swing.JPanel
                 .addContainerGap()
                 .addComponent(playerLabel)
                 .addGap(10, 10, 10)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                 .addGap(10, 10, 10)
                 .addComponent(commandLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -110,6 +124,15 @@ public class Sidebar extends javax.swing.JPanel
     private void commandButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_commandButtonMouseClicked
         setInput();
     }//GEN-LAST:event_commandButtonMouseClicked
+    
+    @Override
+    public void paintComponent(Graphics g)
+    {
+        super.paintComponent(g);
+        
+        String info = this.parent.getDibujador().getPlayerInfo();
+        this.setPlayerInfo(info);
+    }
     
     private void setInput()
     {

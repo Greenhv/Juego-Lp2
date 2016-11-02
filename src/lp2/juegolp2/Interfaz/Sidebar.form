@@ -48,7 +48,7 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="playerLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" min="-2" pref="150" max="-2" attributes="0"/>
+              <Component id="jScrollPane1" pref="150" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Component id="commandLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>

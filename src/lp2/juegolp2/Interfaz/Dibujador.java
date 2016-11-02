@@ -69,16 +69,9 @@ public class Dibujador implements Runnable
                             new Position(xCeldaFin, yCeldaFin));
     }
     
-    public void dibujarInfoJugador(Avatar jugador)
+    public void dibujarInfoJugador()
     {
-        String info = "Nombre: " + jugador.getNombre() + "\n"
-                    + "HP: " + jugador.getCurrentHP() + "/" + jugador.getMaxHP() + "\n"
-                    + "Nivel: " + jugador.getNivel() + "\n"
-                    + "Arma: " + ((jugador.getArma() == null) ? "Ninguna" : jugador.getArma().toString()) + "\n"
-                    + "Armadura: " + ((jugador.getArmadura() == null) ? "Ninguna" : jugador.getArmadura().toString()) + "\n"
-                    + "Saco: \n"
-                    + ((jugador.getSaco().empty()) ? "Vacío" : jugador.getSaco().toString());
-        this.window.getSideBar().setPlayerInfo(jugador.toString());
+        this.window.getSideBar().repaint();
     }
     
     public void showError(String err)
@@ -103,18 +96,14 @@ public class Dibujador implements Runnable
     
     public void showBattleInterface(Avatar jugador, Entidad enemigo)
     {
+        String enemyData = "Enemigo: " + enemigo.getNombre() + "\n"
+                        + "Vida Actual: " + enemigo.getCurrentHP() + "\n"
+                        + "Defensa: " + 
+                        ((enemigo.getArmadura() == null) ? 0 : enemigo.getArmadura().getDefensa());
+        
+        this.window.getSideBar().setBattleInterface(enemyData);
         this.window.getSideBar().showBattleArea();
-        
-        String data = "Heroe: " + jugador.getNombre()
-                    + " - Vida Actual: " + jugador.getCurrentHP()
-                    + " - Defensa: " + 
-                    ((jugador.getArmadura() == null) ? 0 : jugador.getArmadura().getDefensa())
-                    + " \nvs\n"
-                    + "Enemigo: " + enemigo.getNombre()
-                    + " - Vida Actual: " + enemigo.getCurrentHP() + " - Defensa: " + 
-                    ((enemigo.getArmadura() == null) ? 0 : enemigo.getArmadura().getDefensa());
-        
-        this.window.getSideBar().setBattleInterface(data);
+        this.window.getSideBar().repaint();
     }
     
     public void hideBattleInterface()
@@ -207,9 +196,28 @@ public class Dibujador implements Runnable
         this.gameShared.endGame();
     }
     
-    public void receiveKey(Juego.GameShared shared)
+    public void receiveGameKey(Juego.GameShared shared)
     {
         this.gameShared = shared;
+    }
+    
+    public Juego getJuego()
+    {
+        return this.juego;
+    }
+    
+    public String getPlayerInfo()
+    {
+        Avatar jugador = this.gameShared.getJugador();
+        String info = "Nombre: " + jugador.getNombre() + "\n"
+                    + "HP: " + jugador.getCurrentHP() + "/" + jugador.getMaxHP() + "\n"
+                    + "Nivel: " + jugador.getNivel() + "\n"
+                    + "Arma: " + ((jugador.getArma() == null) ? "Ninguna" : jugador.getArma().toString()) + "\n"
+                    + "Armadura: " + ((jugador.getArmadura() == null) ? "Ninguna" : jugador.getArmadura().toString()) + "\n"
+                    + "Saco: \n"
+                    + ((jugador.getSaco().empty()) ? "Vacío" : jugador.getSaco().toString());
+        
+        return info;
     }
     
     public void run()

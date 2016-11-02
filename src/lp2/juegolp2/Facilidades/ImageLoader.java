@@ -15,7 +15,7 @@ public class ImageLoader extends Loader
 
     /**
      * ImageLoader with the path of the package directory
-     * and with those directories <code>loader</code>.
+     * and with those directories' <code>loader</code>s.
      */
     public ImageLoader()
     {

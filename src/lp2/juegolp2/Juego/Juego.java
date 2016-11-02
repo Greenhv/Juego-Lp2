@@ -577,6 +577,11 @@ public class Juego {
         dibujador.startGame();
     }
     
+    private Avatar getJugador()
+    {
+        return this.jugador;
+    }
+    
     public class GameShared
     {
         private GameShared(){}
@@ -600,16 +605,21 @@ public class Juego {
         {
             Juego.getInstance().startGame();
         }
+        
+        public Avatar getJugador()
+        {
+            return Juego.getInstance().getJugador();
+        }
     }
     
     public void giveKeyTo(Dibujador dibujador)
     {
-        dibujador.receiveKey(new GameShared());
+        dibujador.receiveGameKey(new GameShared());
     }
     
     private void updateStage()
     {
         this.dibujador.dibujarLaberinto();
-        this.dibujador.dibujarInfoJugador(this.jugador);
+        this.dibujador.dibujarInfoJugador();
     }
 }

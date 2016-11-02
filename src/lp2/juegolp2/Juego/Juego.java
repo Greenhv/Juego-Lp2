@@ -435,7 +435,7 @@ public class Juego {
         System.out.println("Saco:");
         System.out.println(this.jugador.getSaco());
         boolean validChoice;
-        int choice;
+        int choice = -1;
         do {
             validChoice = true;
             String input = this.dibujador.showInputPrompt(
@@ -446,7 +446,10 @@ public class Juego {
                 if (choice < 1 || choice > numItems)
                     validChoice = false;
             } catch (NumberFormatException ex) {
-                choice = input.trim().charAt(0);
+                input = input.trim();
+                if (input.length() > 0) {
+                    choice = input.charAt(0);
+                }
                 if (choice != 'q')
                     validChoice = false;
             }

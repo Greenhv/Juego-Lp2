@@ -149,9 +149,7 @@ public class Dibujador implements Runnable
     public void showStory(String story, String playerName)
     {
         story = story.replaceAll("\\{playerName\\}", playerName);
-        JFrame ventana = new JFrame();
-        JOptionPane.showMessageDialog(ventana, story, "Historia", JOptionPane.PLAIN_MESSAGE);
-        ventana.dispose();
+        JOptionPane.showMessageDialog(this.window, story, "Historia", JOptionPane.PLAIN_MESSAGE);
     }
     
     public void closeWindow()

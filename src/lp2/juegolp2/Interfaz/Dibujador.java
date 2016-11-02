@@ -23,6 +23,7 @@ public class Dibujador implements Runnable
     private ImageLoader imgLoader;
     private Thread animator;
     private Juego juego;
+    private Juego.GameShared gameShared;
 
     public Dibujador(Juego juego)
     {
@@ -33,6 +34,7 @@ public class Dibujador implements Runnable
         this.imgLoader = new ImageLoader("assets/sprites", "loader");
         this.imgLoader.startLoader();
         this.juego = juego;
+        this.juego.giveKeyTo(this);
     }
     
     public void flush()
@@ -40,15 +42,12 @@ public class Dibujador implements Runnable
         System.out.print(new String(new char[30]).replace('\0', '\n'));
     }
     
-    public void dibujarLaberinto(Laberinto laberinto)
+    private void dibujarLaberinto(Graphics g, Laberinto laberinto)
     {
         JPanel mapPanel = this.window.getMapPanel();
         Rectangle mapBounds = mapPanel.getBounds();
-        // Obtiene graficos
-        Graphics g = this.bs.getDrawGraphics();
-        //g.fillRect(mapBounds.x, mapBounds.y, mapBounds.width, mapBounds.height);
+        
         this.flush();
-        //laberinto.draw(g, 0, 0); //Metodo de debug para revisar si el mapa es correctamente Dibujado
         
         // Coordenadas de celdas
         int xPlayer = laberinto.getPlayer().getPosition().getX();
@@ -60,24 +59,14 @@ public class Dibujador implements Runnable
         
         // Coordenadas del mapa desde las cuales se dibuja
         Point mapCenter = new Point(mapBounds.x + mapBounds.width/2, mapBounds.y + mapBounds.height/2);
-        int xMapIni = mapCenter.x - (xCeldaFin-xCeldaIni)*tileSize/2;
+        int xMapIni = mapCenter.x - (xCeldaFin-xCeldaIni-1)*tileSize/2;
         xMapIni = (xMapIni < 0) ? 0 : xMapIni;
-        int yMapIni = mapCenter.y - (yCeldaFin-yCeldaIni)*tileSize/2;
+        int yMapIni = mapCenter.y - (yCeldaFin-yCeldaIni-1)*tileSize/2;
         yMapIni = (yMapIni < 0) ? 0 : yMapIni;
-        
-        System.out.println("Centro: " + mapCenter.toString());
-        System.out.println("xMapIni: " + xMapIni + ", yMapIni: " + yMapIni);
         
         laberinto.drawRegion(g, new Position(xMapIni, yMapIni), 
                             new Position(xCeldaIni, yCeldaIni), 
                             new Position(xCeldaFin, yCeldaFin));
-        if (bs.contentsLost()) {
-            System.out.println("Buffer contents lost");
-        } else {
-            bs.show();
-            this.window.getSideBar().repaint();
-        }
-        g.dispose();
     }
     
     public void dibujarInfoJugador(Avatar jugador)
@@ -191,17 +180,36 @@ public class Dibujador implements Runnable
         return this.imgLoader;
     }
     
-    public void startGame(Laberinto laberinto)
+    public void startGame()
     {
-        this.window.getMapPanel().setVisible(true);
-        this.window.getSideBar().setVisible(true);
         this.window.setVisible(true);
-        this.dibujarLaberinto(laberinto);
+        //this.dibujarLaberinto(this.gameShared.getLaberintoActual());
     }
     
     public void setCommandInput(String input)
     {
-        this.juego.processInput(input);
+        this.gameShared.processInput(input);
+    }
+    
+    public void dibujarLaberinto()
+    {
+        //this.dibujarLaberinto(this.gameShared.getLaberintoActual());
+        this.window.getMapPanel().repaint();
+    }
+    
+    public void dibujarLaberinto(Graphics g)
+    {
+        this.dibujarLaberinto(g, this.gameShared.getLaberintoActual());
+    }
+    
+    public void endGame()
+    {
+        this.gameShared.endGame();
+    }
+    
+    public void receiveKey(Juego.GameShared shared)
+    {
+        this.gameShared = shared;
     }
     
     public void run()

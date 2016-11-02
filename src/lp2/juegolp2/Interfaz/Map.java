@@ -29,8 +29,10 @@ public class Map extends javax.swing.JPanel
     }
 
     @Override
-    public void paint(Graphics g)
+    public void paintComponent(Graphics g)
     {
+        super.paintComponent(g);
+        
         BufferedImage img = this.parent.getDibujador().getImageLoader().getImage("back1");
         Image tmp = img.getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH);
         BufferedImage back = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -39,7 +41,7 @@ public class Map extends javax.swing.JPanel
         g2.dispose();
         
         g.drawImage(back, 0, 0, null);
-        super.paint(g);
+        this.parent.getDibujador().dibujarLaberinto(g);
     }
     
     /**

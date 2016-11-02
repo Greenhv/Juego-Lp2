@@ -1,6 +1,7 @@
 package lp2.juegolp2.Interfaz;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 /**
@@ -34,6 +35,23 @@ public class GameWindow extends JFrame
         
         this.setLayout(new BorderLayout());
         this.initComponents();
+        
+        this.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt) 
+            {
+                this.keyPressed(evt);
+            }
+        });
+    }
+    
+    private void keyPressed(java.awt.event.KeyEvent evt)
+    {
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE:
+                this.dibujador.endGame();
+                break;
+        }
     }
     
     private void initComponents()

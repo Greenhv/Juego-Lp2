@@ -39,6 +39,7 @@ public class Juego {
     private int currentLabIndex;
     private int numLaberintos;
     private XStream xmlSerializer;
+    private GameShared sharedMethods;
     
     private Juego()
     {
@@ -110,7 +111,7 @@ public class Juego {
                 this.dibujador.showMessage("Has perdido :(");
                 break;
         }
-        this.closeGame();
+        this.endGame();
     }
     
     private String[] getCommandFromString(String line)
@@ -475,12 +476,6 @@ public class Juego {
         BATTLE_RUN,
     }
     
-    private void closeGame()
-    {
-        this.dibujador.closeWindow();
-        this.serializeArtefactos();
-    }
-    
     private void initArtefactos()
     {
         try {
@@ -535,28 +530,33 @@ public class Juego {
             this.dibujador.showError(e.toString());
         }
     }
-
-    public Result processInput(String input)
+    
+    private Laberinto getLaberintoActual()
+    {
+        return gestorLaberinto.get(currentLabIndex);
+    }
+    
+    private Result processInput(String input)
     {
         Result result = Result.PLAYING;
-        String[] cmd = this.getCommandFromString(input);
-        Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
-        if (!this.verifyCommand(cmd)) {
-            this.dibujador.showError("No se ha ingresado un comando válido");
-            this.showHelp();
+        String[] cmd = getCommandFromString(input);
+        Laberinto laberintoActual = gestorLaberinto.get(currentLabIndex);
+        if (!verifyCommand(cmd)) {
+            dibujador.showError("No se ha ingresado un comando válido");
+            showHelp();
         } else {
             switch (cmd[0]) {
                 case "help":
-                    this.showHelp();
+                    showHelp();
                     break;
                 case "interactuar":
-                    result = this.interactuar(cmd[1], laberintoActual);
+                    result = interactuar(cmd[1], laberintoActual);
                     break;
                 case "mover":
-                    result = this.move(cmd[1], laberintoActual);
+                    result = move(cmd[1], laberintoActual);
                     break;
                 case "usar":
-                    this.useItem();
+                    useItem();
                     break;
                 case "salir":
                     result = Result.QUIT;
@@ -566,15 +566,50 @@ public class Juego {
         return result;
     }
     
+    private void endGame()
+    {
+        dibujador.closeWindow();
+        serializeArtefactos();
+    }
+    
     private void startGame()
     {
-        this.dibujador.startGame(this.gestorLaberinto.get(this.currentLabIndex));
+        dibujador.startGame();
+    }
+    
+    public class GameShared
+    {
+        private GameShared(){}
+        
+        public Laberinto getLaberintoActual()
+        {
+            return Juego.getInstance().getLaberintoActual();
+        }
+    
+        public Result processInput(String input)
+        {
+            return Juego.getInstance().processInput(input);
+        }
+    
+        public void endGame()
+        {
+            Juego.getInstance().endGame();
+        }
+    
+        public void startGame()
+        {
+            Juego.getInstance().startGame();
+        }
+    }
+    
+    public void giveKeyTo(Dibujador dibujador)
+    {
+        dibujador.receiveKey(new GameShared());
     }
     
     private void updateStage()
     {
-        Laberinto labActual = this.gestorLaberinto.get(this.currentLabIndex);
-        this.dibujador.dibujarLaberinto(labActual);
+        this.dibujador.dibujarLaberinto();
         this.dibujador.dibujarInfoJugador(this.jugador);
     }
 }

@@ -2,7 +2,7 @@
 
 echo "Compilando Fuentes"
 mkdir build
-mkdir build/sclasses
+mkdir build/classes
 
 # Compila Artefactos
 javac -sourcepath src -cp 'lib/*' -d build/classes src/lp2/juegolp2/Artefactos/*.java

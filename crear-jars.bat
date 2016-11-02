@@ -4,7 +4,7 @@
 #call compilar-fuentes.bat
 
 #Linux
-source ./compilar-fuentes.bat
+#source ./compilar-fuentes.bat
 
 echo "Creando jars"
 

@@ -93,10 +93,10 @@ public class Juego {
         this.startGame();
         Result result = Result.PLAYING;
         while(result == Result.PLAYING) {
-            this.updateStage();
             String input = this.dibujador.showInputPrompt("Ingrese su siguiente movimiento (help para ver los comandos disponibles): ");
-            
             result = this.processInput(input);
+            
+            this.updateStage();
         }
         switch (result) {
             case QUIT:

@@ -70,18 +70,17 @@ public class ImageLoader extends Loader
     {
         super.loadLine(line);
         if (line.startsWith("3 ")) {
-            loadSprites(line);
+            loadSpritesheet(line);
         }
     }
 
-    private boolean loadSprites(String line)
+    private boolean loadSpritesheet(String line)
     {
         boolean error = false;
         StringTokenizer st = new StringTokenizer(line, " ");
         if (st.countTokens() >= 4) {
-            st.nextToken();
+            st.nextToken(); // Discard line format (1, 2, etc)
             String name = st.nextToken();
-            String filename = "";
             int equals = name.indexOf("=");
             int row = 0, col = 0;
             try {
@@ -89,7 +88,6 @@ public class ImageLoader extends Loader
                 col = Integer.parseInt(st.nextToken());
             } catch (NumberFormatException e) {
                 error = true;
-                //e.printStackTrace();
             }
             if (!error) {
                 if (equals == -1) {
@@ -97,48 +95,44 @@ public class ImageLoader extends Loader
                         return false;
                     }
                 } else {
-                    filename = name.substring(equals+1);
+                    String filename = name.substring(equals+1);
                     name = name.substring(0, equals);
                     if (!super.load(filename, name)) {
                         return false;
                     }
                 }
                 BufferedImage bi = getImage(name);
-                int w = (int)bi.getWidth() / col;
+                int w = bi.getWidth() / col;
                 int h = bi.getHeight() / row;
-                int transparency = bi.getColorModel().getTransparency();
                 
-                BufferedImage img;
-                Graphics g;
                 String nextName = null;
-                equals = -1;
-                for (int i = 0; i < row; i++)
-                    for (int j = 0; j < col; j++) {
-                        img = gc.createCompatibleImage(w, h, transparency);
-                        g = img.getGraphics();
-                        g.drawImage(bi, 0, 0, w, h,
-                            j*w, i*h, (j*w)+w, (i*h)+h, null);
-                        if (nextName == null) {
-                            nextName = "";
-                            while (st.hasMoreTokens()) {
-                                nextName = st.nextToken();
-                                equals=nextName.indexOf("=");
-                                if (equals != -1) {
-                                    break;
-                                }
-                            }
-                        }
-                        if (nextName.startsWith(i+"_"+j)) {
-                            loaded.put(nextName.substring(equals+1), img);
-                            System.out.print(nextName.substring(equals+1)+" -> "); // TODELETE
-                            nextName = null;
-                        } else {
-                            loaded.put(name+i+"_"+j, img);
-                        }
-                        g.dispose();
-                        System.out.println(name+i+"_"+j);
+                while (st.hasMoreTokens() && !error) {
+                    nextName = st.nextToken();
+                    equals = nextName.indexOf("=");
+                    if (equals == -1) {
+                        error = true;
+                        break;
                     }
-                removeObject(name);
+                    String imgPos = nextName.substring(0, equals);
+                    String[] indices = imgPos.split("_");
+                    int imgRow = 0;
+                    int imgCol = 0;
+                    try {
+                        imgRow = Integer.parseInt(indices[0]);
+                        imgCol = Integer.parseInt(indices[1]);
+                    } catch (Exception ex) {
+                        error = true;
+                    }
+                    if (!error) {
+                        BufferedImage tmp = bi.getSubimage(imgCol*w, imgRow*h, w, h);
+                        BufferedImage img = this.createCompatibleImage(tmp);
+                        
+                        loaded.put(nextName.substring(equals+1), img);
+                        System.out.print(nextName.substring(equals+1) + " -> ");
+                        System.out.println(name + imgRow + "_" + imgCol);
+                    }
+                }
+                this.removeObject(name);
             }
         } else {
             // not enough arguments
@@ -160,20 +154,14 @@ public class ImageLoader extends Loader
         }
         try {
             BufferedImage bi = ImageIO.read(f);
-            int transparency = bi.getColorModel().getTransparency();
-            BufferedImage img = gc.createCompatibleImage(
-                bi.getWidth(), bi.getHeight(), transparency);
+            BufferedImage img = this.createCompatibleImage(bi);
             
-            Graphics2D g = img.createGraphics();
-            g.drawImage(bi, 0, 0, null);
-            g.dispose();
             loaded.put(name, img);
         } catch (IOException e) {
-            System.err.println("Error loanding image " + f.getPath());
-            e.printStackTrace();
+            System.err.println("Error loading image " + f.getPath());
             return false;
         }
-        System.out.println("Loaded "+name+" from "+f.getName());
+        System.out.println("Loaded " + name + " from "+f.getName());
         return true;
     }
 
@@ -194,5 +182,19 @@ public class ImageLoader extends Loader
             return null;
         }
         return (BufferedImage)o;
+    }
+    
+    public BufferedImage createCompatibleImage(BufferedImage buffer)
+    {
+        int transparency = buffer.getColorModel().getTransparency();
+        BufferedImage img = gc.createCompatibleImage(
+            buffer.getWidth(), buffer.getHeight(), transparency
+        );
+            
+        Graphics2D g = img.createGraphics();
+        g.drawImage(buffer, 0, 0, null);
+        g.dispose();
+        
+        return img;
     }
 }

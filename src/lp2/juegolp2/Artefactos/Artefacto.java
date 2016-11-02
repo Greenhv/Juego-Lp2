@@ -1,19 +1,18 @@
 package lp2.juegolp2.Artefactos;
 
+import lp2.juegolp2.Facilidades.ImageLoader;
+import lp2.juegolp2.Facilidades.WorldObject;
+
 /**
  * Created by pmvb on 01/09/16.
  */
-public abstract class Artefacto
+public abstract class Artefacto extends WorldObject
 {
     String nombre;
     
-    public Artefacto()
+    public Artefacto(String nombre, ImageLoader imgLoader)
     {
-        
-    }
-    
-    public Artefacto(String nombre)
-    {
+        super(imgLoader);
         this.nombre = nombre;
     }
     
@@ -36,20 +35,20 @@ public abstract class Artefacto
         ARMA
     }
     
-    public static Artefacto random()
+    public static Artefacto random(ImageLoader imgLoader)
     {
         int tipo = (int) (Math.random() * Artefacto.Tipo.values().length);
         Artefacto.Tipo type = Artefacto.Tipo.values()[tipo];
         Artefacto artefacto = null;
         switch (type) {
             case POCION:
-                artefacto = PocionCuracion.random();
+                artefacto = PocionCuracion.random(imgLoader);
                 break;
             case ARMA:
-                artefacto = Arma.random();
+                artefacto = Arma.random(imgLoader);
                 break;
             case ARMADURA:
-                artefacto = Armadura.random();
+                artefacto = Armadura.random(imgLoader);
                 break;
         }
         return artefacto;

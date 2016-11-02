@@ -5,6 +5,8 @@ import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Facilidades.*;
 
 import java.util.*;
+import java.awt.*;
+import static lp2.juegolp2.Interfaz.Dibujador.tileSize;
 
 /**
  *
@@ -62,20 +64,24 @@ public class Laberinto
      */
     private ArrayList<Aliado> aliados;
     
-    public Laberinto(int ancho, int alto, double pct_enemigo, int[] niveles)
+    private ImageLoader imgLoader;
+    private Avatar jugador;
+    
+    public Laberinto(int ancho, int alto, double pct_enemigo, int[] niveles, ImageLoader imgLoader)
     {
+        this.imgLoader = imgLoader;
         this.setPctEnemigo(pct_enemigo);
         this.setAncho(ancho);
         this.setAlto(alto);
         this.artefactos = new HashMap<>();
         this.enemigos = new ArrayList<>();
         this.aliados = new ArrayList<>();
-        laberinto = new Celda[alto][ancho];
         this.niveles = Arrays.copyOfRange(niveles, 0, niveles.length);
-        
+        System.out.println("Alto: " + alto + ", Ancho: " + ancho);
+        this.laberinto = new Celda[alto][ancho];
         for (int i = 0; i < alto; i++){
           for (int j = 0; j < ancho; j++){
-                laberinto[i][j] = new Celda(i,j);
+                laberinto[i][j] = new Celda(i,j, imgLoader);
             }
         }
         this.init();
@@ -90,7 +96,7 @@ public class Laberinto
         for (int i = 1; i < alto-1; i++){
             for (int j = 1; j < ancho-1; j++){
                 if(fila_flag){
-                    laberinto[i][j].markAsOutside();
+                    this.get(j, i).markAsOutside();
                 }
                 fila_flag = !fila_flag;
             }
@@ -102,7 +108,7 @@ public class Laberinto
     private void generar_ruta()
     {
         Stack<Celda> cells_stack = new Stack<>();
-        Celda starting_cell = laberinto[1][1]; //just a test starting point
+        Celda starting_cell = this.get(1, 1);
         starting_cell.markAsInside();
         cells_stack.push(starting_cell);
         
@@ -145,7 +151,7 @@ public class Laberinto
         if( (fila < 0) || (columna < 0) || (fila >= alto) || (columna >= ancho)){
             return false;
         }
-        return laberinto[fila][columna].isFree();
+        return this.get(columna, fila).isFree();
     }
     
     private boolean nearby_empty_cell(HashMap<Integer, Celda> close_cells)
@@ -180,11 +186,11 @@ public class Laberinto
 
     /* Fin del generador de laberinto */
     
-    public void draw()
+    public void draw(Graphics g, double x, double y)
     {
         for (int i = 0; i < this.getAlto(); ++i) {
             for (int j = 0; j < this.getAncho(); ++j) {
-                laberinto[i][j].draw();
+                this.get(j, i).draw(g, x, y);
             }
             System.out.println();
         }
@@ -214,12 +220,7 @@ public class Laberinto
     {
         int x = pos.getX();
         int y = pos.getY();
-        // Por como se manejan los arreglos, 'x' corresponde al alto y 'y' al ancho
-        if (!this.inBounds(x, y))
-            throw new IndexOutOfBoundsException(
-                "Coordenadas fuera de rango en Laberinto.get(Position)"
-                + "pos: " + pos.toString());
-        return laberinto[x][y];
+        return this.get(x, y);
     }
     
     public Celda get(int x, int y)
@@ -227,9 +228,9 @@ public class Laberinto
         // Por como se manejan los arreglos, 'x' corresponde al alto y 'y' al ancho
         if (!this.inBounds(x, y))
             throw new IndexOutOfBoundsException(
-                "Coordenadas fuera de rango en Laberinto.get(int, int): "
+                "Coordenadas fuera de rango: "
                 + "x: " + Integer.toString(x) + ", y: " + Integer.toString(y));
-        return laberinto[x][y];
+        return laberinto[y][x];
     }
 
     /**
@@ -278,19 +279,19 @@ public class Laberinto
     
     public boolean inBounds(int x, int y)
     {
-        return !(x < 0 || y < 0 || x >= getAlto() || y >= getAncho());
+        return !(x < 0 || y < 0 || x >= getAncho() || y >= getAlto());
     }
     
     public boolean inBounds(Position pos)
     {
         int x = pos.getX();
         int y = pos.getY();
-        return !(x < 0 || y < 0 || x >= getAlto() || y >= getAncho());
+        return inBounds(x, y);
     }
     
     public boolean validPlayerPosition(int x, int y)
     {
-        if (x < 1 || y < 1 || x >= getAlto()-1 || y >= getAncho()-1){
+        if (x < 1 || y < 1 || x >= getAncho()-1 || y >= getAlto()-1){
             return false;
         }
         Set<Celda.Contenido> cont = this.get(x, y).getContenido();
@@ -319,8 +320,9 @@ public class Laberinto
     public void addEnemigo(Position pos)
     {   
         int nivel = this.niveles[(int) (Math.random() * niveles.length)];
-        Enemigo enemigo = Enemigo.random(nivel);
+        Enemigo enemigo = Enemigo.random(nivel, this.imgLoader);
         this.addEnemigo(enemigo, pos);
+        this.get(pos).removeContenido(Celda.Contenido.PARED);
     }
     
     public void addEnemigo(Enemigo enemigo, Position pos)
@@ -336,7 +338,7 @@ public class Laberinto
     }
     
     public void addArtefacto(Position pos){
-        Artefacto artefacto = Artefacto.random();
+        Artefacto artefacto = Artefacto.random(this.imgLoader);
         this.addArtefacto(artefacto, pos);
     }
     
@@ -345,6 +347,7 @@ public class Laberinto
         if (artefacto != null) {
             this.get(pos).addContenido(Celda.Contenido.ARTEFACTO);
             this.artefactos.put(pos, artefacto);
+            this.get(pos).removeContenido(Celda.Contenido.PARED);
         }
     }
     
@@ -363,9 +366,9 @@ public class Laberinto
     
     private int getCuadranteRespectoPosicion(Position src, Position dest)
     {
-        if (dest.getX() <= src.getX()
+        if (dest.getX() >= src.getX()
             &&
-            dest.getY() >= src.getY()) {
+            dest.getY() <= src.getY()) {
             // Primer cuadrante
             return 1;
         } else if (dest.getX() <= src.getX()
@@ -373,9 +376,9 @@ public class Laberinto
             dest.getY() <= src.getY()) {
             // Segundo cuadrante
             return 2;
-        } else if (dest.getX() >= src.getX()
+        } else if (dest.getX() <= src.getX()
             &&
-            dest.getY() <= src.getY()) {
+            dest.getY() >= src.getY()) {
             // Tercer cuadrante
             return 3;
         } else {
@@ -406,7 +409,8 @@ public class Laberinto
         for (Direction dir : directions) {
             Position newPos = src.copy().move(dir);
             boolean validPosition = this.validPlayerPosition(newPos);
-            if (validPosition && (newPos.distanceTo(dest) < minDistance)) {
+            double distance = newPos.distanceTo(dest);
+            if ((validPosition && distance < minDistance) || distance == 0) {
                 minDir = dir;
                 minDistance = newPos.distanceTo(dest);
             }
@@ -510,6 +514,7 @@ public class Laberinto
     
     public void agregaPlayer(Avatar jugador)
     {
+        this.jugador = jugador;
         this.get(jugador.getPosition()).addContenido(Celda.Contenido.JUGADOR);
     }
     
@@ -533,8 +538,8 @@ public class Laberinto
         for (int i = 1; i < this.getAlto()-1; ++i) {
             for (int j = 1; j < this.getAncho()-1; ++j) {
                 // Si está libre, la añado a la lista
-                if (this.get(i, j).esLibre()) {
-                    libres.add(new Position(i, j));
+                if (this.get(j, i).esLibre()) {
+                    libres.add(new Position(j, i));
                 }
             }
         }
@@ -553,12 +558,57 @@ public class Laberinto
         }
     }
     
-    public Aliado aliadoEnPos(Position pos)
+    public Aliado getAliado(Position pos)
     {
         for (Aliado aliado : this.aliados) {
             if (aliado.getPosition().equals(pos))
                 return aliado;
         }
         return null;
+    }
+    
+    public Avatar getPlayer()
+    {
+        return this.jugador;
+    }
+    
+    private WorldObject getObjectInPos(Position pos)
+    {
+        WorldObject obj = null;
+        
+        Enemigo enemigo = this.getEnemigo(pos);
+        Artefacto item = this.getArtefacto(pos);
+        Aliado ally = this.getAliado(pos);
+        
+        if (this.jugador.getPosition().equals(pos)) {
+            obj = this.jugador;
+        } else if (enemigo != null) {
+            obj = enemigo;
+        } else if (ally != null) {
+            obj = ally;
+        } else if (item != null) {
+            obj = item;
+        }
+        
+        return obj;
+    }
+    
+    public void drawRegion(Graphics g, Position drawingPos, Position startCoords, Position endCoords)
+    {
+        for(int i = startCoords.getY(); i <= endCoords.getY(); i++){
+            for(int j = startCoords.getX(); j <= endCoords.getX();j++){
+                double xImg = drawingPos.getX() + (j-startCoords.getX()) * tileSize;
+                double yImg = drawingPos.getY() + (i-startCoords.getY()) * tileSize;
+                Position celda = new Position(j, i);
+                
+                this.get(j, i).draw(g, xImg, yImg);
+                
+                WorldObject obj = this.getObjectInPos(celda);
+                if (obj != null) {
+                    obj.draw(g, xImg, yImg);
+                }
+            }
+            System.out.println();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package lp2.juegolp2.Entidades;
 
 import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Facilidades.ImageLoader;
 import lp2.juegolp2.Mundo.Celda;
 /**
  *
@@ -9,27 +10,34 @@ import lp2.juegolp2.Mundo.Celda;
 public class Enemigo extends Entidad
 {
     private static String[] enemy_names = {
-        "Duende",
-        "Ogro",
-        "Harpía"
+        "Skeleton",
+        "Orc",
+        "Imp"
     };
     
     private int nivel_enemigo;
     
-    public Enemigo(String nombre)
+    public Enemigo(String nombre, ImageLoader imgLoader)
     {
-        super(nombre);
+        super(nombre, imgLoader);
         nivel_enemigo = 1;
+        init();
     }
     
-    public Enemigo(String nombre, int nivel)
+    public Enemigo(String nombre, int nivel, ImageLoader imgLoader)
     {
-        this(nombre);
+        this(nombre, imgLoader);
         this.nivel_enemigo = nivel;
-        super.setMaxHP(nivel*10);
+        init();
+    }
+    
+    private void init()
+    {
+        super.setMaxHP(nivel_enemigo*10);
         super.initHP();
-        this.setArma(Arma.random());
-        this.setArmadura(Armadura.random());
+        this.setArma(Arma.random(this.getImageLoader()));
+        this.setArmadura(Armadura.random(this.getImageLoader()));
+        this.sprite.setImage(getNombre().toLowerCase() + "StopDown");
     }
     
     @Override
@@ -38,10 +46,10 @@ public class Enemigo extends Entidad
         return this.nivel_enemigo;
     }
     
-    public static Enemigo random(int nivel)
+    public static Enemigo random(int nivel, ImageLoader imgLoader)
     {
         String nombre = enemy_names[(int) (Math.random() * enemy_names.length)];
-        return new Enemigo(nombre, nivel);
+        return new Enemigo(nombre, nivel, imgLoader);
     }
     
     @Override

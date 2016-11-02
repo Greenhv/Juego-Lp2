@@ -1,6 +1,8 @@
 package lp2.juegolp2.Entidades;
 
 import lp2.juegolp2.Artefactos.*;
+import lp2.juegolp2.Facilidades.ImageLoader;
+import lp2.juegolp2.Facilidades.WorldObject;
 import lp2.juegolp2.Mundo.Celda;
 import lp2.juegolp2.Mundo.Direction;
 import lp2.juegolp2.Mundo.Position;
@@ -9,7 +11,7 @@ import lp2.juegolp2.Mundo.Position;
  *
  * @author pmvb
  */
-public abstract class Entidad
+public abstract class Entidad extends WorldObject
 {
     private String nombre;
     private int maxHP;
@@ -19,15 +21,16 @@ public abstract class Entidad
     private Arma arma;
     private Armadura armadura;
     
-    public Entidad(String nombre)
+    public Entidad(String nombre, ImageLoader imgLoader)
     {
+        super(imgLoader);
         this.nombre = nombre;
         this.facingDir = Direction.LEFT;
     }
     
-    public Entidad(String nombre, Position pos)
+    public Entidad(String nombre, Position pos, ImageLoader imgLoader)
     {
-        this(nombre);
+        this(nombre, imgLoader);
         this.setPosition(pos);
         this.facingDir = Direction.LEFT;
     }

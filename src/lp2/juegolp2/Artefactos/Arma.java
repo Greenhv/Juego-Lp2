@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import lp2.juegolp2.Facilidades.ImageLoader;
 
 /**
  * Created by pmvb on 01/09/16.
@@ -15,26 +16,21 @@ public class Arma extends Artefacto
     
     private int dmg_min;
     private int dmg_max;
-
-    public Arma(int dmg_min, int dmg_max)
+    
+    public Arma(int dmg_min, int dmg_max, String nombre, ImageLoader imgLoader)
     {
-        super();
+        super(nombre, imgLoader);
         if (dmg_min > dmg_max)
             throw new ArithmeticException(
                 "El daño máximo de un arma no puede ser menor que el mínimo");
         this.dmg_min = dmg_min;
         this.dmg_max = dmg_max;
-    }
-    
-    public Arma(int dmg_min, int dmg_max, String nombre)
-    {
-        this(dmg_min, dmg_max);
-        this.setNombre(nombre);
+        this.sprite.setImage(getNombre().toLowerCase().replace(" ", "_"));
     }
     
     public Arma(Arma arma)
     {
-        this(arma.dmg_min, arma.dmg_max, arma.getNombre());
+        this(arma.dmg_min, arma.dmg_max, arma.getNombre(), arma.getImageLoader());
     }
 
     public int damage()
@@ -42,9 +38,13 @@ public class Arma extends Artefacto
         return (int) (Math.random() * (dmg_max-dmg_min+1) + dmg_min);
     }
 
-    public static Arma random()
+    public static Arma random(ImageLoader imgLoader)
     {
-        return armasDisp.get((int) (Math.random() * armasDisp.size())).copy();
+        Arma weapon = armasDisp.get((int) (Math.random() * armasDisp.size()));
+        if (weapon.getImageLoader() == null) {
+            weapon.setImageLoader(imgLoader);
+        }
+        return weapon.copy();
     }
     
     public Arma copy()

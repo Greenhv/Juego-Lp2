@@ -1,7 +1,6 @@
 package lp2.juegolp2.Juego;
 
 import com.thoughtworks.xstream.*;
-import com.thoughtworks.xstream.io.xml.*;
 import java.io.*;
 import java.util.*;
 import lp2.juegolp2.Mundo.*;
@@ -40,13 +39,19 @@ public class Juego {
     private int currentLabIndex;
     private int numLaberintos;
     private XStream xmlSerializer;
+    private GameShared sharedMethods;
     
     private Juego()
     {
-        this.gestorLaberinto = new GestorLaberinto();
-        this.dibujador = new Dibujador();
+        this.dibujador = new Dibujador(this);
+        this.gestorLaberinto = new GestorLaberinto(this.dibujador.getImageLoader());
         this.currentLabIndex = 0;
-        xmlSerializer = new XStream(new StaxDriver());
+        xmlSerializer = new XStream();
+        xmlSerializer.omitField(new WorldObject(dibujador.getImageLoader()).getClass(), "imgLoader");
+        xmlSerializer.omitField(new WorldObject(dibujador.getImageLoader()).getClass(), "sprite");
+        
+        this.init();
+        this.historia();
     }
     
     public static Juego getInstance()
@@ -57,18 +62,20 @@ public class Juego {
     // Introducción al juego      
     public void historia(){
         String nJugador = this.jugador.getNombre();        
-        System.out.println("A través del tiempo y el espacio se abren puertas.");
-        System.out.println("Mundo paralelos se crean todos los días con acciones pequeñas.");
-        System.out.println("Hay mundos maravillosos con historias y leyendas nunca antes contadas");
-        System.out.println("Sin embargo...");
-        System.out.println("No todos los mundos son amigables.");
-        System.out.print("Un día normal de su vida, " + nJugador);
-        System.out.println(" es transportado hacia el fantástico mundo de Aether.");
-        System.out.println("Aether está dominado por el demonio Azazel");
-        System.out.println("Azazel planea unir los mundos y convertirse en el amo supremo");
-        System.out.println(nJugador + " lo detendrá, no porque lo desee, sino porque es el único que puede hacerlo.");
-        System.out.println("Avanza, " + nJugador);
-        this.pauseScreen();
+        String story = 
+            "A través del tiempo y el espacio se abren puertas.\n"
+            + "Mundo paralelos se crean todos los días con acciones pequeñas.\n"
+            + "Hay mundos maravillosos con historias y leyendas nunca antes contadas\n"
+            + "Sin embargo...\n"
+            + "No todos los mundos son amigables.\n"
+            + "Un día normal de su vida, {playerName} "
+            + "es transportado hacia el fantástico mundo de Aether.\n"
+            + "Aether está dominado por el demonio Azazel. "
+            + "Azazel planea unir los mundos y convertirse en el amo supremo\n"
+            + "{playerName} lo detendrá, no porque lo desee, sino porque es el único que puede hacerlo.\n"
+            + "Avanza, {playerName}\n";
+        this.dibujador.showStory(story, nJugador);
+        //this.pauseScreen();
     }
     
     // Configura lo necesario para jugar
@@ -81,48 +88,36 @@ public class Juego {
         this.initAliados();
     }
 
-    public Result play()
+    public void play()
     {
-        Scanner scan = new Scanner(System.in);
-        while(true){
-            Laberinto laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
-            this.dibujador.dibujarLaberinto(laberintoActual, this.jugador.getPosition());
-            this.dibujador.dibujarInfoJugador(this.jugador);
-            this.dibujador.showPrompt("Ingrese su siguiente movimiento (Ingrese help para ver los comandos disponibles): ");
+        this.startGame();
+        Result result = Result.PLAYING;
+        while(result == Result.PLAYING) {
+            String input = this.dibujador.showInputPrompt("Ingrese su siguiente movimiento (help para ver los comandos disponibles): ");
+            result = this.processInput(input);
             
-            String[] cmd = this.getCommandFromString(scan.nextLine());
-            Result result = Result.PLAYING;
-            if (!this.verifyCommand(cmd)) {
-                this.dibujador.showError("No se ha ingresado un comando válido");
-                this.showHelp();
-            } else {
-                switch (cmd[0]) {
-                    case "help":
-                        this.showHelp();
-                        break;
-                    case "interactuar":
-                        result = this.interactuar(cmd[1], laberintoActual);
-                        break;
-                    case "mover":
-                        result = this.move(cmd[1], laberintoActual);
-                        break;
-                    case "usar":
-                        this.useItem();
-                        break;
-                    case "salir":
-                        result = Result.QUIT;
-                        break;
-                }
-            }
-            if (result != Result.PLAYING) {
-                this.closeGame();
-                return result;
-            }
+            this.updateStage();
         }
+        switch (result) {
+            case QUIT:
+                this.dibujador.showMessage(
+                    "Has decidido terminar el juego. Gracias por jugar."
+                );
+                break;
+            case WIN:
+                this.dibujador.showMessage("Has ganado !");
+                break;
+            case LOSE:
+                this.dibujador.showMessage("Has perdido :(");
+                break;
+        }
+        this.endGame();
     }
     
     private String[] getCommandFromString(String line)
     {
+        if (line == null)
+            return null;
         // Remueve espacios al inicio y al final
         // Luego reemplaza espacios en medio de la cadena con ";"
         // Finalmente, separa tokens por ";"
@@ -132,7 +127,7 @@ public class Juego {
     private boolean verifyCommand(String[] cmd)
     {
         // Si no ha ingresado ningun comando
-        if (cmd.length <= 0)
+        if (cmd == null || cmd.length <= 0)
             return false;
         // Limpia la entrada
         cmd[0] = cmd[0].toLowerCase();
@@ -153,50 +148,52 @@ public class Juego {
     
     public void showHelp()
     {
-        System.out.println("Comandos disponibles: ");
+        String help = "Comandos disponibles: \n";
         /**
          * Ayuda
          */
-        System.out.println("help:\t\tMuestra este mensaje de ayuda");
+        help += "help: Muestra este mensaje de ayuda\n";
         /**
          * Mover
          */
-        System.out.println("mover <dir>:\t\tMueve al jugador en la direccion dir");
-        System.out.println("\t\t\tDonde dir puede ser:");
-        System.out.println("\t\t\t'UP': arriba");
-        System.out.println("\t\t\t'DOWN': abajo");
-        System.out.println("\t\t\t'RIGHT': derecha");
-        System.out.println("\t\t\t'LEFT': izquierda");
+        help += "mover <dir>: Mueve al jugador en la direccion dir\n";
+        help += "Donde dir puede ser:\n";
+        help += "'UP': arriba\n";
+        help += "'DOWN': abajo\n";
+        help += "'RIGHT': derecha\n";
+        help += "'LEFT': izquierda\n";
         /**
          * Interactuar
          */
-        System.out.println("interactuar <dir>:\tInteractua con la celda adyacente en la direccion dir");
-        System.out.println("\t\t\tDonde dir puede tener los mismos valores que al mover el jugador");
+        help += "interactuar <dir>:\tInteractua con la celda adyacente en la direccion dir\n";
+        help += "\t\t\tDonde dir puede tener los mismos valores que al mover el jugador\n";
         /**
          * Usar
          */
-        System.out.println("usar:\t\t\tUsa un artefacto de tu saco");
+        help += "usar:\t\t\tUsa un artefacto de tu saco\n";
         /**
          * Salir
          */
-        System.out.println("salir:\t\t\tTermina el juego inmediatamente.");
-        /**
-         * Pause the screen
-         */
-        this.pauseScreen();
+        help += "salir:\t\t\tTermina el juego inmediatamente.\n";
+        
+        this.dibujador.showMessage("Ayuda", help);
     }
     
     private void initPlayer()
     {
-        Scanner scan = new Scanner(System.in);
-        this.dibujador.showPrompt("Ingrese su nombre: ");
-        String nombre = scan.nextLine();
+        String nombre;
+        do {
+            nombre = this.dibujador.showInputPopup("Ingrese su nombre: ");
+            if (nombre == null) {
+                this.dibujador.showError("Debe escribir un nombre");
+            }
+        } while (nombre == null);
         Laberinto currentLab = this.gestorLaberinto.get(this.currentLabIndex);
         Position avatarPos = new Position(currentLab.getAnterior());
         Arma armaIni = Arma.armasDisp.get(0);
         Armadura armaduraIni = Armadura.armadurasDisp.get(0);
         
-        this.jugador = new Avatar(nombre, avatarPos);
+        this.jugador = new Avatar(nombre, avatarPos, this.dibujador.getImageLoader());
         this.jugador.setArma(armaIni);
         this.jugador.setArmadura(armaduraIni);
         this.gestorLaberinto.get(currentLabIndex).agregaPlayer(jugador);
@@ -212,7 +209,7 @@ public class Juego {
              */
             int numArt = (int) (Math.random() * 6) + 5;
             for (int j = 0; j < numArt; ++j) {
-                aliados.get(i).pickupItem(Artefacto.random());
+                aliados.get(i).pickupItem(Artefacto.random(this.dibujador.getImageLoader()));
             }
             /**
             * Agrega aliados a los laberintos
@@ -230,7 +227,7 @@ public class Juego {
             int numAliados = Integer.parseInt(line.split(":")[1]);
             for (int i = 0; i < numAliados; ++i) {
                 line = file.readLine();
-                Aliado aliado = readAliadoFromString(line);
+                Aliado aliado = Aliado.readAliadoFromString(line, this.dibujador.getImageLoader());
                 aliados.add(aliado);
             }
         } catch (Exception ex) {
@@ -239,31 +236,6 @@ public class Juego {
             System.exit(1);
         }
         return aliados;
-    }
-    
-    private Aliado readAliadoFromString(String line)
-    {
-        String strAliado = line.split("ALIADO:")[1];
-        String[] datosAliado = strAliado.split("/");
-        // Obten nombre aliado
-        String nomAliado = datosAliado[0];
-               
-        // Crea lista de consejos
-        ArrayList<Consejo> listaConsejos = new ArrayList<>();
-                
-        // Obten consejos aliado
-        String strConsejos = datosAliado[1];
-        String[] datosConsejos = strConsejos.split(":")[1].split("@");
-        int numConsejos = Integer.parseInt(datosConsejos[0]);
-        for (int j = 1; j <= numConsejos; ++j) {
-            String[] consejo = datosConsejos[j].split("\\.");
-            String strConsejo = consejo[0];
-            int nivelConsejo = Integer.parseInt(consejo[1]);
-            Consejo objConsejo = new Consejo(strConsejo, nivelConsejo);
-            listaConsejos.add(objConsejo);
-        }
-
-        return new Aliado(nomAliado, listaConsejos);
     }
     
     private void initMap()
@@ -290,6 +262,7 @@ public class Juego {
                 this.currentLabIndex--;
                 laberintoActual = this.gestorLaberinto.get(this.currentLabIndex);
                 this.jugador.setPosition(laberintoActual.getSiguiente());
+                laberintoActual.agregaPlayer(jugador);
             }
         }
         this.moverEntidades(laberintoActual);
@@ -303,11 +276,11 @@ public class Juego {
         // Si no se puede mover a la posición seleccionada, mostramos un mensaje
         if (!laberintoActual.validPlayerPosition(newPos)) {
             this.dibujador.showError("No se puede mover a esa posición");
-            pauseScreen();
+            //pauseScreen();
             return;
         }
         laberintoActual.moverEntidad(jugador, dir);
-        Aliado aliado = laberintoActual.aliadoEnPos(newPos);
+        Aliado aliado = laberintoActual.getAliado(newPos);
         if (aliado != null) {
             laberintoActual.moverEntidad(aliado, dir.opposite());
         }
@@ -326,11 +299,11 @@ public class Juego {
         // Si no se puede interactuar con la posición seleccionada, se envía un mensaje
         if (laberintoActual.get(pos).getContenido().contains(Celda.Contenido.PARED)) {
             this.dibujador.showError("No se puede interactuar con esa celda");
-            this.pauseScreen();
+            //this.pauseScreen();
             return Result.PLAYING;
         }
         Result res = this.interactuar(laberintoActual, pos);
-        this.pauseScreen();
+        //this.pauseScreen();
         return res;
     }
     
@@ -355,7 +328,7 @@ public class Juego {
             return Result.PLAYING;
         }
         
-        Aliado aliado = laberintoActual.aliadoEnPos(pos);
+        Aliado aliado = laberintoActual.getAliado(pos);
         if (aliado != null) {
             this.dibujador.showMessage("Consejo de tu aliado: " + aliado.getConsejo());
         }
@@ -363,15 +336,18 @@ public class Juego {
     }
     
     private Result battle(Avatar jugador, Entidad enemigo)
-    {   
-        Scanner scan = new Scanner(System.in);
-        while(true) {
+    {
+        Result res = Result.PLAYING;
+        while(res == Result.PLAYING) {
             this.dibujador.showBattleInterface(jugador, enemigo);
-            this.dibujador.showPrompt("Accion a tomar (Ingrese help para ver las acciones disponibles): ");
-            String[] cmd = getCommandFromString(scan.nextLine());
+            String input = this.dibujador.showInputPrompt(
+                "Accion a tomar (Ingrese help para ver las acciones disponibles): "
+            );
+            String[] cmd = getCommandFromString(input);
             if (!this.verifyBattleCommand(cmd)) {
                 this.dibujador.showError("No se ha ingresado un comando válido");
                 this.showBattleHelp();
+                continue;
             }
             boolean attacked = false;
             // Accion del Avatar
@@ -384,7 +360,9 @@ public class Juego {
                     attacked = true;
                     break;
                 case "huir":
-                    return Result.PLAYING;
+                    this.dibujador.showMessage("Has huido del enemigo");
+                    res = Result.BATTLE_RUN;
+                    break;
                 case "usar":
                     // Mostrar el inventario, luego pedir indice.
                     this.useItem();
@@ -392,46 +370,51 @@ public class Juego {
             }
             // El enemigo murio luego de la accion del jugador ?
             if(enemigo.getCurrentHP() == 0) {
-                this.dibujador.showMessage("El " + enemigo.getNombre() + " a sido derrotado!");
-                return Result.PLAYING;
-            }
-            
-            // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
-            if (attacked)
+                this.dibujador.showMessage("El enemigo ha sido derrotado!");
+                res = Result.BATTLE_WIN;
+            } else if (attacked) {
+                // Accion del Enemigo atacar o curarse ( por ahora solo atacara )
                 jugador.damage(enemigo.getArma().damage());
+            }
             
             // El jugador murio luego de la accion del Enemigo ?
             if(jugador.getCurrentHP() == 0)
-                return Result.LOSE;
+                res = Result.LOSE;
         }
+        if (res != Result.LOSE) {
+            res = Result.PLAYING;
+        }
+        this.dibujador.hideBattleInterface();
+        return res;
     }
     
     public void showBattleHelp()
     {
-        System.out.println("Comandos de batalla disponibles: ");
+        String help = "Comandos de batalla disponibles: \n";
         /**
          * Ayuda
          */
-        System.out.println("help:\t\tMuestra este mensaje de ayuda");
+        help += "help:\t\tMuestra este mensaje de ayuda\n";
         /**
          * Atacar
          */
-        System.out.println("atacar:\t\tAtacar al enemigo con tu arma equipada");
+        help += "atacar:\t\tAtacar al enemigo con tu arma equipada\n";
         /**
          * Usar
          */
-        System.out.println("usar:\t\tUsar un artefacto de tu inventorio");
+        help += "usar:\t\tUsar un artefacto de tu inventorio\n";
         /**
          * Huir
          */
-        System.out.println("huir:\t\tTermina la batalla inmediatamente");
-        this.pauseScreen();
+        help += "huir:\t\tTermina la batalla inmediatamente\n";
+        
+        this.dibujador.showMessage("Ayuda", help);
     }
     
     public boolean verifyBattleCommand(String[] cmd)
     {
         // Si no ha ingresado ningun comando
-        if (cmd.length <= 0)
+        if (cmd == null || cmd.length <= 0)
             return false;
         // Limpia la entrada
         cmd[0] = cmd[0].toLowerCase();
@@ -446,23 +429,24 @@ public class Juego {
         int numItems = this.jugador.getNumItems();
         if (numItems == 0) {
             this.dibujador.showError("No tiene artefactos en su saco.");
-            pauseScreen();
+            //pauseScreen();
             return;
         }
         System.out.println("Saco:");
         System.out.println(this.jugador.getSaco());
         boolean validChoice;
         int choice;
-        Scanner scan = new Scanner(System.in);
         do {
             validChoice = true;
-            this.dibujador.showPrompt("Ingrese el artefacto a utilizar ('q' para salir): ");
+            String input = this.dibujador.showInputPrompt(
+                "Ingrese el artefacto a utilizar ('q' para salir): "
+            );
             try {
-                choice = scan.nextInt();
+                choice = Integer.parseInt(input);
                 if (choice < 1 || choice > numItems)
                     validChoice = false;
-            } catch (InputMismatchException ex) {
-                choice = scan.next().charAt(0);
+            } catch (NumberFormatException ex) {
+                choice = input.trim().charAt(0);
                 if (choice != 'q')
                     validChoice = false;
             }
@@ -471,6 +455,9 @@ public class Juego {
         if (choice == 'q')
             return;
         
+        this.dibujador.showMessage(
+            "Has usado el objeto " + this.jugador.getArtefacto(choice-1).getNombre()
+        );
         this.jugador.useItem(choice-1);
     }
     
@@ -484,12 +471,9 @@ public class Juego {
         QUIT,
         LOSE,
         WIN,
-        PLAYING
-    }
-    
-    private void closeGame()
-    {
-        this.serializeArtefactos();
+        PLAYING,
+        BATTLE_WIN,
+        BATTLE_RUN,
     }
     
     private void initArtefactos()
@@ -545,5 +529,97 @@ public class Juego {
         } catch (IOException e) {
             this.dibujador.showError(e.toString());
         }
+    }
+    
+    private Laberinto getLaberintoActual()
+    {
+        return gestorLaberinto.get(currentLabIndex);
+    }
+    
+    private Result processInput(String input)
+    {
+        Result result = Result.PLAYING;
+        String[] cmd = getCommandFromString(input);
+        Laberinto laberintoActual = gestorLaberinto.get(currentLabIndex);
+        if (!verifyCommand(cmd)) {
+            dibujador.showError("No se ha ingresado un comando válido");
+            showHelp();
+        } else {
+            switch (cmd[0]) {
+                case "help":
+                    showHelp();
+                    break;
+                case "interactuar":
+                    result = interactuar(cmd[1], laberintoActual);
+                    break;
+                case "mover":
+                    result = move(cmd[1], laberintoActual);
+                    break;
+                case "usar":
+                    useItem();
+                    break;
+                case "salir":
+                    result = Result.QUIT;
+                    break;
+            }
+        }
+        return result;
+    }
+    
+    private void endGame()
+    {
+        dibujador.closeWindow();
+        serializeArtefactos();
+    }
+    
+    private void startGame()
+    {
+        dibujador.startGame();
+    }
+    
+    private Avatar getJugador()
+    {
+        return this.jugador;
+    }
+    
+    public class GameShared
+    {
+        private GameShared(){}
+        
+        public Laberinto getLaberintoActual()
+        {
+            return Juego.getInstance().getLaberintoActual();
+        }
+    
+        public Result processInput(String input)
+        {
+            return Juego.getInstance().processInput(input);
+        }
+    
+        public void endGame()
+        {
+            Juego.getInstance().endGame();
+        }
+    
+        public void startGame()
+        {
+            Juego.getInstance().startGame();
+        }
+        
+        public Avatar getJugador()
+        {
+            return Juego.getInstance().getJugador();
+        }
+    }
+    
+    public void giveKeyTo(Dibujador dibujador)
+    {
+        dibujador.receiveGameKey(new GameShared());
+    }
+    
+    private void updateStage()
+    {
+        this.dibujador.dibujarLaberinto();
+        this.dibujador.dibujarInfoJugador();
     }
 }

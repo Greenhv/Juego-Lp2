@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import lp2.juegolp2.Facilidades.ImageLoader;
 
 /**
  * Created by pmvb on 01/09/16.
@@ -15,15 +16,16 @@ public class Armadura extends Artefacto
     
     private int defensa;
 
-    public Armadura(int def, String nombre)
+    public Armadura(int def, String nombre, ImageLoader imgLoader)
     {
-        super(nombre);
+        super(nombre, imgLoader);
         setDefensa(def);
+        this.sprite.setImage(getNombre().toLowerCase().replace(' ', '_'));
     }
     
-    public Armadura(Armadura armadura)
+    public Armadura(Armadura armor)
     {
-        this(armadura.getDefensa(), armadura.getNombre());
+        this(armor.getDefensa(), armor.getNombre(), armor.getImageLoader());
     }
     
     public int getDefensa()
@@ -40,9 +42,13 @@ public class Armadura extends Artefacto
         this.defensa = def;
     }
 
-    public static Armadura random()
+    public static Armadura random(ImageLoader imgLoader)
     {
-        return armadurasDisp.get((int) (Math.random() * armadurasDisp.size())).copy();
+        Armadura armor = armadurasDisp.get((int) (Math.random() * armadurasDisp.size()));
+        if (armor.getImageLoader() == null) {
+            armor.setImageLoader(imgLoader);
+        }
+        return armor.copy();
     }
     
     public Armadura copy()

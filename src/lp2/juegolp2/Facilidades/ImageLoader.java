@@ -6,10 +6,6 @@ import java.util.*;
 import java.io.*;
 import javax.imageio.*;
 
-/**
- *
- * @author pmvb
- */
 public class ImageLoader extends Loader
 {
     /**
@@ -24,7 +20,7 @@ public class ImageLoader extends Loader
     public ImageLoader()
     {
         this(".", "");
-    }  // end of ImageLoader();
+    }
 
     /**
      * ImageLoader with the indicated path and a
@@ -35,7 +31,7 @@ public class ImageLoader extends Loader
     public ImageLoader(String path)
     {
         this(path, "");
-    } // end of ImageLoader(String);
+    }
 
     /**
      * ImageLoader with the indicated path and the
@@ -50,7 +46,7 @@ public class ImageLoader extends Loader
         loaded = new HashMap<>();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
-    }  // end of ImageLoader(String, String);
+    }
 
     /**
      * Returns the default GraphicsConfiguration
@@ -96,11 +92,11 @@ public class ImageLoader extends Loader
                 //e.printStackTrace();
             }
             if (!error) {
-                if (equals == -1) { // if no =
+                if (equals == -1) {
                     if (!super.load(name)) {
                         return false;
                     }
-                } else { // if =
+                } else {
                     filename = name.substring(equals+1);
                     name = name.substring(0, equals);
                     if (!super.load(filename, name)) {
@@ -152,7 +148,7 @@ public class ImageLoader extends Loader
             System.err.println("Format error in line: " + line);
         }
         return error;
-    }  // end of loadSprites(String);
+    }
 
     @Override
     public boolean load(File f, String name, boolean rewrite) {
@@ -179,10 +175,10 @@ public class ImageLoader extends Loader
         }
         System.out.println("Loaded "+name+" from "+f.getName());
         return true;
-    }  // end of load(File, String, boolean);
+    }
 
     /**
-     * Returns a previous loaded image.
+     * Returns a previously loaded image.
      */
     public BufferedImage getImage(String name) {
         return (BufferedImage)loaded.get(name);
@@ -190,7 +186,7 @@ public class ImageLoader extends Loader
 
     /**
      * Returns a image. If <code>load</code> is
-     * <code>true</code> and if is necessary it's loaded.
+     * <code>true</code> the image is loaded dynamically
      */
     public BufferedImage getImage(String name, boolean load, boolean rewrite) {
         Object o = super.getObject(name, load, rewrite);
@@ -198,9 +194,5 @@ public class ImageLoader extends Loader
             return null;
         }
         return (BufferedImage)o;
-    }  // end of getImage(String, boolean, boolean);
-
-}  // end of ImageLoader class.
-
-
-//  end of ImageLoader.java
+    }
+}

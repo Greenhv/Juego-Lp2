@@ -10,14 +10,7 @@ import java.io.*;
 public abstract class Loader
 {
     /**
-     * List of valid file extensions that can be loaded.
-     * The Strings aren't case sensitive. The dot '.' is
-     * not allowed. The empty String "" allows any file extension.
-     */
-    public static ArrayList<String> validExtensions;
-
-    /**
-     * Path of the package directory.
+     * Path to the package directory.
      */
     private String packageDirectory;
     
@@ -39,12 +32,12 @@ public abstract class Loader
 
     /**
      * Loader with the path of the package directory
-     * and with those directories <code>loader</code>.
+     * and with those directories' <code>loader</code>s.
      */
     public Loader()
     {
         this(".", "");
-    }  // end of Loader();
+    }
 
     /**
      * Loader with the indicated path and a
@@ -55,7 +48,7 @@ public abstract class Loader
     public Loader(String path)
     {
         this(path, "");
-    } // end of Loader(String);
+    }
 
     /**
      * Loader with the indicated path and the
@@ -66,8 +59,6 @@ public abstract class Loader
      */
     public Loader(String path, String loader)
     {
-            validExtensions = new ArrayList<>();
-            validExtensions.add("");
             // Obtenemos el directorio de una forma enrevesada
             // para poder utilizar el cargador en Apples.
             packageDirectory = getClass().getClassLoader().getResource("").getPath();
@@ -78,15 +69,12 @@ public abstract class Loader
             System.out.println("Package Directory " + packageDirectory);
             System.out.println("Relative Path: " + relativePath);
             System.out.println("Loader: " + loader + " exists-> " + exists());
-    }  // end of ImagesLoader(String, String);
+    }
 
     /**
-     * Set the path of the files directories or
-     * the loader file.<br>
-     * The <code>path</code> is relative the main
-     * directory of the package.<br>
-     * The default path is <code>"."</code>
-     * (directory of the package).<br>
+     * Set the path of the files directories or the loader file.<br>
+     * The <code>path</code> is relative to the main directory of the package.<br>
+     * The default path is <code>"."</code> (directory of the package).<br>
      * Don't use <code>".."</code>
      * 
      * @param path Path to set
@@ -110,7 +98,7 @@ public abstract class Loader
             System.err.println("Error by setting the resource directory.");
             e.printStackTrace();
         }
-    }  // end of setPath(String);
+    }
 
     /**
      * A loader is a comfortable way to upload files. A
@@ -118,10 +106,8 @@ public abstract class Loader
      * valid file name) or directory of the <code>path</code>
      * (if <code>name</code> equals "").
      *
-     * @param name Valid file name or <code>""</code> (all
-     * images of the <code>path</code> directory)
-     * @return <code>true</code> if the file or directory
-     * exists or <code>false</code> if not.
+     * @param name Filename or directory name
+     * @return Whether the file exists
      */
     public boolean setLoader(String name)
     {
@@ -131,20 +117,17 @@ public abstract class Loader
         if (loader == null)
             return false;
         return loader.exists();
-    }  // end of setLoader(String);
+    }
 
     /**
      * Load all the files of the loader.
      *
-     * @return <code>true</code> if the loader (file or
-     * directory) exists and if no errors occur.<br />
-     * On the otherwise <code>false</code>.
+     * @return Whether the load was successful
      */
     public boolean startLoader()
     {
         if (loader != null && loader.exists()) {
             if (loader.isDirectory()) {
-                // load all the valid images in the directory
                 return loadDirectory(loader);
             } else if (loader.isFile()) {
                 if (loader.canRead()) {
@@ -153,7 +136,7 @@ public abstract class Loader
             }
         }
         return false;
-    }  // end of startLoader();
+    }
 
     private boolean readLoaderFile()
     {
@@ -170,7 +153,7 @@ public abstract class Loader
                 if (line.length() == 0 ||
                     line.startsWith("//")) {
                         continue;
-                } // else... analysing the line and load
+                } // else... read the line and load
                 loadLine(line);
             }
             br.close();
@@ -183,8 +166,7 @@ public abstract class Loader
     }
 
     /**
-     * Analysing a line of text that contains a
-     * load information.
+     * Read line with configuration information
      *
      * @param line Information to load an image/s.
      */
@@ -244,14 +226,11 @@ public abstract class Loader
                     }
                 } catch (NumberFormatException e) {
                     error = true;
-                    //e.printStackTrace();
                 }
-                while (i<numFiles) {
-                    fullName =
-                        fileName.substring(0,wildcard)+(i++)
-                        +fileName.substring(wildcard+1);
+                while (i < numFiles) {
+                    fullName = fileName.substring(0,wildcard)+(i++)
+                                +fileName.substring(wildcard+1);
                     load(fullName, loadedName);
-                    //if (!load(fullName)) break;
                 }
             }
         } else {
@@ -263,40 +242,41 @@ public abstract class Loader
     }
 
     /**
-     * Load all the directory images.
+     * Load all files from a directory
      *
-     * @param d Directory with the images which will
+     * @param d Directory from which to load files
      * be loaded.
      */
     public boolean loadDirectory(File d)
     {
-        if (!d.isDirectory()) return false;
+        if (!d.isDirectory())
+            return false;
         File[] f = d.listFiles();
         for (File file : f) {
-            if( file.isFile() && hasValidExtension(file) ) {
+            if(file.isFile()) {
                 load(file);
             }
         }
         return true;
-    }  // end of loadDirectory(File);
+    }
 
     public boolean load(File f)
     {
         return load(f, f.getName(), false);
-    }  // end of load(File);
+    }
 
     /**
      * You must implement this method if you want to load
-     * any Object. Don't forget add the object in the 
+     * any Object. Don't forget add the object to the 
      * <code>loaded:ArrayList</code>.
-     * Don't load anything if return <code>false</code>.
+     * @return Whether the object was loaded successfully
      */
     public abstract boolean load(File f, String name, boolean rewrite);
 
     public boolean load(String n)
     {
         return load(n, n);
-    }  // end of load(String);
+    }
 
     public boolean load(String fileName, String name)
     {
@@ -304,14 +284,14 @@ public abstract class Loader
         if (f.exists()) {
             if (f.isDirectory()) {
                 loadDirectory(f);
-            } else if (f.isFile() && hasValidExtension(f)) {
+            } else if (f.isFile()) {
                 return load(f, name, false);
             }
         } else {
-            System.err.println("No found: "+f.getPath());
+            System.err.println("Not found: " + f.getPath());
         }
         return false;
-    }  // end of load(String, String);
+    }
 
     /**
      * Returns an Object.
@@ -320,8 +300,8 @@ public abstract class Loader
     {
         Object aux = loaded.get(name);
         if ((load && aux == null) || rewrite) {
-            File f = new File(getPath()+name);
-            if (f.exists() && f.isFile() && hasValidExtension(f)) {
+            File f = new File(getPath() + name);
+            if (f.exists() && f.isFile()) {
                 load(f, name, rewrite);
             }
         }
@@ -329,7 +309,7 @@ public abstract class Loader
     }
 
     /**
-     * Remove a previous loaded image.
+     * Remove a previously loaded image.
      */
     public void removeObject(String name)
     {
@@ -337,7 +317,7 @@ public abstract class Loader
     }
 
     /**
-     * Remove all the loaded images.
+     * Remove all loaded images.
      */
     public void removeAllObjects() 
     {
@@ -351,7 +331,6 @@ public abstract class Loader
             return file;
         } catch (Exception e) {
             System.err.println("Error loading file: " + name);
-            //e.printStackTrace();
         }
         return null;
     }
@@ -363,7 +342,7 @@ public abstract class Loader
 
     public String getPath()
     {
-        return packageDirectory+relativePath;
+        return packageDirectory + relativePath;
     }
 
     public String getPackagePath()
@@ -382,45 +361,18 @@ public abstract class Loader
         removeObject(name);
     }
 
-    public void putObject(String name, Object object)
+    public void put(String name, Object object)
     {
         loaded.put(name, object);
     }
 
     /**
-     * Check if the name of <code>f</code> has
-     * any of the extensions indicated in the <code>ArrayList
-     * validExtensions</code>.
-     *
-     * @param f File to check.
-     * @return <code>true</code> if find a extension
-     * or <code>false</code> if not.
-     */
-    public boolean hasValidExtension(File f)
-    {
-        for (int i=0; i < validExtensions.size(); i++) {
-            String ext = "." + validExtensions.get(i).toLowerCase();
-            if (ext.equals(".")) {
-                return true;
-            }
-            if (f.getName().toLowerCase().lastIndexOf(ext) + ext.length()
-                == f.getName().length()) {
-                // the file extension is allowed
-                return true;
-            }
-        }
-        return false;
-    }  // end of hasValidExtension(File);
-
-    /**
      * Checks if the loader file or directory exists.
      *
-     * @return <code>true</code> if exists
-     * or <code>false</code> if not.
+     * @return Whether the loader exists
      */
     public boolean exists()
     {
         return (loader != null) ? loader.exists() : false;
     }
-}  // end of Loader class.
-//  end of Loader.java
+}

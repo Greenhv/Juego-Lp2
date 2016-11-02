@@ -1,8 +1,11 @@
 package lp2.juegolp2.Juego;
 
 import com.thoughtworks.xstream.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.*;
+import javax.swing.Timer;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Interfaz.*;
@@ -39,7 +42,7 @@ public class Juego {
     private int currentLabIndex;
     private int numLaberintos;
     private XStream xmlSerializer;
-    private GameShared sharedMethods;
+    private Timer timer;
     
     private Juego()
     {
@@ -86,6 +89,15 @@ public class Juego {
         // Obten datos y crea jugador
         this.initPlayer();
         this.initAliados();
+        this.timer = new Timer(2000, new ActionListener()
+        {
+            public void actionPerformed(ActionEvent evt)
+            {
+        	moverEntidades(getLaberintoActual());
+                updateStage();
+            }
+        });
+        this.timer.start();
     }
 
     public void play()
@@ -265,7 +277,7 @@ public class Juego {
                 laberintoActual.agregaPlayer(jugador);
             }
         }
-        this.moverEntidades(laberintoActual);
+        //this.moverEntidades(laberintoActual);
         return res;
     }
     
@@ -288,6 +300,7 @@ public class Juego {
     
     private void moverEntidades(Laberinto lab)
     {
+        System.out.println("Moviendo entidades");
         lab.moverEnemigos(this.jugador.getPosition());
         lab.moverAliados();
     }
@@ -571,6 +584,7 @@ public class Juego {
     
     private void endGame()
     {
+        timer.stop();
         dibujador.closeWindow();
         serializeArtefactos();
     }

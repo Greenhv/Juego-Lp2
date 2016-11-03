@@ -1,9 +1,7 @@
 package lp2.juegolp2.Juego;
 
 import com.thoughtworks.xstream.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.Timer;

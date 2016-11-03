@@ -642,15 +642,19 @@ public class Juego {
                 command = "salir";
                 break;
             case KeyEvent.VK_W:
+            case KeyEvent.VK_UP:
                 command = "mover up";
                 break;
             case KeyEvent.VK_D:
+            case KeyEvent.VK_RIGHT:
                 command = "mover right";
                 break;
             case KeyEvent.VK_A:
+            case KeyEvent.VK_LEFT:
                 command = "mover left";
                 break;
             case KeyEvent.VK_S:
+            case KeyEvent.VK_DOWN:
                 command = "mover down";
                 break;
             case KeyEvent.VK_U:

@@ -29,7 +29,7 @@ public class Avatar extends Entidad
     {
         this.nivel = 5;
         this.saco = new Saco();
-        setMaxHP(nivel*10);
+        setMaxHP(nivel*20);
         this.initHP();
         this.sprite.setImage("brownbearStopDown");
     }

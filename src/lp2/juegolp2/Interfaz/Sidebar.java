@@ -1,6 +1,7 @@
 package lp2.juegolp2.Interfaz;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 /**
@@ -34,7 +35,6 @@ public class Sidebar extends javax.swing.JPanel
         //this.BattleTextArea.setBorder(BorderFactory.createEmptyBorder());
         
         this.hideBattleArea();
-        this.hideCommandArea();
     }
     
     /**
@@ -49,12 +49,12 @@ public class Sidebar extends javax.swing.JPanel
         jScrollPane1 = new javax.swing.JScrollPane();
         playerInfoArea = new javax.swing.JTextArea();
         playerLabel = new javax.swing.JLabel();
-        commandTextField = new javax.swing.JTextField();
-        commandLabel = new javax.swing.JLabel();
-        commandButton = new javax.swing.JButton();
+        quitBtn = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         BattleTextArea = new javax.swing.JTextArea();
         battleLabel = new javax.swing.JLabel();
+        interactBtn = new javax.swing.JButton();
+        useItemBtn = new javax.swing.JButton();
 
         playerInfoArea.setColumns(20);
         playerInfoArea.setRows(5);
@@ -62,12 +62,16 @@ public class Sidebar extends javax.swing.JPanel
 
         playerLabel.setText("Jugador:");
 
-        commandLabel.setText("Comando:");
-
-        commandButton.setText("Actuar");
-        commandButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        quitBtn.setText("Salir");
+        quitBtn.setPreferredSize(new java.awt.Dimension(80, 31));
+        quitBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                commandButtonMouseClicked(evt);
+                quitBtnMouseClicked(evt);
+            }
+        });
+        quitBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quitBtnActionPerformed(evt);
             }
         });
 
@@ -77,6 +81,21 @@ public class Sidebar extends javax.swing.JPanel
 
         battleLabel.setText("Batalla:");
 
+        interactBtn.setText("Interactuar");
+        interactBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                interactBtnMouseClicked(evt);
+            }
+        });
+
+        useItemBtn.setText("Usar");
+        useItemBtn.setPreferredSize(new java.awt.Dimension(80, 31));
+        useItemBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                useItemBtnMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -85,20 +104,23 @@ public class Sidebar extends javax.swing.JPanel
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(commandTextField)
-                        .addGap(26, 26, 26)
-                        .addComponent(commandButton)
-                        .addGap(34, 34, 34))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(playerLabel, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(commandLabel, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(battleLabel)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(playerLabel)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(interactBtn)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(useItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(quitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -107,12 +129,11 @@ public class Sidebar extends javax.swing.JPanel
                 .addComponent(playerLabel)
                 .addGap(10, 10, 10)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                .addGap(10, 10, 10)
-                .addComponent(commandLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(commandTextField)
-                    .addComponent(commandButton))
+                    .addComponent(interactBtn)
+                    .addComponent(quitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(useItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(battleLabel)
                 .addGap(7, 7, 7)
@@ -121,9 +142,21 @@ public class Sidebar extends javax.swing.JPanel
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void commandButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_commandButtonMouseClicked
-        setInput();
-    }//GEN-LAST:event_commandButtonMouseClicked
+    private void useItemBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_useItemBtnMouseClicked
+        this.parent.useItemAction();
+    }//GEN-LAST:event_useItemBtnMouseClicked
+
+    private void quitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitBtnActionPerformed
+        this.parent.quitGameAction();
+    }//GEN-LAST:event_quitBtnActionPerformed
+
+    private void quitBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_quitBtnMouseClicked
+        this.parent.quitGameAction();
+    }//GEN-LAST:event_quitBtnMouseClicked
+
+    private void interactBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_interactBtnMouseClicked
+        this.parent.interactAction();
+    }//GEN-LAST:event_interactBtnMouseClicked
     
     @Override
     public void paintComponent(Graphics g)
@@ -132,12 +165,6 @@ public class Sidebar extends javax.swing.JPanel
         
         String info = this.parent.getDibujador().getPlayerInfo();
         this.setPlayerInfo(info);
-    }
-    
-    private void setInput()
-    {
-        String input = this.commandTextField.getText();
-        this.parent.setCommandInput(input);
     }
     
     public void setPlayerInfo(String info)
@@ -163,35 +190,16 @@ public class Sidebar extends javax.swing.JPanel
         this.BattleTextArea.setVisible(true);
         this.battleLabel.setVisible(true);
     }
-    
-    public void setCommandPrompt(String prompt)
-    {
-        this.commandLabel.setText(prompt);
-    }
-    
-    private void hideCommandArea()
-    {
-        this.commandButton.setVisible(false);
-        this.commandLabel.setVisible(false);
-        this.commandTextField.setVisible(false);
-    }
-    
-    private void showCommandArea()
-    {
-        this.commandButton.setVisible(true);
-        this.commandLabel.setVisible(true);
-        this.commandTextField.setVisible(true);
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea BattleTextArea;
     private javax.swing.JLabel battleLabel;
-    private javax.swing.JButton commandButton;
-    private javax.swing.JLabel commandLabel;
-    private javax.swing.JTextField commandTextField;
+    private javax.swing.JButton interactBtn;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea playerInfoArea;
     private javax.swing.JLabel playerLabel;
+    private javax.swing.JButton quitBtn;
+    private javax.swing.JButton useItemBtn;
     // End of variables declaration//GEN-END:variables
 }

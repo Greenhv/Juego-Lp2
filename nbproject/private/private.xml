@@ -2,18 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Facilidades/Loader.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Artefactos/Artefacto.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Facilidades/Aliado.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Interfaz/Dibujador.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Entidades/Avatar.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Entidades/Entidad.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Interfaz/Sprite.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Entidades/Enemigo.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Juego/Juego.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Facilidades/WorldObject.java</file>
-            <file>file:/home/pmvb/git/Juego-Lp2/src/lp2/juegolp2/Artefactos/PocionCuracion.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

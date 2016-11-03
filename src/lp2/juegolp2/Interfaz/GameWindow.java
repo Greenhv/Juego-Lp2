@@ -32,6 +32,7 @@ public class GameWindow extends JFrame
     {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
+        this.setFocusable(true);
         
         this.setLayout(new BorderLayout());
         this.initComponents();
@@ -40,26 +41,23 @@ public class GameWindow extends JFrame
         {
             public void keyPressed(java.awt.event.KeyEvent evt) 
             {
-                this.keyPressed(evt);
+                windowKeyPressed(evt);
             }
         });
     }
     
-    private void keyPressed(java.awt.event.KeyEvent evt)
+    public void windowKeyPressed(java.awt.event.KeyEvent evt)
     {
-        switch (evt.getKeyCode()) {
-            case KeyEvent.VK_ESCAPE:
-                this.dibujador.endGame();
-                break;
-        }
+        this.dibujador.keyPressed(evt);
     }
     
     private void initComponents()
     {
-        this.mapPanel = new Map(640, 640, this);
+        int maxSize = Math.max(this.altoMapa, this.anchoMapa) * Dibujador.tileSize * 2 + Dibujador.tileSize;
+        this.mapPanel = new Map(maxSize, maxSize, this);
         this.add(mapPanel, BorderLayout.CENTER);
         
-        this.sidebar = new Sidebar(350, 640, this);
+        this.sidebar = new Sidebar(350, maxSize, this);
         this.add(sidebar, BorderLayout.LINE_END);
     }
     
@@ -81,5 +79,23 @@ public class GameWindow extends JFrame
     public Dibujador getDibujador()
     {
         return this.dibujador;
+    }
+    
+    public void useItemAction()
+    {
+        this.getDibujador().useItemAction();
+        this.requestFocus();
+    }
+    
+    public void quitGameAction()
+    {
+        this.getDibujador().quitGameAction();
+        //this.requestFocus();
+    }
+    
+    public void interactAction()
+    {
+        this.getDibujador().interactAction();
+        this.requestFocus();
     }
 }

@@ -20,12 +20,14 @@ public abstract class Entidad extends WorldObject
     private Direction facingDir;
     private Arma arma;
     private Armadura armadura;
+    private boolean inBattle;
     
     public Entidad(String nombre, ImageLoader imgLoader)
     {
         super(imgLoader);
         this.nombre = nombre;
         this.facingDir = Direction.LEFT;
+        this.inBattle = false;
     }
     
     public Entidad(String nombre, Position pos, ImageLoader imgLoader)
@@ -152,6 +154,16 @@ public abstract class Entidad extends WorldObject
      */
     public void setArmadura(Armadura armadura) {
         this.armadura = armadura;
+    }
+    
+    public boolean isInBattle()
+    {
+        return this.inBattle;
+    }
+    
+    public void setInBattle(boolean inBattle)
+    {
+        this.inBattle = inBattle;
     }
     
     public abstract Celda.Contenido getContenidoCelda();

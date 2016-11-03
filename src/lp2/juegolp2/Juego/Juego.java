@@ -378,6 +378,8 @@ public class Juego {
     {
         Result res = Result.PLAYING;
         while(res == Result.PLAYING) {
+            jugador.setInBattle(true);
+            enemigo.setInBattle(true);
             this.dibujador.showBattleInterface(jugador, enemigo);
             String input = this.dibujador.showInputPrompt(
                 "Accion a tomar (Ingrese help para ver las acciones disponibles): "
@@ -420,6 +422,8 @@ public class Juego {
             if(jugador.getCurrentHP() == 0)
                 res = Result.LOSE;
         }
+        jugador.setInBattle(false);
+        enemigo.setInBattle(false);
         if (res != Result.LOSE) {
             res = Result.PLAYING;
         }

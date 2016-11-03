@@ -306,7 +306,7 @@ public class Juego {
         // Si no se puede mover a la posición seleccionada, mostramos un mensaje
         if (!laberintoActual.validPlayerPosition(newPos)) {
             this.jugador.setFacingDir(dir);
-            this.dibujador.showError("No se puede mover a esa posición");
+            //this.dibujador.showError("No se puede mover a esa posición");
             //pauseScreen();
             return;
         }
@@ -314,6 +314,13 @@ public class Juego {
         Aliado aliado = laberintoActual.getAliado(newPos);
         if (aliado != null) {
             laberintoActual.moverEntidad(aliado, dir.opposite());
+        }
+        
+        Artefacto artefacto = laberintoActual.getArtefacto(newPos);
+        if (artefacto != null) {
+            this.jugador.pickupItem(artefacto);
+            laberintoActual.removeArtefacto(newPos);
+            this.dibujador.showMessage("Has recogido un artefacto: " + artefacto);
         }
     }
     

@@ -1,8 +1,7 @@
 package lp2.juegolp2.Juego;
 
 import com.thoughtworks.xstream.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.Timer;
@@ -103,13 +102,20 @@ public class Juego {
     public void play()
     {
         this.startGame();
+        /*
         Result result = Result.PLAYING;
         while(result == Result.PLAYING) {
-            String input = this.dibujador.showInputPrompt("Ingrese su siguiente movimiento (help para ver los comandos disponibles): ");
-            result = this.processInput(input);
+            //String input = this.dibujador.showInputPrompt("Ingrese su siguiente movimiento (help para ver los comandos disponibles): ");
+            //result = this.processInput(input);
             
             this.updateStage();
         }
+        this.processResult(result);
+        */
+    }
+    
+    private void processResult(Result result)
+    {
         switch (result) {
             case QUIT:
                 this.dibujador.showMessage(
@@ -123,7 +129,11 @@ public class Juego {
                 this.dibujador.showMessage("Has perdido :(");
                 break;
         }
-        this.endGame();
+        if (result == Result.PLAYING) {
+            this.updateStage();
+        } else {
+            this.endGame();
+        }
     }
     
     private String[] getCommandFromString(String line)
@@ -133,7 +143,14 @@ public class Juego {
         // Remueve espacios al inicio y al final
         // Luego reemplaza espacios en medio de la cadena con ";"
         // Finalmente, separa tokens por ";"
-        return line.trim().replaceAll("\\s+", ";").split(";");
+        String[] cmd = line.trim().replaceAll("\\s+", ";").split(";");
+        if (cmd[0].equals("interactuar") && cmd.length == 1) {
+            cmd = new String[] {
+                "interactuar",
+                this.jugador.getFacingDir().toString(),
+            };
+        }
+        return cmd;
     }
     
     private boolean verifyCommand(String[] cmd)
@@ -147,9 +164,8 @@ public class Juego {
         if (!Arrays.asList(availableCommands).contains(cmd[0].toLowerCase()))
             return false;
         // Comandos que requieren argumento direccion
-        if (cmd[0].equals("mover")
-            || cmd[0].equals("interactuar")) {
-            if (cmd.length < 2)
+        if (cmd[0].equals("mover") || cmd[0].equals("interactuar")) {
+            if (cmd.length != 2)
                 return false;
             cmd[1] = cmd[1].toUpperCase();
             if (!Direction.contains(cmd[1]))
@@ -287,7 +303,8 @@ public class Juego {
         Position newPos = this.jugador.getPosition().copy().move(dir);
         // Si no se puede mover a la posición seleccionada, mostramos un mensaje
         if (!laberintoActual.validPlayerPosition(newPos)) {
-            this.dibujador.showError("No se puede mover a esa posición");
+            this.jugador.setFacingDir(dir);
+            //this.dibujador.showError("No se puede mover a esa posición");
             //pauseScreen();
             return;
         }
@@ -295,6 +312,13 @@ public class Juego {
         Aliado aliado = laberintoActual.getAliado(newPos);
         if (aliado != null) {
             laberintoActual.moverEntidad(aliado, dir.opposite());
+        }
+        
+        Artefacto artefacto = laberintoActual.getArtefacto(newPos);
+        if (artefacto != null) {
+            this.jugador.pickupItem(artefacto);
+            laberintoActual.removeArtefacto(newPos);
+            this.dibujador.showMessage("Has recogido un artefacto: " + artefacto);
         }
     }
     
@@ -352,6 +376,8 @@ public class Juego {
     {
         Result res = Result.PLAYING;
         while(res == Result.PLAYING) {
+            jugador.setInBattle(true);
+            enemigo.setInBattle(true);
             this.dibujador.showBattleInterface(jugador, enemigo);
             String input = this.dibujador.showInputPrompt(
                 "Accion a tomar (Ingrese help para ver las acciones disponibles): "
@@ -394,6 +420,8 @@ public class Juego {
             if(jugador.getCurrentHP() == 0)
                 res = Result.LOSE;
         }
+        jugador.setInBattle(false);
+        enemigo.setInBattle(false);
         if (res != Result.LOSE) {
             res = Result.PLAYING;
         }
@@ -454,6 +482,9 @@ public class Juego {
             String input = this.dibujador.showInputPrompt(
                 "Ingrese el artefacto a utilizar ('q' para salir): "
             );
+            if (input == null) {
+                input = "";
+            }
             try {
                 choice = Integer.parseInt(input);
                 if (choice < 1 || choice > numItems)
@@ -579,6 +610,7 @@ public class Juego {
                     break;
             }
         }
+        this.processResult(result);
         return result;
     }
     
@@ -597,6 +629,42 @@ public class Juego {
     private Avatar getJugador()
     {
         return this.jugador;
+    }
+    
+    private void keyPressed(java.awt.event.KeyEvent evt)
+    {
+        String command = "";
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE:
+            case KeyEvent.VK_Q:
+                command = "salir";
+                break;
+            case KeyEvent.VK_W:
+            case KeyEvent.VK_UP:
+                command = "mover up";
+                break;
+            case KeyEvent.VK_D:
+            case KeyEvent.VK_RIGHT:
+                command = "mover right";
+                break;
+            case KeyEvent.VK_A:
+            case KeyEvent.VK_LEFT:
+                command = "mover left";
+                break;
+            case KeyEvent.VK_S:
+            case KeyEvent.VK_DOWN:
+                command = "mover down";
+                break;
+            case KeyEvent.VK_U:
+                command = "usar";
+                break;
+            case KeyEvent.VK_I:
+                command = "interactuar " + this.jugador.getFacingDir();
+                break;
+        }
+        if (!command.equals("")) {
+            this.processInput(command);
+        }
     }
     
     public class GameShared
@@ -626,6 +694,11 @@ public class Juego {
         public Avatar getJugador()
         {
             return Juego.getInstance().getJugador();
+        }
+        
+        public void keyPressed(java.awt.event.KeyEvent evt)
+        {
+            Juego.getInstance().keyPressed(evt);
         }
     }
     

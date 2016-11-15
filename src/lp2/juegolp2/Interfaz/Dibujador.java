@@ -2,6 +2,7 @@ package lp2.juegolp2.Interfaz;
 
 import java.util.Scanner;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import javax.swing.*;
 import lp2.juegolp2.Mundo.*;
@@ -122,7 +123,6 @@ public class Dibujador implements Runnable
      */
     public String showInputPrompt(String prompt)
     {
-        this.window.getSideBar().setCommandPrompt(prompt);
         return this.showInputPopup(prompt);
     }
     
@@ -216,6 +216,26 @@ public class Dibujador implements Runnable
                     + ((jugador.getSaco().empty()) ? "Vacío" : jugador.getSaco().toString());
         
         return info;
+    }
+    
+    public void keyPressed(java.awt.event.KeyEvent evt)
+    {
+        this.gameShared.keyPressed(evt);
+    }
+    
+    public void quitGameAction()
+    {
+        this.gameShared.processInput("salir");
+    }
+    
+    public void useItemAction()
+    {
+        this.gameShared.processInput("usar");
+    }
+    
+    public void interactAction()
+    {
+        this.gameShared.processInput("interactuar");
     }
     
     public void run()

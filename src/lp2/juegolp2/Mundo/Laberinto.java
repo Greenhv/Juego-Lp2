@@ -463,6 +463,8 @@ public class Laberinto
     
     public boolean moverEntidad(Entidad ent, Direction dir)
     {
+        if (ent.isInBattle())
+            return false;
         // Si es una posición válida, mueve la entidad y termina
         Position newPos = ent.getPosition().copy().move(dir);
         boolean valid = (ent instanceof Enemigo) ? validEnemyPosition(newPos) : validPlayerPosition(newPos);

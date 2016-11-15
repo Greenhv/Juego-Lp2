@@ -20,6 +20,7 @@ public class Map extends javax.swing.JPanel
         
         this.setPreferredSize(new Dimension(width, height));
         this.setBounds(new Rectangle(0, 0, width, height));
+        this.setFocusable(true);
         this.parent = parent;
     }
 

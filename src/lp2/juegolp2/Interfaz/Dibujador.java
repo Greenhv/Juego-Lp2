@@ -291,7 +291,7 @@ public class Dibujador
                 dib.updateStage();
                 
                 try {
-                    sleep(200);
+                    sleep(1000);
                 } catch (InterruptedException ex) {
                     
                 }

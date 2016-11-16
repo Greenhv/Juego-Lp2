@@ -41,7 +41,8 @@ public class Juego {
     private int currentLabIndex;
     private int numLaberintos;
     private XStream xmlSerializer;
-    private Timer timer;
+    private Timer timerEntities;
+    private Timer timerObjects;
     
     private Juego()
     {
@@ -88,7 +89,7 @@ public class Juego {
         // Obten datos y crea jugador
         this.initPlayer();
         this.initAliados();
-        this.timer = new Timer(2000, new ActionListener()
+        this.timerEntities = new Timer(2000, new ActionListener()
         {
             public void actionPerformed(ActionEvent evt)
             {
@@ -96,7 +97,19 @@ public class Juego {
                 updateStage();
             }
         });
-        this.timer.start();
+        this.timerObjects = new Timer(2000, new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                moverObjetos(getLaberintoActual());
+                updateStage();
+            }
+        });
+        this.timerEntities.setDelay(2000);
+        this.timerObjects.setDelay(200);
+        this.timerEntities.start();
+        this.timerObjects.start();
+        
     }
 
     public void play()
@@ -616,7 +629,8 @@ public class Juego {
     
     private void endGame()
     {
-        timer.stop();
+        timerEntities.stop();
+        timerObjects.stop();
         dibujador.closeWindow();
         serializeArtefactos();
     }
@@ -711,5 +725,10 @@ public class Juego {
     {
         this.dibujador.dibujarLaberinto();
         this.dibujador.dibujarInfoJugador();
+    }
+    
+    private void moverObjetos(Laberinto lab)
+    {
+        lab.moverArtefactos();
     }
 }

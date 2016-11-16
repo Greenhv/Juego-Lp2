@@ -1,7 +1,6 @@
 package lp2.juegolp2.Interfaz;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 /**
@@ -39,6 +38,7 @@ public class GameWindow extends JFrame
         
         this.addKeyListener(new java.awt.event.KeyAdapter()
         {
+            @Override
             public void keyPressed(java.awt.event.KeyEvent evt) 
             {
                 windowKeyPressed(evt);

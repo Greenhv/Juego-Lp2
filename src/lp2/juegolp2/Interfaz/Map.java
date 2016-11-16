@@ -32,6 +32,7 @@ public class Map extends javax.swing.JPanel
         
         BufferedImage img = this.parent.getDibujador().getImageLoader().getImage("back1");
         try {
+            img = null;
             Image tmp = img.getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH);
             BufferedImage back = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics g2 = back.createGraphics();
@@ -41,7 +42,8 @@ public class Map extends javax.swing.JPanel
             g.drawImage(back, 0, 0, null);
             this.parent.getDibujador().dibujarLaberinto(g);
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(this, "No se pudo cargar las imagenes", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, "No se pudo cargar las imagenes", "Error", JOptionPane.ERROR_MESSAGE);
+            parent.getDibujador().endGame();
         }
     }
     

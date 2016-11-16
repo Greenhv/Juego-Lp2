@@ -316,7 +316,6 @@ public class Juego {
     
     private void moverEntidades(Laberinto lab)
     {
-        System.out.println("Moviendo entidades");
         lab.moverEnemigos(this.jugador.getPosition());
         lab.moverAliados();
     }
@@ -608,6 +607,7 @@ public class Juego {
     
     private void endGame()
     {
+        setGameOver(true);
         dibujador.closeWindow();
         serializeArtefactos();
     }

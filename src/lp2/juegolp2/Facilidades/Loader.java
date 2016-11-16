@@ -62,6 +62,7 @@ public abstract class Loader
             // Obtenemos el directorio de una forma enrevesada
             // para poder utilizar el cargador en Apples.
             packageDirectory = getClass().getClassLoader().getResource("").getPath();
+            packageDirectory = packageDirectory.replaceAll("%20", " ");
             packageDirectory = packageDirectory.substring(0, packageDirectory.lastIndexOf("build/"));
             setPath(path);
             setLoader(loader);
@@ -69,6 +70,7 @@ public abstract class Loader
             System.out.println("Package Directory " + packageDirectory);
             System.out.println("Relative Path: " + relativePath);
             System.out.println("Loader: " + loader + " exists-> " + exists());
+            System.exit(0);
     }
 
     /**

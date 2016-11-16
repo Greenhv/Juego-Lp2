@@ -1,18 +1,18 @@
 <list>
   <lp2.juegolp2.Artefactos.PocionCuracion>
     <nombre>Potion</nombre>
-    <puntos__vida>5</puntos__vida>
-  </lp2.juegolp2.Artefactos.PocionCuracion>
-  <lp2.juegolp2.Artefactos.PocionCuracion>
-    <nombre>Super Potion</nombre>
     <puntos__vida>10</puntos__vida>
   </lp2.juegolp2.Artefactos.PocionCuracion>
   <lp2.juegolp2.Artefactos.PocionCuracion>
-    <nombre>Hyper Potion</nombre>
+    <nombre>Super Potion</nombre>
     <puntos__vida>20</puntos__vida>
   </lp2.juegolp2.Artefactos.PocionCuracion>
   <lp2.juegolp2.Artefactos.PocionCuracion>
-    <nombre>Max Potion</nombre>
+    <nombre>Hyper Potion</nombre>
     <puntos__vida>50</puntos__vida>
+  </lp2.juegolp2.Artefactos.PocionCuracion>
+  <lp2.juegolp2.Artefactos.PocionCuracion>
+    <nombre>Max Potion</nombre>
+    <puntos__vida>100</puntos__vida>
   </lp2.juegolp2.Artefactos.PocionCuracion>
 </list>

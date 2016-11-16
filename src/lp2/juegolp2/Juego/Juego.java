@@ -737,4 +737,9 @@ public class Juego {
     {
         lab.moverArtefactos();
     }
+    
+    private void moverObjetos(Laberinto lab)
+    {
+        lab.moverArtefactos();
+    }
 }

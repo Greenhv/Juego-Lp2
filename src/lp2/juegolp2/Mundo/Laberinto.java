@@ -288,7 +288,7 @@ public class Laberinto
         int y = pos.getY();
         return inBounds(x, y);
     }
-    
+       
     public boolean validPlayerPosition(int x, int y)
     {
         if (x < 1 || y < 1 || x >= getAncho()-1 || y >= getAlto()-1){
@@ -464,6 +464,7 @@ public class Laberinto
      * del método: moverEntidad(Entidad, Direction)
      * 
      * @param ent 
+     * @return  
      */
     public boolean moverEntidad(Entidad ent)
     {

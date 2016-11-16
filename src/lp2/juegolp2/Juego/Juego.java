@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import javax.swing.Timer;
 import lp2.juegolp2.Mundo.*;
 import lp2.juegolp2.Artefactos.*;
 import lp2.juegolp2.Interfaz.*;
@@ -41,7 +40,7 @@ public class Juego {
     private int currentLabIndex;
     private int numLaberintos;
     private XStream xmlSerializer;
-    private Timer timer;
+    private boolean gameOver;
     
     private Juego()
     {
@@ -51,6 +50,7 @@ public class Juego {
         xmlSerializer = new XStream();
         xmlSerializer.omitField(new WorldObject(dibujador.getImageLoader()).getClass(), "imgLoader");
         xmlSerializer.omitField(new WorldObject(dibujador.getImageLoader()).getClass(), "sprite");
+        this.gameOver = false;
         
         this.init();
         this.historia();
@@ -88,15 +88,6 @@ public class Juego {
         // Obten datos y crea jugador
         this.initPlayer();
         this.initAliados();
-        this.timer = new Timer(2000, new ActionListener()
-        {
-            public void actionPerformed(ActionEvent evt)
-            {
-        	moverEntidades(getLaberintoActual());
-                updateStage();
-            }
-        });
-        this.timer.start();
     }
 
     public void play()
@@ -132,6 +123,7 @@ public class Juego {
         if (result == Result.PLAYING) {
             this.updateStage();
         } else {
+            this.setGameOver(true);
             this.endGame();
         }
     }
@@ -616,7 +608,6 @@ public class Juego {
     
     private void endGame()
     {
-        timer.stop();
         dibujador.closeWindow();
         serializeArtefactos();
     }
@@ -700,6 +691,26 @@ public class Juego {
         {
             Juego.getInstance().keyPressed(evt);
         }
+        
+        public void moverEntidades()
+        {
+            Juego.getInstance().moverEntidades(getLaberintoActual());
+        }
+        
+        public void moverArtefactos()
+        {
+            Juego.getInstance().moverArtefactos(getLaberintoActual());
+        }
+        
+        public void setGameOver(boolean gameOver)
+        {
+            Juego.getInstance().setGameOver(gameOver);
+        }
+        
+        public boolean gameOver()
+        {
+            return Juego.getInstance().gameOver();
+        }
     }
     
     public void giveKeyTo(Dibujador dibujador)
@@ -709,7 +720,21 @@ public class Juego {
     
     private void updateStage()
     {
-        this.dibujador.dibujarLaberinto();
-        this.dibujador.dibujarInfoJugador();
+        this.dibujador.updateStage();
+    }
+    
+    private void setGameOver(boolean gameOver)
+    {
+        this.gameOver = gameOver;
+    }
+    
+    private boolean gameOver()
+    {
+        return this.gameOver;
+    }
+    
+    private void moverArtefactos(Laberinto lab)
+    {
+        lab.moverArtefactos();
     }
 }

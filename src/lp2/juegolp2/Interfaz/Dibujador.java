@@ -2,7 +2,6 @@ package lp2.juegolp2.Interfaz;
 
 import java.util.Scanner;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import javax.swing.*;
 import lp2.juegolp2.Mundo.*;
@@ -14,7 +13,7 @@ import lp2.juegolp2.Juego.Juego;
  *
  * @author pmvb
  */
-public class Dibujador implements Runnable
+public class Dibujador
 {   
     private int anchoVisible;
     private int altoVisible;
@@ -22,9 +21,10 @@ public class Dibujador implements Runnable
     private GameWindow window;
     private BufferStrategy bs;
     private ImageLoader imgLoader;
-    private Thread animator;
     private Juego juego;
     private Juego.GameShared gameShared;
+    private EnemyThread enemies;
+    private ArtefactThread artefacts;
 
     public Dibujador(Juego juego)
     {
@@ -36,6 +36,8 @@ public class Dibujador implements Runnable
         this.imgLoader.startLoader();
         this.juego = juego;
         this.juego.giveKeyTo(this);
+        this.enemies = new EnemyThread(this);
+        this.artefacts = new ArtefactThread(this);
     }
     
     public void flush()
@@ -169,6 +171,8 @@ public class Dibujador implements Runnable
     
     public void startGame()
     {
+        this.enemies.start();
+        this.artefacts.start();
         this.window.setVisible(true);
         //this.dibujarLaberinto(this.gameShared.getLaberintoActual());
     }
@@ -192,6 +196,12 @@ public class Dibujador implements Runnable
     public void endGame()
     {
         this.gameShared.endGame();
+        try {
+            this.enemies.join();
+            this.artefacts.join();
+        } catch (InterruptedException ex) {
+            
+        }
     }
     
     public void receiveGameKey(Juego.GameShared shared)
@@ -238,8 +248,54 @@ public class Dibujador implements Runnable
         this.gameShared.processInput("interactuar");
     }
     
-    public void run()
+    public synchronized void updateStage()
     {
-
+        this.dibujarLaberinto();
+        this.dibujarInfoJugador();
+    }
+    
+    class EnemyThread extends Thread
+    {
+        Dibujador dib;
+        public EnemyThread(Dibujador dib)
+        {
+            this.dib = dib;
+        }
+        
+        @Override
+        public void run()
+        {
+            while (!dib.gameShared.gameOver()) {
+                dib.gameShared.moverEntidades();
+                dib.updateStage();
+                try {
+                    sleep(2000);
+                } catch (InterruptedException ex) {
+                }
+            }
+        }
+    }
+    
+    class ArtefactThread extends Thread
+    {
+        Dibujador dib;
+        public ArtefactThread(Dibujador dib)
+        {
+            this.dib = dib;
+        }
+        @Override
+        public void run()
+        {
+            while(!dib.gameShared.gameOver()) {
+                dib.gameShared.moverArtefactos();
+                dib.updateStage();
+                
+                try {
+                    sleep(200);
+                } catch (InterruptedException ex) {
+                    
+                }
+            }
+        }
     }
 }

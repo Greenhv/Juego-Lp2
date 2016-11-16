@@ -306,6 +306,18 @@ public class Laberinto
         return validPlayerPosition(x, y);
     }
     
+    public boolean validArtefactPosition(Position pos)
+    {
+        int x = pos.getX();
+        int y = pos.getY();
+        Set<Celda.Contenido> cont = this.get(x,y).getContenido();
+        return !cont.contains(Celda.Contenido.ALIADO) &&
+               !cont.contains(Celda.Contenido.JUGADOR) &&
+               !cont.contains(Celda.Contenido.ENEMIGO) &&
+               !cont.contains(Celda.Contenido.PARED) &&
+               !cont.contains(Celda.Contenido.ARTEFACTO);
+    }
+    
     public boolean validEnemyPosition(Position pos)
     {
         int x = pos.getX();
@@ -612,5 +624,25 @@ public class Laberinto
             }
             System.out.println();
         }
+    }
+    
+    public void moverArtefactos()
+    {
+        Direction[] dirs = Direction.values();
+        HashMap<Position, Artefacto> tempArtefactos = new HashMap<>(this.artefactos);
+        
+        tempArtefactos.entrySet().stream().forEach((entry) -> {
+            Position position = entry.getKey();
+            Artefacto artefacto = entry.getValue();
+            // Random Direction
+            int index = (int) (Math.random() * dirs.length);
+            Direction dir = dirs[index];
+            Position newPos = position.copy().move(dir);
+            if (this.validArtefactPosition(newPos)) {
+                this.removeArtefacto(position);
+                position.move(dir);
+                this.addArtefacto(newPos, artefacto);
+            }
+        });
     }
 }

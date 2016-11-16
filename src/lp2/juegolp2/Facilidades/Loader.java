@@ -70,7 +70,6 @@ public abstract class Loader
             System.out.println("Package Directory " + packageDirectory);
             System.out.println("Relative Path: " + relativePath);
             System.out.println("Loader: " + loader + " exists-> " + exists());
-            System.exit(0);
     }
 
     /**

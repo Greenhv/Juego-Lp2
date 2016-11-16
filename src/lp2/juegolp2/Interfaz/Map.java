@@ -2,6 +2,7 @@ package lp2.juegolp2.Interfaz;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -30,14 +31,18 @@ public class Map extends javax.swing.JPanel
         super.paintComponent(g);
         
         BufferedImage img = this.parent.getDibujador().getImageLoader().getImage("back1");
-        Image tmp = img.getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH);
-        BufferedImage back = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics g2 = back.createGraphics();
-        g2.drawImage(tmp, 0, 0, null);
-        g2.dispose();
-        
-        g.drawImage(back, 0, 0, null);
-        this.parent.getDibujador().dibujarLaberinto(g);
+        try {
+            Image tmp = img.getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH);
+            BufferedImage back = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics g2 = back.createGraphics();
+            g2.drawImage(tmp, 0, 0, null);
+            g2.dispose();
+            
+            g.drawImage(back, 0, 0, null);
+            this.parent.getDibujador().dibujarLaberinto(g);
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(this, "No se pudo cargar las imagenes", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     /**

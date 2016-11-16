@@ -71,7 +71,7 @@ public class Position
         this.Y = y;
     }
     
-    public synchronized Position move(Direction dir)
+    public Position move(Direction dir)
     {
         switch (dir) {
             case UP:
